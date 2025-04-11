@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Menu - Atas de Reunião{% endblock %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+  <h1 class="mb-4 text-center">Menu de Atas</h1>
+  <div class="row g-4 justify-content-center">
+
+    <!-- Card Listar Atas -->
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm border-0">
+        <div class="card-body d-flex flex-column text-center gap-3">
+          <div>
+            <i class="bi bi-journal-text display-4 text-primary mb-3"></i>
+            <h5 class="card-title">Listar Atas</h5>
+            <p class="card-text text-muted">Visualize todas as atas cadastradas no sistema.</p>
+          </div>
+          <div class="mt-auto">
+            <a href="{% url 'lista_atas' %}" class="btn btn-outline-primary">Acessar</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card Atas Agrupadas -->
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm border-0">
+        <div class="card-body d-flex flex-column text-center gap-3">
+          <div>
+            <i class="bi bi-folder2-open display-4 text-success mb-3"></i>
+            <h5 class="card-title">Atas por Contrato</h5>
+            <p class="card-text text-muted">Veja as atas agrupadas por contrato com resumos.</p>
+          </div>
+          <div class="mt-auto">
+            <a href="{% url 'atas_agrupadas' %}" class="btn btn-outline-success">Acessar</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

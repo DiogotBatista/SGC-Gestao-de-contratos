@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load custom_filters %}
+{% block title %}Cadastrar Contrato{% endblock %}
+{% block content %}
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h2 class="mb-0">Cadastrar Contrato</h2>
+        </div>
+        <div class="card-body">
+          {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+              {% for error in form.non_field_errors %}
+                {{ error }}<br>
+              {% endfor %}
+            </div>
+          {% endif %}
+          <form method="post" novalidate autocomplete="off">
+            {% csrf_token %}
+            {% for field in form %}
+              <div class="mb-3">
+                <label for="{{ field.id_for_label }}" class="form-label">
+                    {{ field.label }}
+                </label>
+                {% if field.name == "cnpj" %}
+                  {# Não aplicar classes exageradas para evitar conflito com a máscara #}
+                  {{ field|add_class:"form-control" }}
+                {% else %}
+                  {{ field|add_class:"form-control form-control-lg" }}
+                {% endif %}
+                {% if field.help_text %}
+                  <small class="form-text text-muted">{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                  <div class="text-danger small">{{ error }}</div>
+                {% endfor %}
+              </div>
+            {% endfor %}
+            <div class="d-flex justify-content-between">
+              <button type="submit" class="btn btn-success">
+                <i class="bi bi-save"></i> Salvar
+              </button>
+              <a href="{% url 'lista_contratos' %}" class="btn btn-secondary">
+                <i class="bi bi-x-circle"></i> Cancelar
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+  <script>
+    $(document).ready(function(){
+      // CNPJ
+      $('[name="cnpj"]').mask('00.000.000/0000-00');
+
+      // Valor Monetário (classe definida no widget do form)
+      $('.moeda').mask('#.##0,00', {reverse: true});
+    });
+  </script>
+{% endblock %}
+

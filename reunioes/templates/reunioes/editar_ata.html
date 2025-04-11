@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+{% load static %}
+{% load custom_filters %}
+{% block title %}Editar Ata{% endblock %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h2 class="mb-0">Editar Ata de Reunião</h2>
+        </div>
+        <div class="card-body">
+
+          {% if form.errors %}
+            <div class="alert alert-warning">
+              <strong>Erros no formulário:</strong>
+              <ul class="mb-0">
+                {% for field, errors in form.errors.items %}
+                  {% for error in errors %}
+                    <li><strong>{{ field|capfirst }}:</strong> {{ error }}</li>
+                  {% endfor %}
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+
+          <form method="post" novalidate id="form-ata">
+            {% csrf_token %}
+
+            <div class="mb-3">
+              <label class="form-label">Contrato</label>
+              {{ form.contrato|add_class:"form-select" }}
+              {% for error in form.contrato.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Data da Reunião</label>
+              {{ form.data|add_class:"form-control" }}
+              {% for error in form.data.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Resumo</label>
+              {{ form.resumo|add_class:"form-control" }}
+              {% for error in form.resumo.errors %}
+                <div class="invalid-feedback d-block">{{ error }}</div>
+              {% endfor %}
+            </div>
+
+            <hr>
+            <h5 class="mb-3">Itens da Ata</h5>
+            {{ formset.management_form }}
+
+            <div id="formset-itens">
+              {% for item in formset %}
+                <div class="card mb-3 border-0 shadow-sm item-form fade-in">
+                  <div class="card-body">
+                    <div class="row g-3 align-items-end">
+                      <div class="col-md-4">
+                        <label class="form-label mb-1">Categoria</label>
+                        {{ item.categoria|add_class:"form-select" }}
+                      </div>
+                      <div class="col-md-6">
+                        <label class="form-label mb-1">Descrição</label>
+                        {{ item.descricao|add_class:"form-control" }}
+                      </div>
+                      <div class="col-md-2">
+                        <label class="form-label mb-1">Status</label>
+                        {{ item.status|add_class:"form-select" }}
+                      </div>
+                    </div>
+                    {{ item.id.as_hidden }}
+                    {{ item.ordem.as_hidden }}
+                    {{ item.DELETE.as_hidden }}
+                    <div class="text-end mt-3">
+                      <button type="button" class="btn btn-sm btn-outline-danger remove-item">
+                        <i class="bi bi-x-circle"></i> Remover
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+
+            <!-- Template oculto -->
+            <div id="empty-form-template" class="d-none">
+              <div class="card mb-3 border-0 shadow-sm item-form fade-in">
+                <div class="card-body">
+                  <div class="row g-3 align-items-end">
+                    <div class="col-md-4">
+                      <label class="form-label mb-1">Categoria</label>
+                      {{ formset.empty_form.categoria|add_class:"form-select" }}
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label mb-1">Descrição</label>
+                      {{ formset.empty_form.descricao|add_class:"form-control" }}
+                    </div>
+                    <div class="col-md-2">
+                      <label class="form-label mb-1">Status</label>
+                      {{ formset.empty_form.status|add_class:"form-select" }}
+                    </div>
+                  </div>
+                  {{ formset.empty_form.ordem.as_hidden }}
+                  {{ formset.empty_form.id.as_hidden }}
+                  {{ formset.empty_form.DELETE.as_hidden }}
+                  <div class="text-end mt-3">
+                    <button type="button" class="btn btn-sm btn-outline-danger remove-item">
+                      <i class="bi bi-x-circle"></i> Remover
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <button type="button" class="btn btn-outline-primary" id="add-item">
+                <i class="bi bi-plus-circle"></i> Adicionar Item
+              </button>
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+              <a href="{% url 'detalhe_ata' ata.pk %}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Voltar
+              </a>
+              <button type="submit" class="btn btn-success">
+                <i class="bi bi-check-circle"></i> Salvar Alterações
+              </button>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+
+<style>
+  .fade-in {
+    opacity: 0;
+    transform: translateY(-10px);
+    animation: fadeInMove .3s ease forwards;
+  }
+  @keyframes fadeInMove {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .fade-out {
+    animation: fadeOutMove .3s ease forwards;
+  }
+  @keyframes fadeOutMove {
+    to {
+      opacity: 0;
+      transform: translateX(100px);
+      height: 0;
+      margin: 0;
+      padding: 0;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const formsetDiv = document.getElementById('formset-itens');
+    const addButton = document.getElementById('add-item');
+    const totalForms = document.getElementById('id_form-TOTAL_FORMS');
+    const emptyFormHtml = document.getElementById('empty-form-template').innerHTML;
+
+    // Ativa drag and drop
+    Sortable.create(formsetDiv, {
+      handle: '.card-body',
+      animation: 150,
+      onEnd: () => {
+        const cards = formsetDiv.querySelectorAll('.item-form');
+        cards.forEach((card, index) => {
+          const ordemInput = card.querySelector('input[name$="-ordem"]');
+          if (ordemInput) ordemInput.value = index;
+        });
+      }
+    });
+
+    // Adicionar novo item
+    addButton.addEventListener('click', function () {
+      const index = parseInt(totalForms.value);
+      const newForm = emptyFormHtml.replace(/__prefix__/g, index);
+      const wrapper = document.createElement('div');
+      wrapper.innerHTML = newForm;
+      const card = wrapper.firstElementChild;
+      card.classList.add('fade-in');
+      formsetDiv.appendChild(card);
+      totalForms.value = index + 1;
+    });
+
+    // Remover item
+    formsetDiv.addEventListener('click', function (e) {
+      if (e.target.closest('.remove-item')) {
+        const card = e.target.closest('.item-form');
+        const deleteInput = card.querySelector('input[name$="-DELETE"]');
+        if (deleteInput) {
+          deleteInput.value = 'on';
+          card.classList.add('fade-out');
+          setTimeout(() => {
+            card.style.display = 'none';
+          }, 300);
+        } else {
+          card.classList.add('fade-out');
+          setTimeout(() => {
+            card.remove();
+            totalForms.value = parseInt(totalForms.value) - 1;
+          }, 300);
+        }
+      }
+    });
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,167 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}SGC - Sistema de Gestão de Contratos{% endblock title %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="{% static 'images/favicon2.ico' %}">
+    <meta name="description" content="SGC - Sistema de Gestão de Contratos">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
+
+    {% block extra_head %}
+    <style>
+        .navbar-nav .nav-link {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .navbar-nav .nav-link:hover {
+            background-color: rgba(0, 123, 255, 0.1);
+            color: #007bff;
+            border-radius: 4px;
+        }
+        .ui-autocomplete {
+            z-index: 9999;
+        }
+    </style>
+    {% endblock extra_head %}
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <header>
+        {% block header %}
+        <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="{% url 'index' %}">
+                    <i class="bi bi-clipboard-data"></i> SGC
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    {% if user.is_authenticated %}
+                    <ul class="navbar-nav me-auto">
+
+                        <!-- Início -->
+                        <li class="nav-item">
+                            <a class="nav-link active" href="{% url 'index' %}">
+                                <i class="bi bi-house"></i> Início
+                            </a>
+                        </li>
+
+                        <!-- Gestão -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="gestaoDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-briefcase"></i> Gestão
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="gestaoDropdown">
+                                <li><a class="dropdown-item" href="{% url 'menu_contratos' %}"><i class="bi bi-file-earmark-text"></i> Contratos</a></li>
+                                <li><a class="dropdown-item" href="{% url 'lista_obras' %}"><i class="bi bi-building"></i> Obras</a></li>
+                            </ul>
+                        </li>
+
+                        <!-- Atas de reunião -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="gestaoDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-journal-text"></i> Atas de Reunão
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="gestaoDropdown">
+                            <li>
+                                <a class="dropdown-item" href="{% url 'lista_atas' %}">
+                                    <i class="bi bi-journal-text"></i> Listar Atas
+                                </a>
+                            </li>
+                            <li>
+                            <a class="dropdown-item" href="{% url 'atas_agrupadas' %}">
+                                <i class="bi bi-folder2-open"></i> Atas por Contrato
+                            </a>
+                        </li>
+
+                        </ul>
+
+<!--                        &lt;!&ndash; Dashboard &ndash;&gt;-->
+<!--                        <li class="nav-item">-->
+<!--                            <a class="nav-link" href="{% url 'dashboard_bi' %}">-->
+<!--                                <i class="bi bi-graph-up"></i> Dashboard-->
+<!--                            </a>-->
+<!--                        </li>-->
+
+                         <!-- Links externos -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="gestaoDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-share"></i> Links Externos
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="gestaoDropdown">
+                                <li>
+                                    <a class="dropdown-item" href="https://sgmcro.dbsistemas.com.br/" target="_blank">
+                                        <i class="bi bi-box-seam"></i> GSM - Gestão de Materiais
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="https://janos.dbsistemas.com.br/" target="_blank">
+                                        <i class="bi bi-lightning-charge"></i> JANOS - Chaves Cemig
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </li>
+
+                        <!-- Admin -->
+                        {% if user.is_superuser %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'admin:index' %}">
+                                <i class="bi bi-shield-lock"></i> Admin
+                            </a>
+                        </li>
+                        {% endif %}
+
+                    </ul>
+
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'logout' %}">
+                                <i class="bi bi-box-arrow-right"></i> Sair
+                            </a>
+                        </li>
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
+        </nav>
+        {% endblock header %}
+    </header>
+
+    <!-- Mensagens -->
+    <main role="main" class="flex-grow-1 container" style="max-width: 1400px; margin: 70px auto; padding: 0 10px 80px 10px;">
+        {% if messages %}
+            <div class="container mt-3">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Rodapé -->
+    <footer class="fixed-bottom bg-light text-center py-2 border-top">
+        {% block footer %}
+            {% include "footer.html" %}
+        {% endblock footer %}
+    </footer>
+
+    <!-- JS Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"></script>
+    {% block extra_js %}{% endblock extra_js %}
+</body>
+</html>

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}{{ title|default:"Contratos" }} - SGC{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4 text-center">{{ title|default:"Contratos" }}</h2>
+    {% block inner_content %}{% endblock %}
+</div>
+{% endblock %}

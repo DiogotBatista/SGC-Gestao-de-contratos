@@ -1,0 +1,109 @@
+{% extends "contratos/base_contratos.html" %}
+
+{% block inner_content %}
+<div class="row g-4">
+    <!-- Card Listar Contratos -->
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm border-0">
+            <div class="card-body d-flex flex-column text-center gap-3">
+                <div>
+                    <i class="bi bi-list-ul display-4 text-primary mb-3"></i>
+                    <h5 class="card-title">Listar Contratos</h5>
+                    <p class="card-text text-muted">Visualize os contratos cadastrados no sistema.</p>
+                </div>
+                <div class="mt-auto">
+                    <a href="{% url 'lista_contratos' %}" class="btn btn-outline-primary">Acessar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card Novo Contrato -->
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm border-0">
+            <div class="card-body d-flex flex-column text-center gap-3">
+                <div>
+                    <i class="bi bi-plus-circle display-4 text-success mb-3"></i>
+                    <h5 class="card-title">Novo Contrato</h5>
+                    <p class="card-text text-muted">Cadastre um novo contrato com dados completos.</p>
+                </div>
+                <div class="mt-auto">
+                    <a href="{% url 'criar_contrato' %}" class="btn btn-outline-success">Acessar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card Contratantes -->
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm border-0">
+            <div class="card-body d-flex flex-column text-center gap-3">
+                <div>
+                    <i class="bi bi-pen display-4 text-info mb-3"></i>
+                    <h5 class="card-title">Contratantes</h5>
+                    <p class="card-text text-muted">Gerencie os contratantes cadastrados.</p>
+                </div>
+                <div class="mt-auto">
+                    <a href="{% url 'lista_contratantes' %}" class="btn btn-outline-info">Acessar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!--    &lt;!&ndash; Linha para Dashboard &ndash;&gt;-->
+
+<!--        <div class="col-md-4">-->
+<!--            <div class="card h-100 shadow-sm border-0">-->
+<!--                <div class="card-body d-flex flex-column text-center gap-3">-->
+<!--                    <div>-->
+<!--                        <i class="bi bi-graph-up display-4 text-danger mb-3"></i>-->
+<!--                        <h5 class="card-title">Dashboard</h5>-->
+<!--                        <p class="card-text">Visualize os dados consolidados no Power BI.</p>-->
+<!--                    </div>-->
+<!--                    <div class="mt-auto">-->
+<!--                        <a href="{% url 'dashboard_bi' %}" class="btn btn-outline-danger">Acessar</a>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+
+
+
+    <!-- Card Obras -->
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm border-0">
+            <div class="card-body d-flex flex-column text-center gap-3">
+                <div>
+                    <i class="bi bi-building display-4 text-secondary mb-3"></i>
+                    <h5 class="card-title">Obras</h5>
+                    <p class="card-text text-muted">Visualize e gerencie as obras vinculadas aos contratos.</p>
+                </div>
+                <div class="mt-auto">
+                    <a href="{% url 'lista_obras' %}" class="btn btn-outline-secondary">Acessar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card Atas de Reunião -->
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm border-0">
+            <div class="card-body d-flex flex-column text-center gap-3">
+                <div>
+                    <i class="bi bi-journal-text display-4 text-warning mb-3"></i>
+                    <h5 class="card-title">Atas de Reunião</h5>
+                    <p class="card-text">Consulte registros de reuniões e itens por categoria.</p>
+                </div>
+                <div class="mt-auto">
+                    <a href="{% url 'lista_atas' %}" class="btn btn-outline-warning">Acessar</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+</div>
+{% endblock %}
