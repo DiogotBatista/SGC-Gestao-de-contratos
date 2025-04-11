@@ -172,3 +172,17 @@ class NotaContrato(models.Model):
 
     def __str__(self):
         return f"Nota - {self.contrato.numero} ({self.criado_em.strftime('%d/%m/%Y')})"
+
+class NotaObra(models.Model):
+    obra = models.ForeignKey(Obra, on_delete=models.CASCADE, related_name='notas')
+    texto = models.TextField(verbose_name='Anotação')
+    criado_por = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    criado_em = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-criado_em']
+        verbose_name = "Nota da Obra"
+        verbose_name_plural = "Notas das Obras"
+
+    def __str__(self):
+        return f"Nota - {self.obra.codigo} por {self.criado_por}"

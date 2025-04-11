@@ -20,6 +20,9 @@ from .views import (
     NotaContratoCreateView,
     NotaContratoUpdateView,
     NotaContratoDeleteView,
+    NotaObraCreateView,
+    NotaObraUpdateView,
+    NotaObraDeleteView,
 )
 
 urlpatterns = [
@@ -42,6 +45,9 @@ urlpatterns = [
     path('obras/novo/', ObraCreateView.as_view(), name='criar_obra'),
     path('obras/<int:pk>/editar/', ObraUpdateView.as_view(), name='editar_obra'),
     path('obras/<int:pk>/excluir/', ObraDeleteView.as_view(), name='excluir_obra'),
+    path('obras/<int:obra_id>/nota/adicionar/', NotaObraCreateView.as_view(), name='adicionar_nota_obra'),
+    path('obras/nota/<int:pk>/editar/', NotaObraUpdateView.as_view(), name='editar_nota_obra'),
+    path('obras/nota/<int:pk>/excluir/', NotaObraDeleteView.as_view(), name='excluir_nota_obra'),
 
     #Contratantes
     path('contratantes/', ContratanteListView.as_view(), name='lista_contratantes'),

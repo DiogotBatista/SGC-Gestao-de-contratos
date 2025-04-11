@@ -1,5 +1,5 @@
 from django import forms
-from .models import Contrato, Contratante, Obra, NotaContrato
+from .models import Contrato, Contratante, Obra, NotaContrato, NotaObra
 from django.forms import DateInput
 from decimal import Decimal, InvalidOperation
 
@@ -126,3 +126,15 @@ class ObraForm(forms.ModelForm):
         if not self.instance.pk:
             self.fields.pop('ativo')
         self.fields['contrato'].label_from_instance = lambda obj: f"{obj.numero} - {obj.contratante}"
+
+
+class NotaObraForm(forms.ModelForm):
+    class Meta:
+        model = NotaObra
+        fields = ['texto']
+        widgets = {
+            'texto': forms.Textarea(attrs={
+                'rows': 3,
+                'placeholder': 'Digite sua anotação...',
+            })
+        }

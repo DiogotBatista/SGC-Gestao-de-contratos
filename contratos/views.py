@@ -1,5 +1,5 @@
-from .models import Contrato, Obra, Contratante, NotaContrato
-from .forms import ContratoForm, ContratanteForm, ObraForm, NotaContratoForm
+from .models import Contrato, Obra, Contratante, NotaContrato, NotaObra
+from .forms import ContratoForm, ContratanteForm, ObraForm, NotaContratoForm, NotaObraForm
 from django.db.models import Q, Count, Max
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, TemplateView, DetailView, View
 from core.mixins import AccessRequiredMixin
@@ -201,6 +201,7 @@ class NotaContratoDeleteView(AccessRequiredMixin, DeleteView):
     def get_success_url(self):
         messages.success(self.request, 'Anotação excluída com sucesso.')
         return reverse_lazy('detalhes_contrato', kwargs={'pk': self.object.contrato.pk})
+
 # VIEWS DOS CONTRATANTES
 
 class ContratanteListView(AccessRequiredMixin, ListView):
@@ -303,6 +304,70 @@ class ObraDetailView(AccessRequiredMixin, DetailView):
     template_name = 'contratos/obras/detalhes_obra.html'
     context_object_name = 'obra'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['notas'] = self.object.notas.all()
+        context['form_nota'] = NotaObraForm()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = NotaObraForm(request.POST)
+        if form.is_valid():
+            nota = form.save(commit=False)
+            nota.obra = self.object
+            nota.autor = request.user
+            nota.save()
+        return redirect('detalhe_obra', pk=self.object.pk)
+
+class NotaObraCreateView(AccessRequiredMixin, View):
+    """
+    Adiciona anotação à obra
+    """
+    allowed_cargos = ['Gestor']
+    no_permission_redirect_url = 'index'
+
+    def post(self, request, obra_id):
+        obra = get_object_or_404(Obra, pk=obra_id)
+        form = NotaObraForm(request.POST)
+        if form.is_valid():
+            nota = form.save(commit=False)
+            nota.obra = obra
+            nota.criado_por = request.user
+            nota.save()
+            messages.success(request, 'Anotação adicionada com sucesso.')
+        else:
+            messages.warning(request, 'Erro ao adicionar anotação.')
+        return redirect('detalhes_obra', pk=obra.pk)
+
+
+class NotaObraUpdateView(AccessRequiredMixin, UpdateView):
+    """
+    Atualiza anotação da obra
+    """
+    allowed_cargos = ['Gestor']
+    model = NotaObra
+    form_class = NotaObraForm
+    template_name = 'contratos/obras/editar_nota_obra.html'
+
+    def form_valid(self, form):
+        nota = form.save(commit=False)
+        nota.save()
+        messages.success(self.request, 'Anotação atualizada com sucesso.')
+        return redirect('detalhes_obra', pk=nota.obra.pk)
+
+
+class NotaObraDeleteView(AccessRequiredMixin, DeleteView):
+    """
+    Deleta anotação da obra
+    """
+    allowed_cargos = ['Gestor']
+    model = NotaObra
+    template_name = 'contratos/obras/excluir_nota_obra.html'
+
+    def get_success_url(self):
+        messages.success(self.request, 'Anotação excluída com sucesso.')
+        return reverse_lazy('detalhes_obra', kwargs={'pk': self.object.obra.pk})
 
 class ObraCreateView(AccessRequiredMixin, CreateView):
     """
@@ -351,3 +416,4 @@ class ObraDeleteView(AccessRequiredMixin, DeleteView):
         response = super().form_valid(form)
         messages.success(self.request, "Obra excluída com sucesso!")
         return response
+

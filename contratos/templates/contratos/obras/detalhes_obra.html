@@ -12,16 +12,15 @@
         <a href="{% url 'lista_obras' %}" class="btn btn-outline-secondary btn-sm">
           <i class="bi bi-arrow-left"></i> Voltar
         </a>
-
         {% if user|tem_cargo:"Gestor" %}
-        <div>
-          <a href="{% url 'editar_obra' obra.pk %}" class="btn btn-outline-primary btn-sm me-1">
-            <i class="bi bi-pencil-square"></i> Editar
-          </a>
-          <a href="{% url 'excluir_obra' obra.pk %}" class="btn btn-outline-danger btn-sm">
-            <i class="bi bi-trash"></i> Excluir
-          </a>
-        </div>
+          <div>
+            <a href="{% url 'editar_obra' obra.pk %}" class="btn btn-outline-primary btn-sm me-1">
+              <i class="bi bi-pencil-square"></i> Editar
+            </a>
+            <a href="{% url 'excluir_obra' obra.pk %}" class="btn btn-outline-danger btn-sm">
+              <i class="bi bi-trash"></i> Excluir
+            </a>
+          </div>
         {% endif %}
       </div>
 
@@ -29,9 +28,8 @@
         <i class="bi bi-building"></i> Obra {{ obra.codigo }}
       </h2>
 
-      <div class="row g-4">
-
-        <!-- Contrato -->
+      <!-- Cards de detalhes -->
+      <div class="row g-4 mt-3">
         <div class="col-md-6">
           <div class="card border-0 shadow-sm h-100">
             <div class="card-body">
@@ -41,8 +39,6 @@
             </div>
           </div>
         </div>
-
-        <!-- Local -->
         <div class="col-md-6">
           <div class="card border-0 shadow-sm h-100">
             <div class="card-body">
@@ -51,8 +47,6 @@
             </div>
           </div>
         </div>
-
-        <!-- Descrição -->
         <div class="col-md-6">
           <div class="card border-0 shadow-sm h-100">
             <div class="card-body">
@@ -67,8 +61,6 @@
             </div>
           </div>
         </div>
-
-        <!-- Status -->
         <div class="col-md-6">
           <div class="card border-0 shadow-sm h-100">
             <div class="card-body">
@@ -83,10 +75,70 @@
             </div>
           </div>
         </div>
+      </div>
 
+      <!-- Anotações -->
+      <div class="row mt-4">
+        <div class="col-12">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body">
+              <h5 class="card-title mb-3">
+                <i class="bi bi-journal-text"></i> Anotações sobre a Obra
+              </h5>
+
+              {% if obra.notas.exists %}
+                <div class="list-group mb-3">
+                  {% for nota in obra.notas.all %}
+                    <div class="list-group-item list-group-item-action shadow-sm mb-2">
+                      <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                          <strong>{{ nota.criado_por.get_full_name|default:nota.criado_por.username }}</strong>
+                          <small class="text-muted ms-2">{{ nota.criado_em|date:"d/m/Y H:i" }}</small>
+                        </div>
+                        <div class="btn-group">
+                          <a href="{% url 'editar_nota_obra' nota.pk %}" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-pencil"></i>
+                          </a>
+                          <a href="{% url 'excluir_nota_obra' nota.pk %}" class="btn btn-sm btn-outline-danger">
+                            <i class="bi bi-trash"></i>
+                          </a>
+                        </div>
+                      </div>
+                      <p class="mb-0 mt-2">{{ nota.texto }}</p>
+                    </div>
+                  {% endfor %}
+                </div>
+              {% else %}
+                <p class="text-muted">Nenhuma anotação registrada para esta obra.</p>
+              {% endif %}
+
+              {% if user|tem_cargo:"Gestor" %}
+                <form method="post" action="{% url 'adicionar_nota_obra' obra.pk %}">
+                  {% csrf_token %}
+                  <div class="mb-2">
+                    {{ form_nota.texto|add_class:"form-control" }}
+                  </div>
+                  <button type="submit" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-plus-circle"></i> Adicionar Anotação
+                  </button>
+                </form>
+              {% endif %}
+            </div>
+          </div>
+        </div>
       </div>
 
     </div>
   </div>
 </div>
+
+<style>
+  .list-group-item {
+    background-color: #f9f9f9;
+    border-left: 4px solid #0d6efd;
+  }
+  .card-title i {
+    margin-right: 5px;
+  }
+</style>
 {% endblock %}
