@@ -61,18 +61,26 @@
               {% for item in formset %}
                 <div class="card mb-3 border-0 shadow-sm item-form fade-in">
                   <div class="card-body">
-                    <div class="row g-3 align-items-end">
-                      <div class="col-md-4">
-                        <label class="form-label mb-1">Categoria</label>
+                    <div class="row g-3 align-items-start">
+                      <div class="col-md-3">
+                        <label class="form-label">Categoria</label>
                         {{ item.categoria|add_class:"form-select" }}
                       </div>
-                      <div class="col-md-6">
-                        <label class="form-label mb-1">Descrição</label>
+                      <div class="col-md-5">
+                        <label class="form-label">Descrição</label>
                         {{ item.descricao|add_class:"form-control" }}
                       </div>
-                      <div class="col-md-2">
-                        <label class="form-label mb-1">Status</label>
-                        {{ item.status|add_class:"form-select" }}
+                      <div class="col-md-4">
+                        <div class="d-flex flex-column">
+                          <div class="mb-2">
+                            <label class="form-label">Status</label>
+                            {{ item.status|add_class:"form-select" }}
+                          </div>
+                          <div>
+                            <label class="form-label">Prazo</label>
+                            {{ item.data_prazo|add_class:"form-control" }}
+                          </div>
+                        </div>
                       </div>
                     </div>
                     {{ item.id.as_hidden }}
@@ -88,28 +96,36 @@
               {% endfor %}
             </div>
 
-            <!-- Template oculto -->
+            <!-- Formulário oculto -->
             <div id="empty-form-template" class="d-none">
               <div class="card mb-3 border-0 shadow-sm item-form fade-in">
                 <div class="card-body">
-                  <div class="row g-3 align-items-end">
-                    <div class="col-md-4">
-                      <label class="form-label mb-1">Categoria</label>
+                  <div class="row g-3 align-items-start">
+                    <div class="col-md-3">
+                      <label class="form-label">Categoria</label>
                       {{ formset.empty_form.categoria|add_class:"form-select" }}
                     </div>
-                    <div class="col-md-6">
-                      <label class="form-label mb-1">Descrição</label>
+                    <div class="col-md-5">
+                      <label class="form-label">Descrição</label>
                       {{ formset.empty_form.descricao|add_class:"form-control" }}
                     </div>
-                    <div class="col-md-2">
-                      <label class="form-label mb-1">Status</label>
-                      {{ formset.empty_form.status|add_class:"form-select" }}
+                    <div class="col-md-4">
+                      <div class="d-flex flex-column">
+                        <div class="mb-2">
+                          <label class="form-label">Status</label>
+                          {{ formset.empty_form.status|add_class:"form-select" }}
+                        </div>
+                        <div>
+                          <label class="form-label">Prazo</label>
+                          {{ formset.empty_form.data_prazo|add_class:"form-control" }}
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  {{ formset.empty_form.ordem.as_hidden }}
                   {{ formset.empty_form.id.as_hidden }}
+                  {{ formset.empty_form.ordem.as_hidden }}
                   {{ formset.empty_form.DELETE.as_hidden }}
-                  <div class="text-end mt-3">
+                  <div class="text-end mt-2">
                     <button type="button" class="btn btn-sm btn-outline-danger remove-item">
                       <i class="bi bi-x-circle"></i> Remover
                     </button>
@@ -118,7 +134,7 @@
               </div>
             </div>
 
-            <div class="mb-3">
+            <div class="mb-3 mt-3">
               <button type="button" class="btn btn-outline-primary" id="add-item">
                 <i class="bi bi-plus-circle"></i> Adicionar Item
               </button>
@@ -143,34 +159,6 @@
 
 {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-
-<style>
-  .fade-in {
-    opacity: 0;
-    transform: translateY(-10px);
-    animation: fadeInMove .3s ease forwards;
-  }
-  @keyframes fadeInMove {
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .fade-out {
-    animation: fadeOutMove .3s ease forwards;
-  }
-  @keyframes fadeOutMove {
-    to {
-      opacity: 0;
-      transform: translateX(100px);
-      height: 0;
-      margin: 0;
-      padding: 0;
-    }
-  }
-</style>
-
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     const formsetDiv = document.getElementById('formset-itens');
@@ -178,7 +166,7 @@
     const totalForms = document.getElementById('id_form-TOTAL_FORMS');
     const emptyFormHtml = document.getElementById('empty-form-template').innerHTML;
 
-    // Ativa drag and drop
+    // Sortable
     Sortable.create(formsetDiv, {
       handle: '.card-body',
       animation: 150,
@@ -191,7 +179,7 @@
       }
     });
 
-    // Adicionar novo item
+    // Adicionar
     addButton.addEventListener('click', function () {
       const index = parseInt(totalForms.value);
       const newForm = emptyFormHtml.replace(/__prefix__/g, index);
@@ -203,7 +191,7 @@
       totalForms.value = index + 1;
     });
 
-    // Remover item
+    // Remover
     formsetDiv.addEventListener('click', function (e) {
       if (e.target.closest('.remove-item')) {
         const card = e.target.closest('.item-form');
@@ -211,9 +199,7 @@
         if (deleteInput) {
           deleteInput.value = 'on';
           card.classList.add('fade-out');
-          setTimeout(() => {
-            card.style.display = 'none';
-          }, 300);
+          setTimeout(() => { card.style.display = 'none'; }, 300);
         } else {
           card.classList.add('fade-out');
           setTimeout(() => {
@@ -225,4 +211,32 @@
     });
   });
 </script>
+<style>
+  .fade-in {
+    opacity: 0;
+    transform: translateY(-10px);
+    animation: fadeInMove 0.3s ease forwards;
+  }
+
+  @keyframes fadeInMove {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .fade-out {
+    animation: fadeOutMove 0.3s ease forwards;
+  }
+
+  @keyframes fadeOutMove {
+    to {
+      opacity: 0;
+      transform: translateX(100px);
+      height: 0;
+      margin: 0;
+      padding: 0;
+    }
+  }
+</style>
 {% endblock %}

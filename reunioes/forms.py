@@ -22,19 +22,22 @@ class AtaReuniaoForm(forms.ModelForm):
 class ItemAtaForm(forms.ModelForm):
     class Meta:
         model = ItemAta
-        fields = ['categoria', 'descricao', 'status', 'ordem']  # ✅ inclui ordem
+        fields = ['categoria', 'descricao', 'status', 'data_prazo', 'ordem']
         labels = {
             'categoria': 'Categoria',
             'descricao': 'Descrição',
             'status': 'Status',
+            'data_prazo': 'Prazo',
             'ordem': 'Ordem'
         }
         widgets = {
             'categoria': forms.Select(attrs={'class': 'form-select'}),
             'descricao': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'status': forms.Select(attrs={'class': 'form-select'}),
-            'ordem': forms.HiddenInput(),  # ✅ importante para funcionar corretamente
+            'data_prazo': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'ordem': forms.HiddenInput(),
         }
+
 
 
 ItemAtaFormSet = inlineformset_factory(

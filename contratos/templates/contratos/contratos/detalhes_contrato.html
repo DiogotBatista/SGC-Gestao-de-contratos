@@ -24,9 +24,7 @@
         {% endif %}
       </div>
 
-      <h2 class="mb-4">
-        <i class="bi bi-file-earmark-text"></i> Contrato {{ contrato.numero }}
-      </h2>
+      <h2 class="mb-4"><i class="bi bi-file-earmark-text"></i> Contrato {{ contrato.numero }}</h2>
 
       <!-- Painel de Resumo -->
       <div class="row g-3 mt-3">
@@ -72,17 +70,20 @@
 
       <!-- Cards de detalhes -->
       <div class="row g-4 mt-3">
+        <!-- Contratante -->
         <div class="col-md-6">
-          <div class="card border-0 shadow-sm h-100">
+          <div class="card shadow-sm h-100">
             <div class="card-body">
               <h5 class="card-title"><i class="bi bi-person-badge"></i> Contratante</h5>
               <p class="mb-1"><strong>Empresa:</strong> {{ contrato.contratante.nome }}</p>
-              <p class="mb-0"><strong>CNPJ:</strong> {{ contrato.contratante.cnpj|default:"-" }}</p>
+              <p class="mb-0"><strong>CNPJ:</strong> {{ contrato.contratante.cnpj|default:"—" }}</p>
             </div>
           </div>
         </div>
+
+        <!-- Descrição -->
         <div class="col-md-6">
-          <div class="card border-0 shadow-sm h-100">
+          <div class="card shadow-sm h-100">
             <div class="card-body">
               <h5 class="card-title"><i class="bi bi-card-text"></i> Descrição</h5>
               <p class="mb-0">
@@ -95,8 +96,10 @@
             </div>
           </div>
         </div>
+
+        <!-- Informações -->
         <div class="col-md-6">
-          <div class="card border-0 shadow-sm h-100">
+          <div class="card shadow-sm h-100">
             <div class="card-body">
               <h5 class="card-title"><i class="bi bi-info-circle"></i> Informações</h5>
               <p class="mb-1"><strong>Preposto:</strong> {{ contrato.preposto }}</p>
@@ -119,15 +122,17 @@
             </div>
           </div>
         </div>
+
+        <!-- Vigência -->
         <div class="col-md-6">
-          <div class="card border-0 shadow-sm h-100">
+          <div class="card shadow-sm h-100">
             <div class="card-body">
               <h5 class="card-title"><i class="bi bi-calendar-check"></i> Vigência</h5>
               <p class="mb-1"><strong>Início:</strong> {{ contrato.data_inicio|date:"d/m/Y" }}</p>
               {% if contrato.data_fim %}
                 <p class="mb-1"><strong>Fim:</strong> {{ contrato.data_fim|date:"d/m/Y" }}</p>
               {% else %}
-                <p class="mb-0"><strong>Situação:</strong> Em vigência</p>
+                <p class="mb-1"><strong>Situação:</strong> Em vigência</p>
               {% endif %}
               <p class="mb-0"><strong>Valor Total:</strong> {{ contrato.valor_total|br_currency }}</p>
             </div>
@@ -165,56 +170,52 @@
       </div>
 
       <!-- Anotações -->
-      <div class="row mt-4">
-        <div class="col-12">
-          <div class="card border-0 shadow-sm">
-            <div class="card-body">
-              <h5 class="card-title mb-3">
-                <i class="bi bi-journal-text"></i> Anotações Gerais
-              </h5>
+<div class="row mt-4">
+  <div class="col-12">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title mb-3"><i class="bi bi-journal-text"></i> Anotações sobre o Contrato</h5>
 
-              {% if contrato.notas.exists %}
-                <div class="list-group mb-3">
-                  {% for nota in contrato.notas.all %}
-                    <div class="list-group-item list-group-item-action shadow-sm mb-2">
-                      <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                          <strong>{{ nota.criado_por.get_full_name|default:nota.criado_por.username }}</strong>
-                          <small class="text-muted ms-2">{{ nota.criado_em|date:"d/m/Y H:i" }}</small>
-                        </div>
-                        <div class="btn-group">
-                          <a href="{% url 'editar_nota_contrato' nota.pk %}" class="btn btn-sm btn-outline-primary">
-                            <i class="bi bi-pencil"></i>
-                          </a>
-                          <a href="{% url 'excluir_nota_contrato' nota.pk %}" class="btn btn-sm btn-outline-danger">
-                            <i class="bi bi-trash"></i>
-                          </a>
-                        </div>
-                      </div>
-                      <p class="mb-0 mt-2">{{ nota.texto }}</p>
-                    </div>
-                  {% endfor %}
-                </div>
-              {% else %}
-                <p class="text-muted">Nenhuma anotação registrada para este contrato.</p>
-              {% endif %}
-
-              {% if user|tem_cargo:"Gestor" %}
-                <form method="post" action="{% url 'adicionar_nota' contrato.pk %}">
-                  {% csrf_token %}
-                  <div class="mb-2">
-                    {{ nota_form.texto|add_class:"form-control" }}
+        {% if contrato.notas.exists %}
+          <div class="list-group mb-3">
+            {% for nota in contrato.notas.all %}
+              <div class="list-group-item list-group-item-action shadow-sm mb-2">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                    <strong>{{ nota.criado_por.get_full_name|default:nota.criado_por.username }}</strong>
+                    <small class="text-muted ms-2">{{ nota.criado_em|date:"d/m/Y H:i" }}</small>
                   </div>
-                  <button type="submit" class="btn btn-sm btn-outline-primary">
-                    <i class="bi bi-plus-circle"></i> Adicionar Anotação
-                  </button>
-                </form>
-              {% endif %}
-            </div>
+                  {% if user|tem_cargo:"Gestor" %}
+                    <div class="btn-group">
+                      <a href="{% url 'editar_nota_contrato' nota.pk %}" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-pencil"></i>
+                      </a>
+                      <a href="{% url 'excluir_nota_contrato' nota.pk %}" class="btn btn-sm btn-outline-danger">
+                        <i class="bi bi-trash"></i>
+                      </a>
+                    </div>
+                  {% endif %}
+                </div>
+                <p class="mb-0 mt-2">{{ nota.texto }}</p>
+              </div>
+            {% endfor %}
           </div>
-        </div>
-      </div>
+        {% else %}
+          <p class="text-muted">Nenhuma anotação registrada para este contrato.</p>
+        {% endif %}
 
+        {% if user|tem_cargo:"Gestor" %}
+          <form method="post" action="{% url 'adicionar_nota' contrato.pk %}">
+            {% csrf_token %}
+            <div class="mb-2">
+              {{ nota_form.texto|add_class:"form-control" }}
+            </div>
+            <button type="submit" class="btn btn-sm btn-outline-primary">
+              <i class="bi bi-plus-circle"></i> Adicionar Anotação
+            </button>
+          </form>
+        {% endif %}
+      </div>
     </div>
   </div>
 </div>
@@ -223,7 +224,9 @@
   .list-group-item {
     background-color: #f9f9f9;
     border-left: 4px solid #0d6efd;
+    border-radius: .375rem;
   }
+
   .card-title i {
     margin-right: 5px;
   }

@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from contratos.models import Contrato
+from django.utils import timezone
 
 
 class AtaReuniao(models.Model):
@@ -49,15 +50,27 @@ class CategoriaItemAta(models.Model):
     def __str__(self):
         return self.nome
 
+from django.db import models
+from django.conf import settings
+
+from django.utils import timezone
+
 class ItemAta(models.Model):
+    STATUS_CHOICES = [
+        ('pendente', 'Pendente'),
+        ('concluido', 'Concluído'),
+        ('nao_aplicavel', 'Não Aplicável'),
+    ]
+
     ata = models.ForeignKey(AtaReuniao, on_delete=models.CASCADE, related_name='itens')
     categoria = models.ForeignKey(CategoriaItemAta, on_delete=models.SET_NULL, null=True)
     descricao = models.TextField()
     status = models.CharField(
         max_length=20,
-        choices=[('pendente', 'Pendente'), ('concluido', 'Concluído')],
+        choices=STATUS_CHOICES,
         default='pendente'
     )
+    data_prazo = models.DateField(null=True, blank=True)
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
@@ -66,11 +79,18 @@ class ItemAta(models.Model):
         related_name='itens_ata_criados'
     )
     data_cadastro = models.DateTimeField(auto_now_add=True)
-    ordem = models.PositiveIntegerField(default=0)  # <- novo campo
+    ordem = models.PositiveIntegerField(default=0)
 
     class Meta:
         ordering = ['ordem']
 
     def __str__(self):
         return f"{self.categoria} - {self.ata.data}"
+
+    def prazo_status(self):
+        if self.data_prazo and self.status == 'pendente':
+            return "atrasado" if self.data_prazo < timezone.now().date() else "em_dia"
+        return None
+
+
 

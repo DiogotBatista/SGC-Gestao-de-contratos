@@ -50,6 +50,7 @@
                   <tr>
                     <th class="text-center">Categoria</th>
                     <th class="text-center">Descrição</th>
+                    <th class="text-center">Prazo</th>
                     <th class="text-center">Status</th>
                   </tr>
                 </thead>
@@ -59,10 +60,25 @@
                       <td class="text-center">{{ item.categoria }}</td>
                       <td>{{ item.descricao }}</td>
                       <td class="text-center">
+                        {% if item.status == 'nao_aplicavel' %}
+                          <span class="text-muted">—</span>
+                        {% elif item.data_prazo %}
+                          {% if item.prazo_status == "atrasado" %}
+                            <span class="text-danger fw-bold">{{ item.data_prazo|date:"d/m/Y" }} ⚠️</span>
+                          {% else %}
+                            <span class="text-success">{{ item.data_prazo|date:"d/m/Y" }}</span>
+                          {% endif %}
+                        {% else %}
+                          <span class="text-muted">—</span>
+                        {% endif %}
+                      </td>
+                      <td class="text-center">
                         {% if item.status == 'concluido' %}
                           <span class="badge bg-success">Concluído</span>
-                        {% else %}
+                        {% elif item.status == 'pendente' %}
                           <span class="badge bg-warning text-dark">Pendente</span>
+                        {% elif item.status == 'nao_aplicavel' %}
+                          <span class="badge bg-secondary">Não aplicável</span>
                         {% endif %}
                       </td>
                     </tr>
