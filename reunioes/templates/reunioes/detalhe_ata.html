@@ -31,7 +31,7 @@
           {% if ata.resumo %}
           <div class="mb-3">
             <strong>Resumo:</strong>
-            <div class="border rounded p-2 bg-light">{{ ata.resumo }}</div>
+            <div class="border rounded p-2 bg-light">{{ ata.resumo |linebreaksbr}}</div>
           </div>
           {% endif %}
         </div>
@@ -58,7 +58,7 @@
                   {% for item in itens %}
                     <tr>
                       <td class="text-center">{{ item.categoria }}</td>
-                      <td>{{ item.descricao }}</td>
+                      <td>{{ item.descricao |linebreaksbr }}</td>
                       <td class="text-center">
                         {% if item.status == 'nao_aplicavel' %}
                           <span class="text-muted">—</span>
