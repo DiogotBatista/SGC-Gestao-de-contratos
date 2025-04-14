@@ -25,7 +25,7 @@ class ContratoListView(AccessRequiredMixin, ListView):
     model = Contrato
     template_name = 'contratos/contratos/lista_contratos.html'
     context_object_name = 'contratos'
-    paginate_by = 10
+    paginate_by = 20
     ordering = ['-data_cadastro']
 
     def get_queryset(self):
@@ -134,6 +134,7 @@ class AtasPorContratoView(AccessRequiredMixin, ListView):
     template_name = 'contratos/contratos/atas_por_contrato.html'
     context_object_name = 'atas'
     allowed_cargos = []
+    paginate_by = 20
 
     def get_queryset(self):
         return AtaReuniao.objects.filter(contrato_id=self.kwargs['pk']).select_related('contrato')
@@ -152,6 +153,7 @@ class ObrasPorContratoView(AccessRequiredMixin, ListView):
     template_name = 'contratos/contratos/obras_por_contrato.html'
     context_object_name = 'obras'
     allowed_cargos = []
+    paginate_by = 20
 
     def get_queryset(self):
         return Obra.objects.filter(contrato_id=self.kwargs['pk']).select_related('contrato')
@@ -220,7 +222,7 @@ class ContratanteListView(AccessRequiredMixin, ListView):
     model = Contratante
     template_name = 'contratos/contratantes/lista_contratantes.html'
     context_object_name = 'contratantes'
-    paginate_by = 10
+    paginate_by = 20
     ordering = ['nome']
 
     def get_queryset(self):
@@ -290,7 +292,7 @@ class ObraListView(AccessRequiredMixin, ListView):
     model = Obra
     template_name = 'contratos/obras/lista_obras.html'
     context_object_name = 'obras'
-    paginate_by = 10
+    paginate_by = 20
     ordering = ['codigo']
 
     def get_queryset(self):
