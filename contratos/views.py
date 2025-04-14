@@ -31,11 +31,19 @@ class ContratoListView(AccessRequiredMixin, ListView):
     def get_queryset(self):
         queryset = super().get_queryset()
         query = self.request.GET.get('q')
+        ativo = self.request.GET.get('ativo')
+
         if query:
             queryset = queryset.filter(
                 Q(numero__icontains=query) |
                 Q(contratante__nome__icontains=query)
             )
+
+        if ativo == 'ativos':
+            queryset = queryset.filter(ativo=True)
+        elif ativo == 'inativos':
+            queryset = queryset.filter(ativo=False)
+
         return queryset
 
 class ContratoCreateView(AccessRequiredMixin, CreateView):
@@ -283,16 +291,23 @@ class ObraListView(AccessRequiredMixin, ListView):
     template_name = 'contratos/obras/lista_obras.html'
     context_object_name = 'obras'
     paginate_by = 10
-    ordering = ['-data_cadastro']
+    ordering = ['codigo']
 
     def get_queryset(self):
         queryset = super().get_queryset()
         query = self.request.GET.get('q')
+        ativo = self.request.GET.get('ativo')
         if query:
             queryset = queryset.filter(
                 Q(codigo__icontains=query) |
-                Q(contrato__numero__icontains=query)
+                Q(contrato__numero__icontains=query)|
+                Q(local__icontains=query)
             )
+        if ativo == 'ativas':
+            queryset = queryset.filter(ativo=True)
+        elif ativo == 'inativas':
+            queryset = queryset.filter(ativo=False)
+
         return queryset
 
 class ObraDetailView(AccessRequiredMixin, DetailView):

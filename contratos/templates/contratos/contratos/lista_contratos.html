@@ -15,18 +15,33 @@
         </a>
     </div>
 
-    <!-- Busca -->
+    <!-- Busca e Filtro -->
     <form method="get" class="mb-3">
-        <div class="input-group">
-            <input type="text" name="q" value="{{ request.GET.q }}" class="form-control" placeholder="Pesquisar contratos...">
-            <button class="btn btn-outline-secondary" type="submit">
-                <i class="bi bi-search"></i> Pesquisar
-            </button>
-            <a href="{% url 'lista_contratos' %}" class="btn btn-outline-secondary">
-                <i class="bi bi-eraser"></i> Limpar
-            </a>
+      <div class="row g-2 align-items-end">
+        <div class="col-md-6">
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input type="text" name="q" id="search-input" value="{{ request.GET.q }}" class="form-control" placeholder="Buscar por contrato ou contratante">
+          </div>
         </div>
+        <div class="col-md-3">
+          <select name="ativo" id="ativo-select" class="form-select">
+            <option value="">Todos</option>
+            <option value="ativos" {% if request.GET.ativo == "ativos" %}selected{% endif %}>Ativos</option>
+            <option value="inativos" {% if request.GET.ativo == "inativos" %}selected{% endif %}>Inativos</option>
+          </select>
+        </div>
+        <div class="col-md-3 d-flex gap-2">
+          <button class="btn btn-outline-primary w-50" type="submit">
+            <i class="bi bi-search"></i> Pesquisar
+          </button>
+          <a href="{% url 'lista_contratos' %}" class="btn btn-outline-secondary w-50">
+            <i class="bi bi-eraser"></i> Limpar
+          </a>
+        </div>
+      </div>
     </form>
+
 
     <!-- Tabela -->
     <div class="table-responsive">
@@ -62,8 +77,6 @@
                         <td colspan="4" class="text-center">Nenhum contrato encontrado.</td>
                     </tr>
                 {% endfor %}
-
-
             </tbody>
         </table>
     </div>
@@ -73,37 +86,37 @@
         <ul class="pagination justify-content-center">
             {% if page_obj.has_previous %}
                 <li class="page-item">
-                    <a class="page-link" href="?q={{ request.GET.q }}&page={{ page_obj.previous_page_number }}" aria-label="Anterior">&laquo;</a>
+                    <a class="page-link" href="?q={{ request.GET.q }}&ativo={{ request.GET.ativo }}&page={{ page_obj.previous_page_number }}" aria-label="Anterior">&laquo;</a>
                 </li>
             {% endif %}
 
             {% if page_obj.number > 2 %}
-                <li class="page-item"><a class="page-link" href="?q={{ request.GET.q }}&page=1">1</a></li>
+                <li class="page-item"><a class="page-link" href="?q={{ request.GET.q }}&ativo={{ request.GET.ativo }}&page=1">1</a></li>
                 {% if page_obj.number > 3 %}
                     <li class="page-item disabled"><span class="page-link">...</span></li>
                 {% endif %}
             {% endif %}
 
             {% if page_obj.number|add:"-1" > 1 %}
-                <li class="page-item"><a class="page-link" href="?q={{ request.GET.q }}&page={{ page_obj.number|add:"-1" }}">{{ page_obj.number|add:"-1" }}</a></li>
+                <li class="page-item"><a class="page-link" href="?q={{ request.GET.q }}&ativo={{ request.GET.ativo }}&page={{ page_obj.number|add:"-1" }}">{{ page_obj.number|add:"-1" }}</a></li>
             {% endif %}
 
             <li class="page-item active"><span class="page-link">{{ page_obj.number }}</span></li>
 
             {% if page_obj.number|add:"1" <= page_obj.paginator.num_pages %}
-                <li class="page-item"><a class="page-link" href="?q={{ request.GET.q }}&page={{ page_obj.number|add:"1" }}">{{ page_obj.number|add:"1" }}</a></li>
+                <li class="page-item"><a class="page-link" href="?q={{ request.GET.q }}&ativo={{ request.GET.ativo }}&page={{ page_obj.number|add:"1" }}">{{ page_obj.number|add:"1" }}</a></li>
             {% endif %}
 
             {% if page_obj.number < page_obj.paginator.num_pages|add:"-1" %}
                 {% if page_obj.number < page_obj.paginator.num_pages|add:"-2" %}
                     <li class="page-item disabled"><span class="page-link">...</span></li>
                 {% endif %}
-                <li class="page-item"><a class="page-link" href="?q={{ request.GET.q }}&page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a></li>
+                <li class="page-item"><a class="page-link" href="?q={{ request.GET.q }}&ativo={{ request.GET.ativo }}&page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a></li>
             {% endif %}
 
             {% if page_obj.has_next %}
                 <li class="page-item">
-                    <a class="page-link" href="?q={{ request.GET.q }}&page={{ page_obj.next_page_number }}" aria-label="Próximo">&raquo;</a>
+                    <a class="page-link" href="?q={{ request.GET.q }}&ativo={{ request.GET.ativo }}&page={{ page_obj.next_page_number }}" aria-label="Próximo">&raquo;</a>
                 </li>
             {% endif %}
         </ul>
