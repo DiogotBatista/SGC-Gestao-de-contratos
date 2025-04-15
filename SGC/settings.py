@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'contratos',
     'reunioes',
     'dashboards',
+    'notaspessoais',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

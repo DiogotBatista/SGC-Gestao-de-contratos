@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Detalhes da Nota{% endblock %}
+{% block content %}
+<div class="container mt-4 mb-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-info text-white">
+            <h4 class="mb-0"><i class="bi bi-journal-text me-2"></i> {{ object.titulo }}</h4>
+        </div>
+        <div class="card-body">
+            <p class="text-muted mb-1"><i class="bi bi-clock me-1"></i> Criada em {{ object.criada_em|date:"d/m/Y H:i" }}</p>
+            <p class="mb-4">{{ object.texto|linebreaksbr }}</p>
+
+            <div class="d-flex justify-content-end">
+                <a href="{% url 'editar_nota' object.pk %}" class="btn btn-outline-warning me-2">
+                    <i class="bi bi-pencil-square"></i> Editar
+                </a>
+                <a href="{% url 'excluir_nota' object.pk %}" class="btn btn-outline-danger me-2">
+                    <i class="bi bi-trash"></i> Excluir
+                </a>
+                <a href="{% url 'lista_notas' %}" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Voltar
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

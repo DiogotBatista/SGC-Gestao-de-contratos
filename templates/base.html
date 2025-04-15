@@ -100,12 +100,25 @@
 
                 <!-- Admin -->
                 {% if user.is_superuser %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'admin:index' %}">
-                        <i class="bi bi-shield-lock"></i> Admin
-                    </a>
-                </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="superDropdown" data-bs-toggle="dropdown">
+                            <i class="bi bi-shield-lock"></i> Super
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="superDropdown">
+                            <li>
+                                <a class="dropdown-item" href="{% url 'lista_notas' %}">
+                                    <i class="bi bi-journal-bookmark"></i> Notas Pessoais
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'admin:index' %}">
+                                    <i class="bi bi-gear-wide-connected"></i> Admin
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
                 {% endif %}
+
             </ul>
 
             <!-- Sair -->

@@ -5,19 +5,19 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     # Adm do Django
-    path('admin/', admin.site.urls),
+    path('painel_admin/', admin.site.urls),
 
     #App Core
     path('', include('core.urls')),
 
     # App contratos
-    path('', include('contratos.urls')),
+    path('contratos/', include('contratos.urls')),
 
     # App reuniões
-    path('', include('reunioes.urls')),
+    path('atas/', include('reunioes.urls')),
 
     # App dashboards
-    path('', include('dashboards.urls')),
+    path('dashboards/', include('dashboards.urls')),
 
     # URLs de autenticação:
     path('login/', auth_views.LoginView.as_view(template_name='login.html'), name='login'),
@@ -27,4 +27,7 @@ urlpatterns = [
     path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
     path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
+
+    # App notaspessoais
+    path('notaspessoais/', include('notaspessoais.urls')),
 ]
