@@ -27,9 +27,10 @@
               <button type="submit" id="btn-excluir" class="btn btn-danger" disabled>
                 <i class="bi bi-trash"></i> Confirmar Exclusão
               </button>
-              <a href="{% url 'lista_contratos' %}" class="btn btn-outline-secondary">
-                <i class="bi bi-x-circle"></i> Cancelar
-              </a>
+             <a href="{% url 'detalhes_contrato' object.pk %}" class="btn btn-outline-secondary">
+              <i class="bi bi-x-circle"></i> Cancelar
+            </a>
+
             </div>
           </form>
         </div>

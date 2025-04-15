@@ -3,10 +3,11 @@ from .forms import ContratoForm, ContratanteForm, ObraForm, NotaContratoForm, No
 from django.db.models import Q, Count, Max
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, TemplateView, DetailView, View
 from core.mixins import AccessRequiredMixin
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.contrib import messages
 from reunioes.models import AtaReuniao, ItemAta
 from django.shortcuts import  get_object_or_404, redirect
+from django.http import HttpResponseRedirect
 
 # MENU
 class MenuView(AccessRequiredMixin, TemplateView):
@@ -181,7 +182,7 @@ class NotaContratoCreateView(AccessRequiredMixin, View):
             messages.success(request, 'Anotação adicionada com sucesso.')
         else:
             messages.warning(request, 'Erro ao adicionar anotação.')
-        return redirect('detalhes_contrato', pk=contrato.pk)
+        return HttpResponseRedirect(reverse('detalhes_contrato', kwargs={'pk': contrato.pk}) + '#anotacoes')
 
 class NotaContratoUpdateView(AccessRequiredMixin, UpdateView):
     """
@@ -370,7 +371,6 @@ class ObraUpdateView(AccessRequiredMixin, UpdateView):
     def get_success_url(self):
         return reverse_lazy('detalhes_obra', kwargs={'pk': self.object.pk})
 
-
 class ObraDeleteView(AccessRequiredMixin, DeleteView):
     """
     Deletar obra
@@ -405,7 +405,7 @@ class NotaObraCreateView(AccessRequiredMixin, View):
             messages.success(request, 'Anotação adicionada com sucesso.')
         else:
             messages.warning(request, 'Erro ao adicionar anotação.')
-        return redirect('detalhes_obra', pk=obra.pk)
+        return HttpResponseRedirect(reverse('detalhes_obra', kwargs={'pk': obra.pk}) + '#anotacoes')
 
 class NotaObraUpdateView(AccessRequiredMixin, UpdateView):
     """

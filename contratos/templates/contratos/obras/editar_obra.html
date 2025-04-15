@@ -42,7 +42,7 @@
               <button type="submit" class="btn btn-primary">
                 <i class="bi bi-pencil-square"></i> Atualizar
               </button>
-             <a href="{% url 'detalhes_obra' form.instance.pk %}" class="btn btn-outline-secondary">
+             <a href="#" onclick="window.history.length > 1 ? history.back() : window.location.href='{% url 'detalhes_obra' form.instance.pk %}'; return false;" class="btn btn-outline-secondary">
                <i class="bi bi-x-circle"></i> Cancelar
              </a>
 

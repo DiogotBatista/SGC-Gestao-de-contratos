@@ -19,6 +19,7 @@
             <th>Local</th>
             <th>Descrição</th>
             <th class="text-center">Status</th>
+            <th class="text-center">Execução</th>
             <th class="text-center">Ações</th>
           </tr>
         </thead>
@@ -35,6 +36,26 @@
                   <span class="badge bg-secondary">Inativa</span>
                 {% endif %}
               </td>
+              <td>
+              <div class="progress" style="height: 20px;">
+                <div class="progress-bar
+                  {% if obra.porcentagem_execucao >= 100 %}
+                    bg-success
+                  {% elif obra.porcentagem_execucao >= 50 %}
+                    bg-warning
+                  {% else %}
+                    bg-danger
+                  {% endif %}"
+                  role="progressbar"
+                  style="width: {{ obra.porcentagem_execucao }}%;"
+                  aria-valuenow="{{ obra.porcentagem_execucao }}"
+                  aria-valuemin="0"
+                  aria-valuemax="100">
+                  {{ obra.porcentagem_execucao|floatformat:0 }}%
+                </div>
+              </div>
+            </td>
+
               <td class="text-center">
                 <a href="{% url 'detalhes_obra' obra.pk %}" class="btn btn-outline-primary btn-sm">
                   <i class="bi bi-eye"></i> Detalhes

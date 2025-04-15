@@ -94,7 +94,7 @@
 
       <!-- Botões -->
       <div class="d-flex justify-content-between mt-4">
-        <a href="{% url 'lista_atas' %}" class="btn btn-secondary">
+        <a href="#" onclick="window.history.length > 1 ? history.back() : window.location.href='{% url 'lista_atas' %}'; return false;" class="btn btn-secondary">
           <i class="bi bi-arrow-left"></i> Voltar
         </a>
         <div>

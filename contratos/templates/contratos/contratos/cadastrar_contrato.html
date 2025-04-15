@@ -42,7 +42,7 @@
               <button type="submit" class="btn btn-success">
                 <i class="bi bi-save"></i> Salvar
               </button>
-              <a href="{% url 'lista_contratos' %}" class="btn btn-secondary">
+              <a href="#" onclick="window.history.length > 1 ? history.back() : window.location.href='{% url 'lista_contratos' %}'; return false;" class="btn btn-secondary">
                 <i class="bi bi-x-circle"></i> Cancelar
               </a>
             </div>

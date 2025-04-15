@@ -27,7 +27,7 @@
               <button type="submit" id="btn-excluir" class="btn btn-danger" disabled>
                 <i class="bi bi-trash"></i> Confirmar Exclusão
               </button>
-              <a href="{% url 'lista_obras' %}" class="btn btn-outline-secondary">
+                <a href="#" onclick="window.history.length > 1 ? history.back() : window.location.href='{% url 'detalhes_obra' object.pk %}'; return false;" class="btn btn-outline-secondary">
                 <i class="bi bi-x-circle"></i> Cancelar
               </a>
             </div>

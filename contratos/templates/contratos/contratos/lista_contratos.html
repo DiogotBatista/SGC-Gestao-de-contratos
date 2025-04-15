@@ -51,6 +51,7 @@
                     <th class="text-center">Contrato</th>
                     <th class="text-center">Contratante</th>
                     <th class="text-center">Ativo</th>
+                    <th class="text-center">Execução</th>
                     <th class="text-center" style="min-width: 130px;">Ações</th>
                 </tr>
             </thead>
@@ -65,6 +66,25 @@
                             {% else %}
                                 <span class="badge bg-secondary">Inativo</span>
                             {% endif %}
+                        </td>
+                        <td>
+                          <div class="progress" style="height: 20px;">
+                            <div class="progress-bar
+                              {% if contrato.media_execucao_obras >= 100 %}
+                                bg-success
+                              {% elif contrato.media_execucao_obras >= 50 %}
+                                bg-warning
+                              {% else %}
+                                bg-danger
+                              {% endif %}"
+                              role="progressbar"
+                              style="width: {{ contrato.media_execucao_obras }}%;"
+                              aria-valuenow="{{ contrato.media_execucao_obras }}"
+                              aria-valuemin="0"
+                              aria-valuemax="100">
+                              {{ contrato.media_execucao_obras|floatformat:0 }}%
+                            </div>
+                          </div>
                         </td>
                         <td class="text-center">
                             <a href="{% url 'detalhes_contrato' contrato.pk %}" class="btn btn-outline-primary btn-sm">

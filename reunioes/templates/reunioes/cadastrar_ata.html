@@ -148,7 +148,7 @@
               <button type="submit" class="btn btn-success">
                 <i class="bi bi-save"></i> Salvar Ata
               </button>
-              <a href="{% url 'lista_atas' %}" class="btn btn-secondary">
+              <a href="#" onclick="window.history.length > 1 ? history.back() : window.location.href='{% url 'lista_atas' %}'; return false;" class="btn btn-secondary">
                 <i class="bi bi-x-circle"></i> Cancelar
               </a>
             </div>
