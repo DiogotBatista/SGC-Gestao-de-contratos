@@ -110,6 +110,14 @@ class Contrato(models.Model):
         verbose_name = 'Contrato'
         verbose_name_plural = 'Contratos'
 
+    @property
+    def media_execucao_obras(self):
+        obras = self.obras.all()
+        valores = [obra.porcentagem_execucao for obra in obras if obra.porcentagem_execucao is not None]
+        if not valores:
+            return 0
+        return sum(valores) / len(valores)
+
     def __str__(self):
         return f"{self.numero} - {self.contratante}"
 
@@ -120,6 +128,13 @@ class Obra(models.Model):
     local = models.CharField(max_length=100, help_text="Local de execução da obra")
     descricao = models.TextField(blank=True, null=True, help_text="Descrição ou observações sobre a obra")
     ativo = models.BooleanField(default=True, help_text="Indica que a obra será tratada como ativa. Ao invés de exclui-la, desmarque isso.")
+    porcentagem_execucao = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        default=0,
+        verbose_name='Execução (%)',
+        help_text='Percentual de execução da obra'
+    )
     data_cadastro = models.DateTimeField(auto_now_add=True)
     data_alteracao = models.DateTimeField(auto_now=True)
     created_by = models.ForeignKey(
@@ -143,21 +158,6 @@ class Obra(models.Model):
 
     def __str__(self):
         return self.codigo
-
-class AndamentoContrato(models.Model):
-    contrato = models.OneToOneField(Contrato, on_delete=models.CASCADE)
-    porcentagem_executada = models.DecimalField(max_digits=5, decimal_places=2)
-    observacao = models.TextField(blank=True, null=True)
-    atualizado_em = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        ordering = ['contrato']
-        verbose_name = 'Andamento do contrato'
-        verbose_name_plural = 'Andamento dos contratos'
-
-    def __str__(self):
-        return f"Andamento de {self.contrato}"
-
 
 class NotaContrato(models.Model):
     contrato = models.ForeignKey(Contrato, on_delete=models.CASCADE, related_name='notas')

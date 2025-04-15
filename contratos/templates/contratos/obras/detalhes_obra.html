@@ -61,20 +61,45 @@
             </div>
           </div>
         </div>
-        <div class="col-md-6">
-          <div class="card -0 shadow-sm h-100">
-            <div class="card-body">
-              <h5 class="card-title"><i class="bi bi-check-circle"></i> Status</h5>
-              <p class="mb-0">
-                {% if obra.ativo %}
-                  <span class="badge bg-success">Ativa</span>
-                {% else %}
-                  <span class="badge bg-secondary">Inativa</span>
-                {% endif %}
-              </p>
-            </div>
-          </div>
+<div class="col-md-6">
+  <div class="card shadow-sm h-100">
+    <div class="card-body">
+      <h5 class="card-title"><i class="bi bi-check-circle"></i> Status e Execução</h5>
+
+      <!-- Status -->
+      <p class="mb-2">
+        <strong>Status:</strong>
+        {% if obra.ativo %}
+          <span class="badge bg-success">Ativa</span>
+        {% else %}
+          <span class="badge bg-secondary">Inativa</span>
+        {% endif %}
+      </p>
+
+      <!-- Execução -->
+      <p class="mb-2"><strong>Execução:</strong> {{ obra.porcentagem_execucao|floatformat:2 }}%</p>
+
+      <div class="progress" style="height: 20px;">
+        <div class="progress-bar
+          {% if obra.porcentagem_execucao >= 100 %}
+            bg-success
+          {% elif obra.porcentagem_execucao >= 50 %}
+            bg-warning
+          {% else %}
+            bg-danger
+          {% endif %}"
+          role="progressbar"
+          style="width: {{ obra.porcentagem_execucao }}%;"
+          aria-valuenow="{{ obra.porcentagem_execucao }}"
+          aria-valuemin="0"
+          aria-valuemax="100">
+          {{ obra.porcentagem_execucao|floatformat:0 }}%
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
       </div>
 
       <!-- Anotações -->

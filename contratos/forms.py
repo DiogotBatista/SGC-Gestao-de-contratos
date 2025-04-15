@@ -101,12 +101,13 @@ class ContratanteForm(forms.ModelForm):
 class ObraForm(forms.ModelForm):
     class Meta:
         model = Obra
-        fields = ['codigo', 'contrato', 'descricao', 'local', 'ativo']
+        fields = ['codigo', 'contrato', 'descricao', 'local', 'porcentagem_execucao', 'ativo']
         labels = {
             'codigo': 'Cod. Obra',
             'local': 'Local',
             'contrato': 'Contrato',
             'descricao': 'Descrição',
+            'porcentagem_execucao': 'Execução (%)',
             'ativo': 'Ativo',
         }
         help_texts = {
@@ -114,11 +115,12 @@ class ObraForm(forms.ModelForm):
             'local': 'Local de execução da obra',
             'contrato': 'Informar o contrato da obra',
             'descricao': 'Descrição ou observações sobre a obra',
+            'porcentagem_execucao': 'Percentual de execução da obra',
             'ativo': 'Indica se a obra está ativa',
         }
         widgets = {
+            'porcentagem_execucao': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01', 'min': '0', 'max': '100'}),
             'ativo': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
-
         }
 
     def __init__(self, *args, **kwargs):
@@ -126,6 +128,7 @@ class ObraForm(forms.ModelForm):
         if not self.instance.pk:
             self.fields.pop('ativo')
         self.fields['contrato'].label_from_instance = lambda obj: f"{obj.numero} - {obj.contratante}"
+
 
 
 class NotaObraForm(forms.ModelForm):

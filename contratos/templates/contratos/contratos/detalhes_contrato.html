@@ -123,22 +123,44 @@
           </div>
         </div>
 
-        <!-- Vigência -->
-        <div class="col-md-6">
-          <div class="card shadow-sm h-100">
-            <div class="card-body">
-              <h5 class="card-title"><i class="bi bi-calendar-check"></i> Vigência</h5>
-              <p class="mb-1"><strong>Início:</strong> {{ contrato.data_inicio|date:"d/m/Y" }}</p>
-              {% if contrato.data_fim %}
-                <p class="mb-1"><strong>Fim:</strong> {{ contrato.data_fim|date:"d/m/Y" }}</p>
-              {% else %}
-                <p class="mb-1"><strong>Situação:</strong> Em vigência</p>
-              {% endif %}
-              <p class="mb-0"><strong>Valor Total:</strong> {{ contrato.valor_total|br_currency }}</p>
+          <!-- Vigência + Execução -->
+          <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+              <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-calendar-check"></i> Vigência e Execução</h5>
+
+                <p class="mb-1"><strong>Início:</strong> {{ contrato.data_inicio|date:"d/m/Y" }}</p>
+                {% if contrato.data_fim %}
+                  <p class="mb-1"><strong>Fim:</strong> {{ contrato.data_fim|date:"d/m/Y" }}</p>
+                {% else %}
+                  <p class="mb-1"><strong>Situação:</strong> Em vigência</p>
+                {% endif %}
+
+                <p class="mb-1"><strong>Valor Total:</strong> {{ contrato.valor_total|br_currency }}</p>
+
+                <p class="mb-2"><strong>Execução Média do Contrato:</strong> {{ contrato.media_execucao_obras|floatformat:2 }}%</p>
+
+                <div class="progress" style="height: 20px;">
+                  <div class="progress-bar
+                    {% if contrato.media_execucao_obras >= 100 %}
+                      bg-success
+                    {% elif contrato.media_execucao_obras >= 50 %}
+                      bg-warning
+                    {% else %}
+                      bg-danger
+                    {% endif %}"
+                    role="progressbar"
+                    style="width: {{ contrato.media_execucao_obras }}%;"
+                    aria-valuenow="{{ contrato.media_execucao_obras }}"
+                    aria-valuemin="0"
+                    aria-valuemax="100">
+                    {{ contrato.media_execucao_obras|floatformat:0 }}%
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+
 
       <!-- Atas e Obras Vinculadas -->
       <div class="row g-4 mt-4">
