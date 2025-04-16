@@ -30,4 +30,7 @@ urlpatterns = [
 
     # App notaspessoais
     path('notaspessoais/', include('notaspessoais.urls')),
+
+    #App tarefas
+    path('tarefas/', include('tarefas.urls')),
 ]

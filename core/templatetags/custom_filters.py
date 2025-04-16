@@ -1,4 +1,5 @@
 from django import template
+import locale
 
 register = template.Library()
 
@@ -34,3 +35,11 @@ def tem_cargo(user, cargos):
         return cargo_usuario in lista_cargos
     except AttributeError:
         return False
+
+@register.filter
+def moeda(value):
+    try:
+        locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
+        return locale.currency(value, grouping=True)
+    except:
+        return f"R$ {value:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")

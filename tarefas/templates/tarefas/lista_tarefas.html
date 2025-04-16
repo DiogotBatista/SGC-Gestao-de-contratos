@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Tarefas{% endblock %}
+{% block content %}
+<div class="container mt-4 mb-5">
+    <h3 class="mb-4"><i class="bi bi-check2-square"></i> Lista de Tarefas</h3>
+
+    <div class="mb-3 text-end">
+        <a href="{% url 'criar_tarefa' %}" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> Nova Tarefa
+        </a>
+    </div>
+
+    {% if tarefas %}
+        <ul class="list-group shadow-sm">
+            {% for tarefa in tarefas %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span class="{% if tarefa.concluida %}text-success text-decoration-line-through{% endif %}">
+                        {{ tarefa.descricao }}
+                    </span>
+                    {% if tarefa.concluida %}
+                        <span class="badge bg-success">Concluída</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Pendente</span>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="alert alert-info">Nenhuma tarefa registrada até o momento.</div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,4 @@
+Ess app é para ser acessado somente pelo Super Usuário, a idea é ter um local para anoteções pessoais sobre melhorias e atualizações
+do sistema, bem como sobre os projetos. Sem acesso de algum outro usuário.
+
+Mas pode ser modificação
