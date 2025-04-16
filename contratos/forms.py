@@ -41,6 +41,10 @@ class ContratoForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if not self.instance.pk:
             self.fields.pop('ativo')
+        else:
+            valor = self.initial.get('valor_total')
+            if valor is not None:
+                self.initial['valor_total'] = f"{valor:,.2f}".replace('.', 'X').replace(',', '.').replace('X', ',')
 
     def clean_valor_total(self):
         valor = self.cleaned_data.get('valor_total')
