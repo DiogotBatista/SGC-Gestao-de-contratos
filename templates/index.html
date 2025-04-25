@@ -3,11 +3,17 @@
 
 {% block content %}
 <div class="container mt-4">
+
+  <!-- Cabeçalho -->
   <header class="text-center mb-5">
     <h1 class="fw-bold">Contratos Ativos</h1>
-    <p class="text-muted">Resumo geral com progresso das obras</p>
+    <p class="text-muted">CRO Construtora Ribeiro Oliveira</p>
+    <p class="text-secondary small">
+      Usuário logado: {{ request.user.get_full_name|default:request.user.username }}
+    </p>
   </header>
 
+  <!-- Cards -->
   <div class="row g-4">
     {% for contrato in cards_contratos %}
       <div class="col-md-6 col-lg-4">
@@ -46,6 +52,7 @@
   </div>
 </div>
 
+<!-- Estilo dos cards -->
 <style>
   .dashboard-card {
     transition: transform 0.3s ease, box-shadow 0.3s ease;

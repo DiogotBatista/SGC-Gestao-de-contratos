@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% load custom_filters %}
+{% block title %}{% if form.instance.pk %}Editar Proposta{% else %}Nova Proposta{% endif %}{% endblock %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">
+            {% if form.instance.pk %}
+              <i class="bi bi-pencil-square"></i> Editar Proposta
+            {% else %}
+              <i class="bi bi-file-earmark-plus"></i> Nova Proposta
+            {% endif %}
+          </h5>
+        </div>
+        <div class="card-body">
+          {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+              {% for error in form.non_field_errors %}
+                {{ error }}<br>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          <form method="post" enctype="multipart/form-data" novalidate autocomplete="off">
+            {% csrf_token %}
+            <div class="row g-3">
+
+              <!-- Título -->
+              <div class="col-md-12">
+                {{ form.titulo.label_tag }}
+                {{ form.titulo|add_class:"form-control" }}
+                {% if form.titulo.help_text %}
+                  <small class="form-text text-muted">{{ form.titulo.help_text }}</small>
+                {% endif %}
+              </div>
+
+              <!-- Contratante + Local -->
+              <div class="col-md-6">
+                {{ form.contratante.label_tag }}
+                {{ form.contratante|add_class:"form-select" }}
+                {% if form.contratante.help_text %}
+                  <small class="form-text text-muted">{{ form.contratante.help_text }}</small>
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+                {{ form.local_execucao.label_tag }}
+                {{ form.local_execucao|add_class:"form-control" }}
+                {% if form.local_execucao.help_text %}
+                  <small class="form-text text-muted">{{ form.local_execucao.help_text }}</small>
+                {% endif %}
+              </div>
+
+              <!-- Valor + Etapa -->
+              <div class="col-md-6">
+                {{ form.valor_estimado.label_tag }}
+                {{ form.valor_estimado|add_class:"form-control moeda" }}
+                {% if form.valor_estimado.help_text %}
+                  <small class="form-text text-muted">{{ form.valor_estimado.help_text }}</small>
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+                {{ form.etapa_atual.label_tag }}
+                {{ form.etapa_atual|add_class:"form-select" }}
+                {% if form.etapa_atual.help_text %}
+                  <small class="form-text text-muted">{{ form.etapa_atual.help_text }}</small>
+                {% endif %}
+              </div>
+
+              <!-- Datas -->
+              <div class="col-md-4">
+                {{ form.data_recebimento.label_tag }}
+                {{ form.data_recebimento|add_class:"form-control" }}
+                {% if form.data_recebimento.help_text %}
+                  <small class="form-text text-muted">{{ form.data_recebimento.help_text }}</small>
+                {% endif %}
+              </div>
+              <div class="col-md-4">
+                {{ form.data_envio.label_tag }}
+                {{ form.data_envio|add_class:"form-control" }}
+                {% if form.data_envio.help_text %}
+                  <small class="form-text text-muted">{{ form.data_envio.help_text }}</small>
+                {% endif %}
+              </div>
+              <div class="col-md-4">
+                {{ form.data_resposta.label_tag }}
+                {{ form.data_resposta|add_class:"form-control" }}
+                {% if form.data_resposta.help_text %}
+                  <small class="form-text text-muted">{{ form.data_resposta.help_text }}</small>
+                {% endif %}
+              </div>
+
+              <!-- Situação + Endereço -->
+              <div class="col-md-6">
+                {{ form.situacao.label_tag }}
+                {{ form.situacao|add_class:"form-select" }}
+                {% if form.situacao.help_text %}
+                  <small class="form-text text-muted">{{ form.situacao.help_text }}</small>
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+                {{ form.endereco_servidor.label_tag }}
+                {{ form.endereco_servidor|add_class:"form-control" }}
+                {% if form.endereco_servidor.help_text %}
+                  <small class="form-text text-muted">{{ form.endereco_servidor.help_text }}</small>
+                {% endif %}
+              </div>
+
+              <!-- Descrição -->
+              <div class="col-12">
+                {{ form.descricao.label_tag }}
+                {{ form.descricao|add_class:"form-control" }}
+                {% if form.descricao.help_text %}
+                  <small class="form-text text-muted">{{ form.descricao.help_text }}</small>
+                {% endif %}
+              </div>
+
+            </div>
+
+            <!-- Botões -->
+            <div class="d-flex justify-content-end mt-4">
+              <button type="submit" class="btn btn-success me-2">
+                <i class="bi bi-save"></i> Salvar
+              </button>
+              <a href="{% url 'lista_propostas' %}" class="btn btn-secondary">
+                <i class="bi bi-x-circle"></i> Cancelar
+              </a>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+<script>
+  $(document).ready(function () {
+    $('#id_contratante').select2({
+      width: '100%',
+      theme: 'bootstrap-5',
+      placeholder: "Selecione...",
+      allowClear: true
+    });
+    $('.moeda').mask('000.000.000,00', {reverse: true});
+  });
+</script>
+{% endblock %}

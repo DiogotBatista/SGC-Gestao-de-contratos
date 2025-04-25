@@ -16,7 +16,8 @@ class MenuAtasView(AccessRequiredMixin, TemplateView):
     Menu de atas
     """
     template_name = 'reunioes/menu_atas.html'
-    allowed_cargos = []  # ajuste se quiser restringir acesso
+    allowed_cargos = []
+    view_name = 'menu_atas'
 
 @method_decorator(login_required, name='dispatch')
 class AtaReuniaoCreateView(AccessRequiredMixin, View):
@@ -24,6 +25,7 @@ class AtaReuniaoCreateView(AccessRequiredMixin, View):
     Cria Ata de reunião
     """
     allowed_cargos = ['Gestor']
+    view_name = 'criar_atas'
     template_name = 'reunioes/cadastrar_ata.html'
     no_permission_redirect_url = 'index'
 
@@ -64,7 +66,6 @@ class AtaReuniaoCreateView(AccessRequiredMixin, View):
 
         return render(request, self.template_name, {'form': ata_form, 'formset': formset})
 
-
 class AtaReuniaoListView(AccessRequiredMixin, ListView):
     """
     Lista de atas
@@ -75,6 +76,7 @@ class AtaReuniaoListView(AccessRequiredMixin, ListView):
     paginate_by = 10
     ordering = ['-data']
     allowed_cargos = []
+    view_name = 'lista_atas'
 
     def get_queryset(self):
         queryset = super().get_queryset().select_related('contrato', 'autor')
@@ -95,6 +97,7 @@ class AtaReuniaoDetailView(AccessRequiredMixin, DetailView):
     template_name = 'reunioes/detalhe_ata.html'
     context_object_name = 'ata'
     allowed_cargos = []
+    view_name = 'detalhe_atas'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -105,7 +108,8 @@ class AtaReuniaoUpdateView(AccessRequiredMixin, View):
     """
     Atualização de ata
     """
-    allowed_cargos = ['Gestor']
+    allowed_cargos = []
+    view_name = 'atualizar_atas'
     template_name = 'reunioes/editar_ata.html'
     no_permission_redirect_url = 'lista_atas'
 
@@ -146,7 +150,6 @@ class AtaReuniaoUpdateView(AccessRequiredMixin, View):
 
         return render(request, self.template_name, {'form': form, 'formset': formset, 'ata': ata})
 
-
 class AtaReuniaoDeleteView(AccessRequiredMixin, DeleteView):
     """
     Deletar atas
@@ -154,20 +157,21 @@ class AtaReuniaoDeleteView(AccessRequiredMixin, DeleteView):
     model = AtaReuniao
     template_name = 'reunioes/excluir_ata.html'
     success_url = reverse_lazy('lista_atas')
-    allowed_cargos = ['Gestor']
+    allowed_cargos = []
+    view_name = 'deletar_atas'
     no_permission_redirect_url = 'lista_atas'
 
     def form_valid(self, form):
         messages.success(self.request, 'Ata excluída com sucesso.')
         return super().form_valid(form)
 
-
 class AtasAgrupadasView(AccessRequiredMixin, View):
     """
     atas agrupadas por contrato
     """
     template_name = 'reunioes/atas_agrupadas.html'
-    allowed_cargos = []  # ou ['Gestor'] se quiser restringir
+    allowed_cargos = []
+    view_name = 'atas_agrupadas'
 
     def get(self, request):
         atas = AtaReuniao.objects.select_related('contrato', 'contrato__contratante').prefetch_related('itens')

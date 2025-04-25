@@ -41,7 +41,6 @@ class Empresa(models.Model):
     def __str__(self):
         return self.nome
 
-
 class Contratante(models.Model):
     nome = models.CharField(max_length=200, verbose_name='Empresa' ,help_text="Nome do contratante, ex: Empresa X")
     cnpj = models.CharField(
@@ -78,37 +77,78 @@ class Contratante(models.Model):
     def __str__(self):
         return self.nome
 
-
 class Contrato(models.Model):
-    numero = models.CharField(max_length=50, unique=True, verbose_name='Contrato', help_text="Número do contrato")
-    contratante = models.ForeignKey(Contratante, on_delete=models.RESTRICT, related_name='contratos')
-    valor_total = models.DecimalField(max_digits=15, decimal_places=2, blank=True, null=True, help_text="Valor total do contrato incluídos os TAC's")
-    data_inicio = models.DateField(blank=True, null=True)
-    data_fim = models.DateField(blank=True, null=True)
-    descricao = models.TextField(blank=True, null=True, help_text="Descrição ou observações sobre o contrato")
-    ativo = models.BooleanField(default=True, help_text="Indica que o contrato será tratado como ativo. Ao invés de exclui-lo, desmarque isso.")
-    preposto = models.CharField(max_length=150)
-    url_dashboard = models.URLField(blank=True, null=True)
-    data_cadastro = models.DateTimeField(auto_now_add=True)
-    data_alteracao = models.DateTimeField(auto_now=True)
+    numero = models.CharField(
+        max_length=50,
+        unique=True,
+        verbose_name='Contrato',
+        help_text="Número identificador do contrato"
+    )
+    contratante = models.ForeignKey(
+        Contratante,
+        on_delete=models.RESTRICT,
+        related_name='contratos',
+        help_text="Empresa ou entidade contratante"
+    )
+    valor_total = models.DecimalField(
+        max_digits=15,
+        decimal_places=2,
+        blank=True,
+        null=True,
+        help_text="Valor total do contrato, incluindo aditivos e TACs"
+    )
+    data_inicio = models.DateField(
+        blank=True,
+        null=True,
+        help_text="Data de início da vigência do contrato"
+    )
+    data_fim = models.DateField(
+        blank=True,
+        null=True,
+        help_text="Data de encerramento da vigência do contrato"
+    )
+    descricao = models.TextField(
+        blank=True,
+        null=True,
+        help_text="Informações complementares, cláusulas ou observações relevantes"
+    )
+    ativo = models.BooleanField(
+        default=True,
+        help_text="Marque como ativo para que o contrato seja exibido nas listagens e análises"
+    )
+    preposto = models.CharField(
+        max_length=150,
+        help_text="Nome do responsável (preposto) pela gestão do contrato"
+    )
+    url_dashboard = models.URLField(
+        blank=True,
+        null=True,
+        help_text="Endereço de acesso ao dashboard do contrato (Power BI ou outro)"
+    )
+    data_cadastro = models.DateTimeField(
+        auto_now_add=True,
+        help_text="Data em que o contrato foi cadastrado no sistema (preenchimento automático)"
+    )
+    data_alteracao = models.DateTimeField(
+        auto_now=True,
+        help_text="Data da última modificação do contrato (preenchimento automático)"
+    )
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name='contrato_criado',
         on_delete=models.SET_NULL,
         null=True,
-        blank=True
+        blank=True,
+        help_text="Usuário que criou o contrato (preenchido automaticamente)"
     )
     updated_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name='contrato_atualizados',
         on_delete=models.SET_NULL,
         null=True,
-        blank=True
+        blank=True,
+        help_text="Usuário que realizou a última alteração (preenchido automaticamente)"
     )
-
-    class Meta:
-        verbose_name = 'Contrato'
-        verbose_name_plural = 'Contratos'
 
     @property
     def media_execucao_obras(self):
@@ -117,9 +157,6 @@ class Contrato(models.Model):
         if not valores:
             return 0
         return sum(valores) / len(valores)
-
-    def __str__(self):
-        return f"{self.numero} - {self.contratante}"
 
 
 class Obra(models.Model):

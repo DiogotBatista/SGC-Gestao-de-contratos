@@ -43,3 +43,21 @@ def moeda(value):
         return locale.currency(value, grouping=True)
     except:
         return f"R$ {value:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+
+@register.filter
+def field_type(field):
+    return field.field.widget.__class__.__name__
+
+@register.filter(name='eh_gestor')
+def eh_gestor(user):
+    """
+    Retorna True se o usuário for superusuário ou tiver cargo 'Gestor'.
+    Uso: {% if user|eh_gestor %}
+    """
+    if not user.is_authenticated:
+        return False
+
+    try:
+        return user.is_superuser or user.userprofile.cargo.nome == "Gestor"
+    except:
+        return False

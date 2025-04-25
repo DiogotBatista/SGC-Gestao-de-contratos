@@ -16,6 +16,9 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
     <script src="https://unpkg.com/htmx.org@1.9.5"></script>
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             document.body.addEventListener('htmx:configRequest', function (event) {
@@ -96,6 +99,14 @@
                         <li><a class="dropdown-item" href="{% url 'atas_agrupadas' %}"><i class="bi bi-folder2-open"></i> Atas por Contrato</a></li>
                     </ul>
                 </li>
+
+                <!-- Propostas -->
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'lista_propostas' %}">
+                    <i class="bi bi-cash-coin"></i> Propostas
+                  </a>
+                </li>
+
 
                 <!-- Links externos -->
                 <li class="nav-item dropdown">

@@ -16,6 +16,7 @@ class MenuView(AccessRequiredMixin, TemplateView):
     """
     allowed_cargos = []
     template_name = 'contratos/menu_contratos.html'
+    view_name = 'menu_contratos'
 
 # VIEWS DOS CONTRATOS
 class ContratoListView(AccessRequiredMixin, ListView):
@@ -23,6 +24,7 @@ class ContratoListView(AccessRequiredMixin, ListView):
     Lista de contratos
     """
     allowed_cargos = []
+    view_name = 'lista_contratos'
     model = Contrato
     template_name = 'contratos/contratos/lista_contratos.html'
     context_object_name = 'contratos'
@@ -51,7 +53,8 @@ class ContratoCreateView(AccessRequiredMixin, CreateView):
     """
     Cadastrar novo contrato
     """
-    allowed_cargos = ['Gestor']
+    allowed_cargos = []
+    view_name = 'criar_contratos'
     no_permission_redirect_url = 'lista_contratos'
     model = Contrato
     form_class = ContratoForm
@@ -72,6 +75,7 @@ class ContratoDetailView(AccessRequiredMixin, DetailView):
     template_name = 'contratos/contratos/detalhes_contrato.html'
     context_object_name = 'contrato'
     allowed_cargos = []
+    view_name = 'detalhe_contrato'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -98,7 +102,8 @@ class ContratoUpdateView(AccessRequiredMixin, UpdateView):
     """
     Atualizar contrato
     """
-    allowed_cargos = ['Gestor']
+    allowed_cargos = []
+    view_name = 'atualizar_contrato'
     no_permission_redirect_url = 'lista_contratos'
     model = Contrato
     form_class = ContratoForm
@@ -116,7 +121,8 @@ class ContratoDeleteView(AccessRequiredMixin, DeleteView):
     """
     Deletar contrato
     """
-    allowed_cargos = ['Gestor']
+    allowed_cargos = []
+    view_name = 'deletar_contrato'
     no_permission_redirect_url = 'lista_contratos'
     model = Contrato
     template_name = 'contratos/contratos/excluir_contratos.html'
@@ -135,6 +141,8 @@ class AtasPorContratoView(AccessRequiredMixin, ListView):
     template_name = 'contratos/contratos/atas_por_contrato.html'
     context_object_name = 'atas'
     allowed_cargos = []
+    view_name = 'atas_por_contrato'
+
     paginate_by = 20
 
     def get_queryset(self):
@@ -153,6 +161,7 @@ class ObrasPorContratoView(AccessRequiredMixin, ListView):
     template_name = 'contratos/contratos/obras_por_contrato.html'
     context_object_name = 'obras'
     allowed_cargos = []
+    view_name = 'obras_por_contrato'
     paginate_by = 20
 
     def get_queryset(self):
@@ -168,7 +177,8 @@ class NotaContratoCreateView(AccessRequiredMixin, View):
     """
     Notas por contrato
     """
-    allowed_cargos = ['Gestor']
+    allowed_cargos = []
+    view_name = 'criar_nota_contrato'
     no_permission_redirect_url = 'index'
 
     def post(self, request, contrato_id):
@@ -188,7 +198,8 @@ class NotaContratoUpdateView(AccessRequiredMixin, UpdateView):
     """
     Atualiza a nota do contrato
     """
-    allowed_cargos = ['Gestor']
+    allowed_cargos = []
+    view_name = 'atualizar_nota_contrato'
     model = NotaContrato
     form_class = NotaContratoForm
     template_name = 'contratos/contratos/editar_nota.html'
@@ -204,7 +215,8 @@ class NotaContratoDeleteView(AccessRequiredMixin, DeleteView):
     """
     Deleta a nota do contrato
     """
-    allowed_cargos = ['Gestor']
+    allowed_cargos = []
+    view_name = 'deletar_nota_contrato'
     model = NotaContrato
     template_name = 'contratos/contratos/excluir_nota.html'
 
@@ -217,7 +229,8 @@ class ContratanteListView(AccessRequiredMixin, ListView):
     """
     Lista das empresas contratantes
     """
-    allowed_cargos = [] # Informar os cargos que terão acesso à esse template
+    allowed_cargos = []
+    view_name = 'lista_contratantes'
     model = Contratante
     template_name = 'contratos/contratantes/lista_contratantes.html'
     context_object_name = 'contratantes'
@@ -238,7 +251,8 @@ class ContratanteCreateView(AccessRequiredMixin, CreateView):
     """
     Cadastro das empresas contratantes
     """
-    allowed_cargos = ['Gestor'] # Informar os cargos que terão acesso à esse template
+    allowed_cargos = []
+    view_name = 'criar_contratante'
     no_permission_redirect_url = 'lista_contratantes'
     model = Contratante
     form_class = ContratanteForm
@@ -255,7 +269,8 @@ class ContratanteUpdateView(AccessRequiredMixin, UpdateView):
     """
     Atualização da empresa contratante
     """
-    allowed_cargos = ['Gestor']
+    allowed_cargos = []
+    view_name = 'atualizar_contratante'
     no_permission_redirect_url = 'lista_contratantes'
     model = Contratante
     form_class = ContratanteForm
@@ -271,7 +286,8 @@ class ContratanteDeleteView(AccessRequiredMixin, DeleteView):
     """
     Deleta uma empresa contratante
     """
-    allowed_cargos = ['Gestor']
+    allowed_cargos = []
+    view_name = 'deletar_contratante'
     no_permission_redirect_url = 'lista_contratantes'
     model = Contratante
     template_name = 'contratos/contratantes/excluir_contratante.html'
@@ -288,6 +304,7 @@ class ObraListView(AccessRequiredMixin, ListView):
     Lista de obras
     """
     allowed_cargos = []
+    view_name = 'lista_obras'
     model = Obra
     template_name = 'contratos/obras/lista_obras.html'
     context_object_name = 'obras'
@@ -316,6 +333,7 @@ class ObraDetailView(AccessRequiredMixin, DetailView):
     Detalher da obra
     """
     allowed_cargos = []
+    view_name = 'detalhe_obra'
     model = Obra
     template_name = 'contratos/obras/detalhes_obra.html'
     context_object_name = 'obra'
@@ -340,7 +358,8 @@ class ObraCreateView(AccessRequiredMixin, CreateView):
     """
     Cadastrar nova obra
     """
-    allowed_cargos = ['Gestor']
+    allowed_cargos = []
+    view_name = 'criar_obra'
     no_permission_redirect_url = 'lista_obras'
     model = Obra
     form_class = ObraForm
@@ -357,7 +376,8 @@ class ObraUpdateView(AccessRequiredMixin, UpdateView):
     """
     Atualizar obra
     """
-    allowed_cargos = ['Gestor']
+    allowed_cargos = []
+    view_name = 'atualizar_obra'
     model = Obra
     form_class = ObraForm
     template_name = 'contratos/obras/editar_obra.html'
@@ -375,7 +395,8 @@ class ObraDeleteView(AccessRequiredMixin, DeleteView):
     """
     Deletar obra
     """
-    allowed_cargos = ['Gestor']
+    allowed_cargos = []
+    view_name = 'deletar_obra'
     no_permission_redirect_url = 'lista_obras'
     model = Obra
     template_name = 'contratos/obras/excluir_obra.html'
@@ -391,7 +412,8 @@ class NotaObraCreateView(AccessRequiredMixin, View):
     """
     Adiciona anotação à obra
     """
-    allowed_cargos = ['Gestor']
+    allowed_cargos = []
+    view_name = 'criar_nota_obra'
     no_permission_redirect_url = 'index'
 
     def post(self, request, obra_id):
@@ -411,7 +433,8 @@ class NotaObraUpdateView(AccessRequiredMixin, UpdateView):
     """
     Atualiza anotação da obra
     """
-    allowed_cargos = ['Gestor']
+    allowed_cargos = []
+    view_name = 'atualizar_obra_nota'
     model = NotaObra
     form_class = NotaObraForm
     template_name = 'contratos/obras/editar_nota_obra.html'
@@ -426,7 +449,8 @@ class NotaObraDeleteView(AccessRequiredMixin, DeleteView):
     """
     Deleta anotação da obra
     """
-    allowed_cargos = ['Gestor']
+    allowed_cargos = []
+    view_name = 'deletar_nota_obra'
     model = NotaObra
     template_name = 'contratos/obras/excluir_nota_obra.html'
 

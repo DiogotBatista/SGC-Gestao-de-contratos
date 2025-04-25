@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'dashboards',
     'notaspessoais',
     'tarefas',
+    'propostas',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

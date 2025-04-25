@@ -2,6 +2,8 @@
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     # Adm do Django
@@ -33,4 +35,11 @@ urlpatterns = [
 
     #App tarefas
     path('tarefas/', include('tarefas.urls')),
+
+    #App Propostas
+    path('propostas/', include('propostas.urls')),
+
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

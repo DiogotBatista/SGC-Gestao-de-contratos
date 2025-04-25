@@ -5,7 +5,8 @@ from .mixins import AccessRequiredMixin  # ajuste o path se estiver em outro app
 
 class DashboardView(AccessRequiredMixin, TemplateView):
     template_name = "index.html"
-    allowed_cargos = ['Gestor']  # ou outros cargos permitidos
+    allowed_cargos = []  # ou outros cargos permitidos
+    view_name = 'index'
     no_permission_redirect_url = 'login'  # ou outra página apropriada
 
     def get_context_data(self, **kwargs):

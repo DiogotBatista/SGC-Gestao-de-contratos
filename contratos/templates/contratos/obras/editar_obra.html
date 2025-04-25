@@ -1,13 +1,14 @@
 {% extends "base.html" %}
 {% load custom_filters %}
 {% block title %}Editar Obra{% endblock %}
+
 {% block content %}
 <div class="container mt-4">
   <div class="row justify-content-center">
-    <div class="col-md-8">
+    <div class="col-lg-10">
       <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">
-          <h2 class="mb-0">Editar Obra</h2>
+          <h5 class="mb-0"><i class="bi bi-pencil-square"></i> Editar Obra</h5>
         </div>
         <div class="card-body">
           {% if form.non_field_errors %}
@@ -17,35 +18,38 @@
               {% endfor %}
             </div>
           {% endif %}
+
           <form method="post" novalidate autocomplete="off">
             {% csrf_token %}
-            {% for field in form %}
-              <div class="mb-3">
-                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                {% if field.name == "ativo" %}
-                  <div class="form-check form-switch">
-                    {{ field|add_class:"form-check-input" }}
-                    <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                  </div>
-                {% else %}
-                  {{ field|add_class:"form-control form-control-lg" }}
-                {% endif %}
-                {% if field.help_text %}
-                  <small class="form-text text-muted">{{ field.help_text }}</small>
-                {% endif %}
-                {% for error in field.errors %}
-                  <div class="text-danger small">{{ error }}</div>
-                {% endfor %}
-              </div>
-            {% endfor %}
-            <div class="d-flex justify-content-between">
-              <button type="submit" class="btn btn-primary">
-                <i class="bi bi-pencil-square"></i> Atualizar
-              </button>
-             <a href="#" onclick="window.history.length > 1 ? history.back() : window.location.href='{% url 'detalhes_obra' form.instance.pk %}'; return false;" class="btn btn-outline-secondary">
-               <i class="bi bi-x-circle"></i> Cancelar
-             </a>
+            <div class="row g-3">
+              {% for field in form %}
+                <div class="col-md-6">
+                  <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                  {% if field.name == "ativo" %}
+                    <div class="form-check form-switch">
+                      {{ field|add_class:"form-check-input" }}
+                      <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    </div>
+                  {% else %}
+                    {{ field|add_class:"form-control" }}
+                  {% endif %}
+                  {% if field.help_text %}
+                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                  {% endif %}
+                  {% for error in field.errors %}
+                    <div class="text-danger small">{{ error }}</div>
+                  {% endfor %}
+                </div>
+              {% endfor %}
+            </div>
 
+            <div class="d-flex justify-content-end mt-4">
+              <button type="submit" class="btn btn-primary me-2">
+                <i class="bi bi-save"></i> Atualizar
+              </button>
+              <a href="#" onclick="window.history.length > 1 ? history.back() : window.location.href='{% url 'detalhes_obra' form.instance.pk %}'; return false;" class="btn btn-outline-secondary">
+                <i class="bi bi-x-circle"></i> Cancelar
+              </a>
             </div>
           </form>
         </div>

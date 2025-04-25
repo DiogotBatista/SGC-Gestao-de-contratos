@@ -1,0 +1,50 @@
+# VIEWS CONTRATOS
+
+menu_contratos
+lista_contratos
+criar_contrato
+detalhe_contrato
+deletar_contrato
+atas_por_contrato
+obras_por_contrato
+criar_nota_contrato
+atualizar_nota_contrato
+deletar_nota_contrato
+
+# VIEWS DOS CONTRATANTES
+lista_contratantes
+criar_contratante
+atualizar_contratante
+deletar_contratante
+
+# VIEWS DAS OBRAS
+lista_obras
+detalhe_obra
+criar_obra
+atualizar_obra
+deletar_obra
+
+#Notas na obras
+criar_nota_obra
+atualizar_obra_nota
+deletar_nota_obra
+
+#app core
+index
+
+#VIEWS PROPOSTAS
+lista_propostas
+criar_proposta
+detalhe_proposta
+atualizar_proposta
+deletar_proposta
+
+# VIEWS ATAS
+menu_atas
+criar_atas
+lista_atas
+detalhe_atas
+atualizar_atas
+deletar_atas
+atas_agrupadas
+
