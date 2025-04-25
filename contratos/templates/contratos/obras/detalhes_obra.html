@@ -136,7 +136,7 @@
               {% endif %}
 
               {% if user|eh_gestor  %}
-                <form method="post" action="{% url 'adicionar_nota_obra' obra.pk %}">
+                <form method="post" action="{% url 'adicionar_nota_obra' obra.pk %}#anotacoes">
                   {% csrf_token %}
                   <div class="mb-2">
                     {{ form_nota.texto|add_class:"form-control" }}
@@ -164,4 +164,17 @@
     margin-right: 5px;
   }
 </style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    if (window.location.hash === "#anotacoes") {
+      const el = document.getElementById("anotacoes");
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  });
+</script>
 {% endblock %}
