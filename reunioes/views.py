@@ -27,7 +27,7 @@ class AtaReuniaoCreateView(AccessRequiredMixin, View):
     allowed_cargos = ['Gestor']
     view_name = 'criar_atas'
     template_name = 'reunioes/cadastrar_ata.html'
-    no_permission_redirect_url = 'index'
+    no_permission_redirect_url = 'lista_atas'
 
     def get(self, request):
         ata_form = AtaReuniaoForm()

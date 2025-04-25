@@ -61,3 +61,7 @@ def eh_gestor(user):
         return user.is_superuser or user.userprofile.cargo.nome == "Gestor"
     except:
         return False
+
+@register.filter(name='split')
+def split(value, separator):
+    return value.split(separator)

@@ -12,7 +12,7 @@
         <a href="{% url 'lista_propostas' %}" class="btn btn-outline-secondary btn-sm">
           <i class="bi bi-arrow-left"></i> Voltar
         </a>
-        {% if user|tem_cargo:"Gestor" %}
+
         <div>
           <a href="{% url 'editar_proposta' proposta.pk %}" class="btn btn-outline-primary btn-sm me-1">
             <i class="bi bi-pencil-square"></i> Editar
@@ -21,7 +21,7 @@
             <i class="bi bi-trash3"></i> Excluir
           </a>
         </div>
-        {% endif %}
+
       </div>
 
       <h2 class="mb-4">

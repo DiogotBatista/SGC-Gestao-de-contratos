@@ -2,6 +2,8 @@ from django.views.generic import TemplateView
 from contratos.models import Contrato
 from django.db.models import Count
 from .mixins import AccessRequiredMixin  # ajuste o path se estiver em outro app
+from django.contrib.auth.views import PasswordResetConfirmView
+from django.contrib.auth.password_validation import password_validators_help_texts
 
 class DashboardView(AccessRequiredMixin, TemplateView):
     template_name = "index.html"
@@ -31,4 +33,12 @@ class DashboardView(AccessRequiredMixin, TemplateView):
             })
 
         context["cards_contratos"] = cards_contratos
+        return context
+
+
+
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['regras_senha'] = password_validators_help_texts()
         return context
