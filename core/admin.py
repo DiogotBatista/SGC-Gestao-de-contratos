@@ -1,5 +1,7 @@
 from django.contrib import admin
 from .models import UserProfile, Cargo, ViewDisponivel, PermissaoDeAcessoPorCargo
+from django.contrib.auth.models import User
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 @admin.register(UserProfile)
 class UserProfileAdmin(admin.ModelAdmin):
@@ -22,3 +24,10 @@ class PermissaoDeAcessoPorCargoAdmin(admin.ModelAdmin):
     list_display = ['cargo']
     filter_horizontal = ['views']
     search_fields = ['cargo__nome']
+
+class CustomUserAdmin(BaseUserAdmin):
+    list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'last_login')
+    ordering = ('-last_login',)
+
+admin.site.unregister(User)
+admin.site.register(User, CustomUserAdmin)
