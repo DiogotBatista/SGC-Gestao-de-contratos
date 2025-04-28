@@ -1,5 +1,10 @@
 from django.contrib import admin
-from .models import UserProfile, Cargo, ViewDisponivel, PermissaoDeAcessoPorCargo
+from .models import (
+    UserProfile,
+    Cargo,
+    ViewDisponivel,
+    PermissaoDeAcessoPorCargo
+)
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
@@ -8,6 +13,7 @@ class UserProfileAdmin(admin.ModelAdmin):
     list_display = ['user', 'cargo', 'empresa']
     list_filter = ['cargo', 'empresa']
     search_fields = ['user__username', 'user__first_name', 'user__last_name']
+    filter_horizontal = ['contratos']  # Mantém para facilitar seleção dos contratos
 
 @admin.register(Cargo)
 class CargoAdmin(admin.ModelAdmin):

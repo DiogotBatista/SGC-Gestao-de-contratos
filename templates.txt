@@ -48,3 +48,6 @@ atualizar_atas
 deletar_atas
 atas_agrupadas
 
+# DASHBOARDS
+dashboard
+

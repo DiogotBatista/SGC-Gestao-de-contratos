@@ -2,7 +2,7 @@ from .models import Contrato, Obra, Contratante, NotaContrato, NotaObra
 from .forms import ContratoForm, ContratanteForm, ObraForm, NotaContratoForm, NotaObraForm
 from django.db.models import Q, Count, Max
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, TemplateView, DetailView, View
-from core.mixins import AccessRequiredMixin
+from core.mixins import AccessRequiredMixin, ContratoAccessMixin
 from django.urls import reverse_lazy, reverse
 from django.contrib import messages
 from reunioes.models import AtaReuniao, ItemAta
@@ -32,7 +32,7 @@ class ContratoListView(AccessRequiredMixin, ListView):
     ordering = ['-data_cadastro']
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+        queryset = self.request.user.userprofile.contratos.all()
         query = self.request.GET.get('q')
         ativo = self.request.GET.get('ativo')
 
@@ -67,7 +67,7 @@ class ContratoCreateView(AccessRequiredMixin, CreateView):
         messages.success(self.request, "Contrato cadastrado com sucesso!")
         return super().form_valid(form)
 
-class ContratoDetailView(AccessRequiredMixin, DetailView):
+class ContratoDetailView(AccessRequiredMixin, ContratoAccessMixin, DetailView):
     """
     Detalhes de um contrato específico
     """
@@ -98,7 +98,7 @@ class ContratoDetailView(AccessRequiredMixin, DetailView):
         context['nota_form'] = NotaContratoForm()
         return context
 
-class ContratoUpdateView(AccessRequiredMixin, UpdateView):
+class ContratoUpdateView(AccessRequiredMixin, ContratoAccessMixin, UpdateView):
     """
     Atualizar contrato
     """
@@ -117,7 +117,7 @@ class ContratoUpdateView(AccessRequiredMixin, UpdateView):
     def get_success_url(self):
         return reverse_lazy('detalhes_contrato', kwargs={'pk': self.object.pk})
 
-class ContratoDeleteView(AccessRequiredMixin, DeleteView):
+class ContratoDeleteView(AccessRequiredMixin, ContratoAccessMixin, DeleteView):
     """
     Deletar contrato
     """
@@ -312,7 +312,8 @@ class ObraListView(AccessRequiredMixin, ListView):
     ordering = ['codigo']
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+        contratos_permitidos = self.request.user.userprofile.contratos.all()
+        queryset = super().get_queryset().filter(contrato__in=contratos_permitidos)
         query = self.request.GET.get('q')
         ativo = self.request.GET.get('ativo')
         if query:
@@ -328,7 +329,7 @@ class ObraListView(AccessRequiredMixin, ListView):
 
         return queryset
 
-class ObraDetailView(AccessRequiredMixin, DetailView):
+class ObraDetailView(AccessRequiredMixin, ContratoAccessMixin, DetailView):
     """
     Detalher da obra
     """
@@ -372,7 +373,7 @@ class ObraCreateView(AccessRequiredMixin, CreateView):
         messages.success(self.request, "Obra cadastrada com sucesso!")
         return super().form_valid(form)
 
-class ObraUpdateView(AccessRequiredMixin, UpdateView):
+class ObraUpdateView(AccessRequiredMixin, ContratoAccessMixin, UpdateView):
     """
     Atualizar obra
     """
@@ -391,7 +392,7 @@ class ObraUpdateView(AccessRequiredMixin, UpdateView):
     def get_success_url(self):
         return reverse_lazy('detalhes_obra', kwargs={'pk': self.object.pk})
 
-class ObraDeleteView(AccessRequiredMixin, DeleteView):
+class ObraDeleteView(AccessRequiredMixin, ContratoAccessMixin, DeleteView):
     """
     Deletar obra
     """

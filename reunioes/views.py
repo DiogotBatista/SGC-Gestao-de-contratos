@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from core.mixins import AccessRequiredMixin
+from core.mixins import AccessRequiredMixin, ContratoAccessMixin
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.generic import ListView, DetailView, DeleteView, TemplateView
@@ -79,7 +79,8 @@ class AtaReuniaoListView(AccessRequiredMixin, ListView):
     view_name = 'lista_atas'
 
     def get_queryset(self):
-        queryset = super().get_queryset().select_related('contrato', 'autor')
+        contratos_permitidos = self.request.user.userprofile.contratos.all()
+        queryset = super().get_queryset().select_related('contrato', 'autor').filter(contrato__in=contratos_permitidos)
         query = self.request.GET.get('q')
         if query:
             queryset = queryset.filter(
@@ -89,7 +90,7 @@ class AtaReuniaoListView(AccessRequiredMixin, ListView):
             )
         return queryset
 
-class AtaReuniaoDetailView(AccessRequiredMixin, DetailView):
+class AtaReuniaoDetailView(AccessRequiredMixin, ContratoAccessMixin, DetailView):
     """
     Detalhes da ata
     """
@@ -104,7 +105,7 @@ class AtaReuniaoDetailView(AccessRequiredMixin, DetailView):
         context['itens'] = self.object.itens.select_related('categoria').all()
         return context
 
-class AtaReuniaoUpdateView(AccessRequiredMixin, View):
+class AtaReuniaoUpdateView(AccessRequiredMixin, ContratoAccessMixin, View):
     """
     Atualização de ata
     """
@@ -150,7 +151,7 @@ class AtaReuniaoUpdateView(AccessRequiredMixin, View):
 
         return render(request, self.template_name, {'form': form, 'formset': formset, 'ata': ata})
 
-class AtaReuniaoDeleteView(AccessRequiredMixin, DeleteView):
+class AtaReuniaoDeleteView(AccessRequiredMixin, ContratoAccessMixin, DeleteView):
     """
     Deletar atas
     """
@@ -174,7 +175,9 @@ class AtasAgrupadasView(AccessRequiredMixin, View):
     view_name = 'atas_agrupadas'
 
     def get(self, request):
-        atas = AtaReuniao.objects.select_related('contrato', 'contrato__contratante').prefetch_related('itens')
+        contratos_permitidos = request.user.userprofile.contratos.all()
+        atas = AtaReuniao.objects.select_related('contrato', 'contrato__contratante').prefetch_related('itens').filter(
+            contrato__in=contratos_permitidos)
 
         agrupado = defaultdict(list)
         for ata in atas:

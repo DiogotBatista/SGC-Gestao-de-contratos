@@ -1,3 +1,5 @@
+# app: reunioes/models.py
+
 from django.db import models
 from django.conf import settings
 from contratos.models import Contrato

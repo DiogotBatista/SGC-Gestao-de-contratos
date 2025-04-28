@@ -1,3 +1,5 @@
+# app: contratos/models.py
+
 import re
 from django.db import models
 from django.conf import settings
@@ -149,6 +151,9 @@ class Contrato(models.Model):
         blank=True,
         help_text="Usuário que realizou a última alteração (preenchido automaticamente)"
     )
+
+    def __str__(self):
+        return self.numero
 
     @property
     def media_execucao_obras(self):

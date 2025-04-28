@@ -12,7 +12,7 @@
         <a href=href="#" onclick="window.history.length > 1 ? history.back() : window.location.href='{% url 'lista_obras' %}'; return false;" class="btn btn-outline-secondary btn-sm">
           <i class="bi bi-arrow-left"></i> Voltar
         </a>
-        {% if user|eh_gestor  %}
+
           <div>
             <a href="{% url 'editar_obra' obra.pk %}" class="btn btn-outline-primary btn-sm me-1">
               <i class="bi bi-pencil-square"></i> Editar
@@ -21,7 +21,7 @@
               <i class="bi bi-trash"></i> Excluir
             </a>
           </div>
-        {% endif %}
+
       </div>
 
       <h2 class="mb-4">
