@@ -2,6 +2,7 @@ from django import forms
 from .models import AtaReuniao, ItemAta, CategoriaItemAta
 from django.forms import inlineformset_factory
 from django.forms.widgets import DateInput
+from contratos.models import Contrato
 
 
 class AtaReuniaoForm(forms.ModelForm):
@@ -23,9 +24,12 @@ class AtaReuniaoForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         if user:
-            self.fields['contrato'].queryset = user.userprofile.contratos.filter(ativo=True)
-        self.fields['contrato'].label_from_instance = lambda obj: f"{obj.numero} - {obj.contratante}"
+            if user.is_superuser:
+                self.fields['contrato'].queryset = Contrato.objects.filter(ativo=True)
+            else:
+                self.fields['contrato'].queryset = user.userprofile.contratos.filter(ativo=True)
 
+        self.fields['contrato'].label_from_instance = lambda obj: f"{obj.numero} - {obj.contratante}"
 
 class ItemAtaForm(forms.ModelForm):
     class Meta:

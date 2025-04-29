@@ -132,11 +132,12 @@ class ObraForm(forms.ModelForm):
             self.fields.pop('ativo')
 
         if user:
-            contratos_autorizados = user.userprofile.contratos.filter(ativo=True)
-            self.fields['contrato'].queryset = contratos_autorizados
+            if user.is_superuser:
+                self.fields['contrato'].queryset = Contrato.objects.filter(ativo=True)
+            else:
+                self.fields['contrato'].queryset = user.userprofile.contratos.filter(ativo=True)
 
         self.fields['contrato'].label_from_instance = lambda obj: f"{obj.numero} - {obj.contratante}"
-
 
 class NotaObraForm(forms.ModelForm):
     class Meta:

@@ -32,7 +32,11 @@ class ContratoListView(AccessRequiredMixin, ListView):
     ordering = ['-data_cadastro']
 
     def get_queryset(self):
-        queryset = self.request.user.userprofile.contratos.all()
+        if self.request.user.is_superuser:
+            queryset = Contrato.objects.all()
+        else:
+            queryset = self.request.user.userprofile.contratos.all()
+
         query = self.request.GET.get('q')
         ativo = self.request.GET.get('ativo')
 
@@ -401,7 +405,6 @@ class ObraUpdateView(AccessRequiredMixin, ContratoAccessMixin, UpdateView):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         return kwargs
-
 
 class ObraDeleteView(AccessRequiredMixin, ContratoAccessMixin, DeleteView):
     """
