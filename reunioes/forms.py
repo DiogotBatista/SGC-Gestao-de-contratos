@@ -18,6 +18,14 @@ class AtaReuniaoForm(forms.ModelForm):
             'resumo': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
         }
 
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+
+        if user:
+            self.fields['contrato'].queryset = user.userprofile.contratos.filter(ativo=True)
+        self.fields['contrato'].label_from_instance = lambda obj: f"{obj.numero} - {obj.contratante}"
+
 
 class ItemAtaForm(forms.ModelForm):
     class Meta:
@@ -37,8 +45,6 @@ class ItemAtaForm(forms.ModelForm):
             'data_prazo': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'ordem': forms.HiddenInput(),
         }
-
-
 
 ItemAtaFormSet = inlineformset_factory(
     parent_model=AtaReuniao,

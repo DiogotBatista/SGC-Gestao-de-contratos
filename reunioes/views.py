@@ -30,12 +30,12 @@ class AtaReuniaoCreateView(AccessRequiredMixin, View):
     no_permission_redirect_url = 'lista_atas'
 
     def get(self, request):
-        ata_form = AtaReuniaoForm()
+        ata_form = AtaReuniaoForm(user=request.user)
         formset = ItemAtaFormSet(prefix='form')
         return render(request, self.template_name, {'form': ata_form, 'formset': formset})
 
     def post(self, request):
-        ata_form = AtaReuniaoForm(request.POST)
+        ata_form = AtaReuniaoForm(request.POST, user=request.user)
         formset = ItemAtaFormSet(request.POST, prefix='form')
 
         if ata_form.is_valid() and formset.is_valid():
@@ -116,13 +116,13 @@ class AtaReuniaoUpdateView(AccessRequiredMixin, ContratoAccessMixin, View):
 
     def get(self, request, pk):
         ata = get_object_or_404(AtaReuniao, pk=pk)
-        form = AtaReuniaoForm(instance=ata)
+        form = AtaReuniaoForm(instance=ata, user=request.user)
         formset = ItemAtaFormSet(instance=ata, prefix='form')
         return render(request, self.template_name, {'form': form, 'formset': formset, 'ata': ata})
 
     def post(self, request, pk):
         ata = get_object_or_404(AtaReuniao, pk=pk)
-        form = AtaReuniaoForm(request.POST, instance=ata)
+        form = AtaReuniaoForm(request.POST, instance=ata, user=request.user)
         formset = ItemAtaFormSet(request.POST, instance=ata, prefix='form')
 
         if form.is_valid() and formset.is_valid():

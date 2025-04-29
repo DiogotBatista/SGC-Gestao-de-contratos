@@ -69,7 +69,6 @@ class NotaContratoForm(forms.ModelForm):
             'texto': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Digite sua anotação...'}),
         }
 
-
 #CONTRATANTES
 class ContratanteForm(forms.ModelForm):
     class Meta:
@@ -99,8 +98,6 @@ class ContratanteForm(forms.ModelForm):
         if not self.instance.pk:
             self.fields.pop('ativo')
 
-
-
 #OBRA
 class ObraForm(forms.ModelForm):
     class Meta:
@@ -128,11 +125,17 @@ class ObraForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
+
         if not self.instance.pk:
             self.fields.pop('ativo')
-        self.fields['contrato'].label_from_instance = lambda obj: f"{obj.numero} - {obj.contratante}"
 
+        if user:
+            contratos_autorizados = user.userprofile.contratos.filter(ativo=True)
+            self.fields['contrato'].queryset = contratos_autorizados
+
+        self.fields['contrato'].label_from_instance = lambda obj: f"{obj.numero} - {obj.contratante}"
 
 
 class NotaObraForm(forms.ModelForm):

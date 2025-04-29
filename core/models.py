@@ -38,7 +38,6 @@ class UserProfile(models.Model):
     def __str__(self):
         return self.user.get_full_name() or self.user.username
 
-
 class ViewDisponivel(models.Model):
     nome = models.CharField(max_length=100, unique=True, help_text="Ex: lista_contratos, editar_obra")
 
