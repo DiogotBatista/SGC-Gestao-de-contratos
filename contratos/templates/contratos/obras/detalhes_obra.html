@@ -135,7 +135,7 @@
                 <p class="text-muted">Nenhuma anotação registrada para esta obra.</p>
               {% endif %}
 
-              {% if user|eh_gestor  %}
+
                 <form method="post" action="{% url 'adicionar_nota_obra' obra.pk %}#anotacoes">
                   {% csrf_token %}
                   <div class="mb-2">
@@ -145,7 +145,7 @@
                     <i class="bi bi-plus-circle"></i> Adicionar Anotação
                   </button>
                 </form>
-              {% endif %}
+
             </div>
           </div>
         </div>
