@@ -1,3 +1,5 @@
+
+
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse, HttpResponse
 from django.template.loader import render_to_string
@@ -6,17 +8,23 @@ from .models import Tarefa
 from .forms import TarefaForm
 from core.mixins import AccessRequiredMixin
 from django.utils.decorators import method_decorator
-from django.views import View
+from django.views.generic import ListView
 
 
-class TarefaBoardView(AccessRequiredMixin, View):
-    allowed_cargos = []
-    no_permission_redirect_url = 'index'
+class TarefaBoardView(AccessRequiredMixin, ListView):
+    model = Tarefa
+    template_name = 'tarefas/gerenciar_tarefas.html'
+    context_object_name = 'tarefas'
 
-    def get(self, request):
-        tarefas = Tarefa.objects.filter(autor=request.user)
-        form = TarefaForm()
-        return render(request, 'tarefas/gerenciar_tarefas.html', {'tarefas': tarefas, 'form': form})
+    def get_queryset(self):
+        return Tarefa.objects.filter(autor=self.request.user).order_by('criada_em')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form"] = TarefaForm()
+        return context
+
+
 
 @require_http_methods(["POST"])
 def criar_tarefa(request):
@@ -37,15 +45,11 @@ def alternar_status_tarefa(request, pk):
     html = render_to_string("tarefas/partials/tarefa_item.html", {'tarefa': tarefa})
     return HttpResponse(html)
 
-
-
 @require_http_methods(["POST"])
 def excluir_tarefa(request, pk):
     tarefa = get_object_or_404(Tarefa, pk=pk, autor=request.user)
     tarefa.delete()
-    return HttpResponse("")
-
-
+    return HttpResponse(status=204)
 
 @require_http_methods(["POST"])
 def editar_tarefa(request, pk):

@@ -5,75 +5,54 @@
 {% block content %}
 <style>
     .tarefa-item {
-        transition: all 0.3s ease;
+        transition: all 0.4s ease;
         padding: 10px 15px;
         border-radius: 6px;
         margin-bottom: 6px;
     }
-
     .tarefa-item:hover {
         background-color: #f8f9fa;
     }
-
+    .fade-out {
+        opacity: 0;
+        transition: opacity 0.4s ease-out;
+    }
     .tarefa-item .form-check-input {
         margin-right: 10px;
         transform: scale(1.2);
         cursor: pointer;
     }
-
     .tarefa-item .form-control-plaintext {
         flex-grow: 1;
         border: none;
         background: transparent;
         outline: none;
+        transition: all 0.3s ease;
     }
-
     .tarefa-item .btn {
         opacity: 0.7;
         transition: opacity 0.2s ease;
     }
-
     .tarefa-item .btn:hover {
         opacity: 1;
     }
-
     #formNovaTarefa input {
         border-radius: 6px 0 0 6px;
     }
-
     #formNovaTarefa button {
         border-radius: 0 6px 6px 0;
     }
-    .fade-out {
-        opacity: 0;
-        transform: translateX(30px);
-        transition: all 0.4s ease;
-    }
-    .tarefa-item .form-control-plaintext {
-        transition: all 0.3s ease;
-    }
-    .form-check-input.animate-check {
-        animation: check-spin 0.4s ease;
-    }
-
-    @keyframes check-spin {
-        0% { transform: scale(1) rotate(0deg); }
-        50% { transform: scale(1.3) rotate(20deg); }
-        100% { transform: scale(1) rotate(0deg); }
-    }
-
 </style>
 
 <div class="container mt-4 mb-5">
     <h3 class="mb-4"><i class="bi bi-check2-square"></i> Gerenciador de Tarefas</h3>
 
     <!-- Formulário para adicionar nova tarefa -->
-        <form id="formNovaTarefa"
-              method="post"
-              hx-post="/tarefas/nova/"
-              hx-target="#listaTarefas"
-              hx-swap="beforeend">
-
+    <form id="formNovaTarefa"
+          method="post"
+          hx-post="{% url 'criar_tarefa' %}"
+          hx-target="#listaTarefas"
+          hx-swap="beforeend">
         {% csrf_token %}
         <div class="input-group mb-3">
             {{ form.descricao|add_class:"form-control" }}
@@ -83,6 +62,19 @@
         </div>
     </form>
 
+    <!-- Toast de sucesso -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1055;">
+        <div id="toastNovaTarefa" class="toast align-items-center text-bg-success border border-light shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex align-items-center">
+                <i class="bi bi-check-circle-fill ms-3 me-2" style="font-size: 1.5rem;"></i>
+                <div class="toast-body">
+                    Tarefa adicionada com sucesso!
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
     <!-- Lista de tarefas -->
     <ul id="listaTarefas" class="list-group shadow-sm">
         {% for tarefa in tarefas %}
@@ -90,4 +82,77 @@
         {% endfor %}
     </ul>
 </div>
+
+<script>
+    document.addEventListener('htmx:afterOnLoad', function(evt) {
+        const form = document.getElementById('formNovaTarefa');
+        const toastEl = document.getElementById('toastNovaTarefa');
+
+        if (evt.target.id === 'formNovaTarefa' && toastEl) {
+            form.reset();
+            const input = form.querySelector('input[name="descricao"]');
+            if (input) {
+                input.focus();
+            }
+
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+        }
+    });
+
+    function editarTarefa(id) {
+        const inputDescricao = document.querySelector(`#tarefa-${id} input[name="descricao"]`);
+        const btnEditar = document.querySelector(`#tarefa-${id} .btn-editar`);
+        const btnSalvar = document.querySelector(`#tarefa-${id} .btn-salvar`);
+
+        if (inputDescricao && btnEditar && btnSalvar) {
+            inputDescricao.removeAttribute('readonly');
+            inputDescricao.focus();
+            btnEditar.classList.add('d-none');
+            btnSalvar.classList.remove('d-none');
+        }
+    }
+
+    function salvarTarefa(id) {
+        const inputDescricao = document.querySelector(`#tarefa-${id} input[name="descricao"]`);
+        const btnEditar = document.querySelector(`#tarefa-${id} .btn-editar`);
+        const btnSalvar = document.querySelector(`#tarefa-${id} .btn-salvar`);
+
+        if (inputDescricao && btnEditar && btnSalvar) {
+            const descricaoAtualizada = inputDescricao.value;
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            htmx.ajax('POST', `/tarefas/${id}/editar/`, {
+                headers: {'X-CSRFToken': csrfToken},
+                values: {descricao: descricaoAtualizada},
+                target: `#tarefa-${id}`,
+                swap: 'outerHTML'
+            });
+        }
+    }
+
+    document.body.addEventListener('htmx:beforeSwap', function(evt) {
+        if (evt.detail.xhr.status === 204 && evt.target.classList.contains('tarefa-item')) {
+            evt.target.classList.add('fade-out');
+            setTimeout(() => {
+                evt.detail.shouldSwap = true;
+            }, 400);
+            evt.detail.shouldSwap = false;
+        }
+    });
+
+    document.body.addEventListener('htmx:configRequest', function (event) {
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+        if (csrfToken) {
+            event.detail.headers['X-CSRFToken'] = csrfToken;
+        }
+    });
+
+    function animateCheck(checkbox) {
+        checkbox.classList.add('animate-check');
+        setTimeout(() => {
+            checkbox.classList.remove('animate-check');
+        }, 400);
+    }
+</script>
 {% endblock %}

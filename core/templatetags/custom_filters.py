@@ -7,7 +7,6 @@ register = template.Library()
 def add_class(field, css_class):
     return field.as_widget(attrs={"class": css_class})
 
-
 @register.filter(name='br_currency')
 def br_currency(value):
     """
@@ -18,7 +17,6 @@ def br_currency(value):
         return "R$ {:,.2f}".format(valor).replace(",", "X").replace(".", ",").replace("X", ".")
     except (ValueError, TypeError):
         return "R$ 0,00"
-
 
 @register.filter(name='tem_cargo')
 def tem_cargo(user, cargos):

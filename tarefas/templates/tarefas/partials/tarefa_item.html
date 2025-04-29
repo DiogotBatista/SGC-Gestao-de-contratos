@@ -1,95 +1,33 @@
-<li class="list-group-item tarefa-item d-flex justify-content-between align-items-center" id="tarefa-{{ tarefa.id }}">
+<li id="tarefa-{{ tarefa.id }}" class="list-group-item tarefa-item d-flex justify-content-between align-items-center">
     <div class="d-flex align-items-center w-100">
-        <!-- Checkbox com HTMX -->
         <input type="checkbox"
                class="form-check-input me-2"
                name="concluida"
-               onclick="animateCheck(this, event, {{ tarefa.id }})"
-               {% if tarefa.concluida %}checked{% endif %}>
-
-
-        <!-- Descrição da tarefa -->
-        <input type="text" name="descricao"
+               {% if tarefa.concluida %}checked{% endif %}
+               hx-post="{% url 'concluir_tarefa' tarefa.pk %}"
+               hx-target="#tarefa-{{ tarefa.id }}"
+               hx-swap="outerHTML"
+               onclick="animateCheck(this)">
+        <input type="text"
+               name="descricao"
                value="{{ tarefa.descricao }}"
                class="form-control-plaintext {% if tarefa.concluida %}text-decoration-line-through text-success{% else %}text-body{% endif %}"
                readonly>
-
-        <!-- Data de criação -->
-        <small class="text-muted ms-1" style="font-size: 0.75rem;">
-            Criada em {{ tarefa.criada_em|date:"d/m/Y H:i" }}
-        </small>
+        <small class="text-muted ms-3">{{ tarefa.criada_em|date:"d/m/Y H:i" }}</small>
     </div>
 
-    <!-- Botões de ação -->
-    <div class="ms-3 d-flex gap-2">
-        <!-- Editar -->
-        <button class="btn btn-sm btn-outline-secondary"
-                onclick="editarDescricao({{ tarefa.id }}, '{{ tarefa.descricao|escapejs }}')"
-                title="Editar">
+    <div class="ms-2 d-flex gap-2">
+        <button type="button" class="btn btn-sm btn-outline-primary btn-editar" onclick="editarTarefa({{ tarefa.id }})">
             <i class="bi bi-pencil"></i>
         </button>
-
-        <!-- Excluir -->
-        <button class="btn btn-sm btn-outline-danger"
+        <button type="button" class="btn btn-sm btn-outline-success btn-salvar d-none" onclick="salvarTarefa({{ tarefa.id }})">
+            <i class="bi bi-save"></i>
+        </button>
+        <button type="button" class="btn btn-sm btn-outline-danger"
                 hx-post="{% url 'excluir_tarefa' tarefa.pk %}"
-                hx-swap="none"
-                hx-on="htmx:afterRequest: animateAndRemove(this)">
+                hx-target="#tarefa-{{ tarefa.id }}"
+                hx-swap="delete">
             <i class="bi bi-trash"></i>
         </button>
     </div>
 </li>
-
-<script>
-function animateCheck(el, event, id) {
-    event.preventDefault();
-    el.classList.add('animate-check');
-
-    setTimeout(() => {
-        el.classList.remove('animate-check');
-
-        htmx.ajax('POST', `/tarefas/${id}/concluir/`, {
-            target: `#tarefa-${id}`,
-            swap: 'outerHTML',
-            headers: {
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value
-            },
-            values: {
-                concluida: el.checked
-            }
-        });
-    }, 300);
-}
-
-
-function editarDescricao(id, textoAtual) {
-    const el = document.querySelector(`#tarefa-${id} input[name='descricao']`);
-    el.readOnly = false;
-    el.focus();
-    el.classList.remove('form-control-plaintext');
-    el.classList.add('form-control');
-
-    el.addEventListener('blur', function () {
-        const descricao = el.value;
-        const token = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
-        if (!token) return;
-
-        htmx.ajax('POST', `/tarefas/${id}/editar/`, {
-            target: `#tarefa-${id}`,
-            swap: 'outerHTML',
-            headers: {
-                'X-CSRFToken': token
-            },
-            values: {
-                descricao: descricao
-            }
-        });
-    }, { once: true });
-}
-
-function animateAndRemove(btn) {
-    const li = btn.closest('li');
-    if (!li) return;
-    li.classList.add('fade-out');
-    setTimeout(() => li.remove(), 400);
-}
-</script>
