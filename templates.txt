@@ -3,6 +3,7 @@
 menu_contratos
 lista_contratos
 criar_contrato
+atualizar_contrato
 detalhe_contrato
 deletar_contrato
 atas_por_contrato
