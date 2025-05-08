@@ -10,9 +10,14 @@
         </div>
         <div class="card-body">
           <p class="lead">Tem certeza que deseja excluir o contrato <strong>{{ object.numero }}</strong>?</p>
-          <p class="lead text-muted">
-            Se o contrato estiver inativo, é melhor apenas desmarcar o campo <strong>"Ativo"</strong> no formulário de <strong><a href="{% url 'editar_contrato' object.pk %}">edição</a></strong>.
+           <div class="alert alert-warning" role="alert">
+            <strong>Atenção:</strong> Esta ação <strong>não poderá ser desfeita</strong>. Todas as <strong>obras vinculadas</strong> a este contrato também serão excluídas permanentemente.
+          </div>
+
+          <p class="text-muted">
+            Se o contrato estiver inativo, considere apenas desmarcar o campo <strong>"Ativo"</strong> no formulário de <strong><a href="{% url 'editar_contrato' object.pk %}">edição</a></strong> em vez de excluí-lo.
           </p>
+
 
           <form method="post" id="form-exclusao">
             {% csrf_token %}

@@ -79,6 +79,11 @@ class Contratante(models.Model):
     def __str__(self):
         return self.nome
 
+    def save(self, *args, **kwargs):
+        if self.nome:
+            self.nome = self.nome.upper()
+        super().save(*args, **kwargs)
+
 class Contrato(models.Model):
     numero = models.CharField(
         max_length=50,
@@ -163,10 +168,9 @@ class Contrato(models.Model):
             return 0
         return sum(valores) / len(valores)
 
-
 class Obra(models.Model):
     codigo = models.CharField(max_length=50, unique=True,verbose_name='Cod/Nome Obra', help_text="Código da obra/serviço")
-    contrato = models.ForeignKey(Contrato, on_delete=models.PROTECT, related_name='obras')
+    contrato = models.ForeignKey(Contrato, on_delete=models.CASCADE, related_name='obras')
     local = models.CharField(max_length=100, help_text="Local de execução da obra")
     descricao = models.TextField(blank=True, null=True, help_text="Descrição ou observações sobre a obra")
     ativo = models.BooleanField(default=True, help_text="Indica que a obra será tratada como ativa. Ao invés de exclui-la, desmarque isso.")
