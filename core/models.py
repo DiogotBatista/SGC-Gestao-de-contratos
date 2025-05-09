@@ -59,6 +59,36 @@ class PermissaoDeAcessoPorCargo(models.Model):
     def __str__(self):
         return self.cargo.nome
 
+from django.db import models
+
+class Aviso(models.Model):
+    TIPO_CHOICES = [
+        ("info", "Informação - Azul claro"),
+        ("success", "Sucesso - Verde"),
+        ("warning", "Aviso - Laranja"),
+        ("danger", "Crítico - Vermelho"),
+        ("primary", "Especial - Azul Escuro"),
+    ]
+
+    mensagem = models.TextField("Mensagem do aviso")
+    tipo = models.CharField(
+        max_length=10,
+        choices=TIPO_CHOICES,
+        default="info",
+        verbose_name="Tipo de aviso"
+    )
+    ativo = models.BooleanField(default=True, verbose_name="Ativo")
+    criado_em = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-criado_em"]
+        verbose_name = "Aviso"
+        verbose_name_plural = "Avisos"
+
+    def __str__(self):
+        return self.mensagem[:50]
+
+
 
 
 

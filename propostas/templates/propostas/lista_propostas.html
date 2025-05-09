@@ -43,6 +43,7 @@
       <div class="col-md-2">
         <select name="etapa" class="form-select">
           <option value="">Todas Etapas</option>
+          <option value="elaboracao" {% if request.GET.etapa == "elaboracao" %}selected{% endif %}>Em Elaboração</option>
           <option value="analise" {% if request.GET.etapa == "analise" %}selected{% endif %}>Em Análise</option>
           <option value="negociacao" {% if request.GET.etapa == "negociacao" %}selected{% endif %}>Em Negociação</option>
           <option value="aguardando" {% if request.GET.etapa == "aguardando" %}selected{% endif %}>Aguardando</option>
@@ -75,6 +76,8 @@
           <th class="text-center">Recebido</th>
           <th class="text-center">Situação</th>
           <th class="text-center">Etapa</th>
+          <th class="text-center">Criado em</th>
+          <th class="text-center">Atualizado em</th>
           <th class="text-center">Ações</th>
         </tr>
       </thead>
@@ -84,7 +87,13 @@
           <td class="text-center">{{ proposta.titulo }}</td>
           <td class="text-center">{{ proposta.contratante.nome }}</td>
           <td class="text-center">{{ proposta.local_execucao }}</td>
-          <td class="text-center">{{ proposta.valor_estimado|br_currency }}</td>
+          <td class="text-center">
+            {% if proposta.valor_estimado %}
+              {{ proposta.valor_estimado|br_currency }}
+            {% else %}
+              <span class="text-muted">--</span>
+            {% endif %}
+          </td>
           <td class="text-center">{{ proposta.data_recebimento|date:"d/m/Y" }}</td>
           <td class="text-center">
             <span class="badge
@@ -96,7 +105,9 @@
             </span>
           </td>
           <td class="text-center">
-            {% if proposta.etapa_atual == 'analise' %}
+            {% if proposta.etapa_atual == 'elaboracao' %}
+              <span class="badge bg-primary">Em Elaboração</span>
+            {% elif proposta.etapa_atual == 'analise' %}
               <span class="badge bg-warning text-dark">Em Análise</span>
             {% elif proposta.etapa_atual == 'negociacao' %}
               <span class="badge bg-info text-dark">Em Negociação</span>
@@ -106,6 +117,8 @@
               <span class="badge bg-success">Finalizada</span>
             {% endif %}
           </td>
+          <td class="text-center">{{ proposta.data_cadastro|date:"d/m/Y" }}</td>
+          <td class="text-center">{{ proposta.data_alteracao|date:"d/m/Y" }}</td>
           <td class="text-center">
             <a href="{% url 'detalhe_proposta' proposta.pk %}" class="btn btn-outline-primary btn-sm">
               <i class="bi bi-eye"></i> Detalhes

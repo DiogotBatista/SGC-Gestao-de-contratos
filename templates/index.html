@@ -2,10 +2,18 @@
 {% block title %}Página Inicial{% endblock %}
 
 {% block content %}
-<div class="container mt-5 mb-5">
-    <h1 class="text-center mb-5">Bem-vindo ao Sistema de Gestão de Contratos</h1>
+<div class="container mt-3 mb-4">
+    <h2 class="text-center mb-3">Bem-vindo ao Sistema de Gestão de Contratos</h2>
 
-    <div class="row g-4">
+    {% if avisos %}
+      {% for aviso in avisos %}
+        <div class="alert alert-{{ aviso.tipo }} shadow-sm text-center py-2">
+          {{ aviso.mensagem|linebreaksbr }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <div class="row g-4 mt-2">
         <!-- Contratos -->
         <div class="col-md-4">
             <div class="card h-100 shadow-sm border-0">

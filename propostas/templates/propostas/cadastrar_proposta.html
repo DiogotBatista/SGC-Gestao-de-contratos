@@ -33,6 +33,9 @@
               <div class="col-md-12">
                 {{ form.titulo.label_tag }}
                 {{ form.titulo|add_class:"form-control" }}
+                {% for error in form.titulo.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
                 {% if form.titulo.help_text %}
                   <small class="form-text text-muted">{{ form.titulo.help_text }}</small>
                 {% endif %}
@@ -42,6 +45,9 @@
               <div class="col-md-6">
                 {{ form.contratante.label_tag }}
                 {{ form.contratante|add_class:"form-select" }}
+                {% for error in form.contratante.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
                 {% if form.contratante.help_text %}
                   <small class="form-text text-muted">{{ form.contratante.help_text }}</small>
                 {% endif %}
@@ -49,6 +55,9 @@
               <div class="col-md-6">
                 {{ form.local_execucao.label_tag }}
                 {{ form.local_execucao|add_class:"form-control" }}
+                {% for error in form.local_execucao.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
                 {% if form.local_execucao.help_text %}
                   <small class="form-text text-muted">{{ form.local_execucao.help_text }}</small>
                 {% endif %}
@@ -58,6 +67,9 @@
               <div class="col-md-6">
                 {{ form.valor_estimado.label_tag }}
                 {{ form.valor_estimado|add_class:"form-control moeda" }}
+                {% for error in form.valor_estimado.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
                 {% if form.valor_estimado.help_text %}
                   <small class="form-text text-muted">{{ form.valor_estimado.help_text }}</small>
                 {% endif %}
@@ -65,6 +77,9 @@
               <div class="col-md-6">
                 {{ form.etapa_atual.label_tag }}
                 {{ form.etapa_atual|add_class:"form-select" }}
+                {% for error in form.etapa_atual.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
                 {% if form.etapa_atual.help_text %}
                   <small class="form-text text-muted">{{ form.etapa_atual.help_text }}</small>
                 {% endif %}
@@ -74,6 +89,9 @@
               <div class="col-md-4">
                 {{ form.data_recebimento.label_tag }}
                 {{ form.data_recebimento|add_class:"form-control" }}
+                {% for error in form.data_recebimento.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
                 {% if form.data_recebimento.help_text %}
                   <small class="form-text text-muted">{{ form.data_recebimento.help_text }}</small>
                 {% endif %}
@@ -81,6 +99,9 @@
               <div class="col-md-4">
                 {{ form.data_envio.label_tag }}
                 {{ form.data_envio|add_class:"form-control" }}
+                {% for error in form.data_envio.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
                 {% if form.data_envio.help_text %}
                   <small class="form-text text-muted">{{ form.data_envio.help_text }}</small>
                 {% endif %}
@@ -88,6 +109,9 @@
               <div class="col-md-4">
                 {{ form.data_resposta.label_tag }}
                 {{ form.data_resposta|add_class:"form-control" }}
+                {% for error in form.data_resposta.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
                 {% if form.data_resposta.help_text %}
                   <small class="form-text text-muted">{{ form.data_resposta.help_text }}</small>
                 {% endif %}
@@ -97,6 +121,9 @@
               <div class="col-md-6">
                 {{ form.situacao.label_tag }}
                 {{ form.situacao|add_class:"form-select" }}
+                {% for error in form.situacao.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
                 {% if form.situacao.help_text %}
                   <small class="form-text text-muted">{{ form.situacao.help_text }}</small>
                 {% endif %}
@@ -104,6 +131,9 @@
               <div class="col-md-6">
                 {{ form.endereco_servidor.label_tag }}
                 {{ form.endereco_servidor|add_class:"form-control" }}
+                {% for error in form.endereco_servidor.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
                 {% if form.endereco_servidor.help_text %}
                   <small class="form-text text-muted">{{ form.endereco_servidor.help_text }}</small>
                 {% endif %}
@@ -113,6 +143,9 @@
               <div class="col-12">
                 {{ form.descricao.label_tag }}
                 {{ form.descricao|add_class:"form-control" }}
+                {% for error in form.descricao.errors %}
+                  <div class="invalid-feedback d-block">{{ error }}</div>
+                {% endfor %}
                 {% if form.descricao.help_text %}
                   <small class="form-text text-muted">{{ form.descricao.help_text }}</small>
                 {% endif %}

@@ -36,8 +36,8 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
 CSRF_COOKIE_HTTPONLY = True
 X_FRAME_OPTIONS = 'DENY'
-SESSION_COOKIE_AGE = 3600
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_AGE = 60 * 60 * 5  # Tempo limite para ficar logado é de 5 horas
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Usuário será deslogado ao fechar o navegador
 # SECURE_SSL_REDIRECT = True
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv(), default='localhost,127.0.0.1')

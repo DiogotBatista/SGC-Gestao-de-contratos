@@ -4,6 +4,7 @@ from django.conf import settings
 
 class PropostaOrcamento(models.Model):
     ETAPAS = [
+        ('elaboracao', 'Em Elaboração'),
         ('analise', 'Em Análise'),
         ('negociacao', 'Em Negociação'),
         ('aguardando', 'Aguardando Resposta'),
@@ -11,7 +12,7 @@ class PropostaOrcamento(models.Model):
     ]
 
     NEGOCIACAO = [
-        ('Contrato firmado', 'Orçamento Negociado / Contrato firmado'),
+        ('Contrato firmado', 'Orçamento Negociado  / Contrato firmado'),
         ("Proposta rejeitada", "Orçamento Não Negociado / Proposta rejeitada"),
         ('Em negociação', "Orçamento aguardando negociação"),
     ]
@@ -36,6 +37,8 @@ class PropostaOrcamento(models.Model):
     valor_estimado = models.DecimalField(
         max_digits=15,
         decimal_places=2,
+        null= True,
+        blank= True,
         verbose_name="Valor Estimado em Reais (R$)",
         help_text='Valor do orçamento/proposta'
     )
@@ -51,7 +54,7 @@ class PropostaOrcamento(models.Model):
     etapa_atual = models.CharField(
         max_length=20,
         choices=ETAPAS,
-        default='analise',
+        default='elaboracao',
         verbose_name="Etapa Atual",
         help_text='Etapa da negociação'
     )
@@ -114,4 +117,6 @@ class PropostaOrcamento(models.Model):
         verbose_name_plural = "Propostas de Orçamento"
 
     def __str__(self):
-        return f"{self.contratante} - {self.local_execucao} - R$ {self.valor_estimado:,.2f}"
+        valor = f"R$ {self.valor_estimado:,.2f}" if self.valor_estimado is not None else "Valor indefinido"
+        return f"{self.contratante} - {self.local_execucao} - {valor}"
+

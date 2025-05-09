@@ -3,7 +3,8 @@ from .models import (
     UserProfile,
     Cargo,
     ViewDisponivel,
-    PermissaoDeAcessoPorCargo
+    PermissaoDeAcessoPorCargo,
+    Aviso,
 )
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
@@ -34,6 +35,11 @@ class PermissaoDeAcessoPorCargoAdmin(admin.ModelAdmin):
 class CustomUserAdmin(BaseUserAdmin):
     list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'last_login')
     ordering = ('-last_login',)
+
+@admin.register(Aviso)
+class AvisoAdmin(admin.ModelAdmin):
+    list_display = ('mensagem', 'tipo', 'ativo', 'criado_em')
+    list_filter = ('tipo', 'ativo', 'criado_em')
 
 admin.site.unregister(User)
 admin.site.register(User, CustomUserAdmin)
