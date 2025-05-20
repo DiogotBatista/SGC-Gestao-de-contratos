@@ -8,6 +8,7 @@ from django.contrib import messages
 from reunioes.models import AtaReuniao, ItemAta
 from django.shortcuts import  get_object_or_404, redirect
 from django.http import HttpResponseRedirect
+from medicoes.models import Medicao
 
 # MENU
 class MenuView(AccessRequiredMixin, TemplateView):
@@ -90,6 +91,7 @@ class ContratoDetailView(AccessRequiredMixin, ContratoAccessMixin, DetailView):
         total_itens = ItemAta.objects.filter(ata__contrato=contrato).count()
         pendentes = ItemAta.objects.filter(ata__contrato=contrato, status='pendente').count()
         concluidos = ItemAta.objects.filter(ata__contrato=contrato, status='concluido').count()
+        medicoes = Medicao.objects.filter(contrato=contrato).order_by('criado_em')
         ultima_ata = atas.order_by('-data').first()
 
         context.update({
@@ -99,6 +101,7 @@ class ContratoDetailView(AccessRequiredMixin, ContratoAccessMixin, DetailView):
             'concluidos': concluidos,
             'ultima_ata': ultima_ata,
         })
+        context['medicoes'] = medicoes
         context['nota_form'] = NotaContratoForm()
         return context
 

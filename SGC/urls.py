@@ -39,6 +39,9 @@ urlpatterns = [
     #App Propostas
     path('propostas/', include('propostas.urls')),
 
+    #App medicoes
+    path('medicoes/', include('medicoes.urls')),
+
 ]
 
 if settings.DEBUG:

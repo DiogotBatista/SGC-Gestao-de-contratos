@@ -50,8 +50,7 @@
         </div>
     </div>
 
-    <!-- Linha para Dashboard -->
-
+    <!-- Card Dashboard -->
         <div class="col-md-4">
             <div class="card h-100 shadow-sm border-0">
                 <div class="card-body d-flex flex-column text-center gap-3">
@@ -66,8 +65,6 @@
                 </div>
             </div>
         </div>
-
-
 
     <!-- Card Obras -->
     <div class="col-md-4">
@@ -100,6 +97,24 @@
             </div>
         </div>
     </div>
+
+    <!-- Card Medições -->
+    <div class="col-md-4">
+    <div class="card h-100 shadow-sm border-0">
+        <div class="card-body d-flex flex-column text-center gap-3">
+            <div>
+                <i class="bi bi-clipboard-data display-4 text-dark mb-3"></i>
+                <h5 class="card-title">Medições</h5>
+                <p class="card-text text-muted">Acesse os registros de medições por contrato.</p>
+            </div>
+            <div class="mt-auto">
+                <a href="{% url 'lista_medicoes' %}" class="btn btn-outline-dark">Acessar</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 </div>
 
 

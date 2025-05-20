@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'notaspessoais',
     'tarefas',
     'propostas',
+    'medicoes',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
