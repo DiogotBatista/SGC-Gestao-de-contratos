@@ -15,18 +15,20 @@
       <table class="table table-hover align-middle">
         <thead class="table-light">
           <tr>
-            <th>Data</th>
-            <th>Resumo</th>
-            <th>Autor</th>
+            <th class="text-center">Data</th>
+            <th class="text-center">Resumo</th>
+            <th class="text-center">Autor</th>
+            <th class="text-center">Açoes Pendentes</th>
             <th class="text-center">Ações</th>
           </tr>
         </thead>
         <tbody>
           {% for ata in atas %}
             <tr>
-              <td>{{ ata.data|date:"d/m/Y" }}</td>
-              <td>{{ ata.resumo|truncatewords:12 }}</td>
-              <td>{{ ata.autor.get_full_name|default:ata.autor.username }}</td>
+              <td class="text-center">{{ ata.data|date:"d/m/Y" }}</td>
+              <td class="text-center">{{ ata.resumo|truncatewords:12 }}</td>
+              <td class="text-center">{{ ata.autor.get_full_name|default:ata.autor.username }}</td>
+              <td class="text-center">{{ ata.pendentes }}</td>
               <td class="text-center">
                 <a href="{% url 'detalhe_ata' ata.pk %}" class="btn btn-outline-primary btn-sm">
                   <i class="bi bi-eye"></i> Detalhes

@@ -11,7 +11,7 @@ class CategoriaItemAtaAdmin(admin.ModelAdmin):
 class ItemAtaInline(admin.TabularInline):
     model = ItemAta
     extra = 0
-    fields = ('categoria', 'descricao', 'status', 'created_by', 'data_cadastro', 'ordem')
+    fields = ('categoria', 'descricao', 'responsavel', 'solicitante', 'status', 'created_by', 'data_cadastro', 'ordem')
     readonly_fields = ('created_by', 'data_cadastro')
 
 
@@ -26,7 +26,8 @@ class AtaReuniaoAdmin(admin.ModelAdmin):
 
 @admin.register(ItemAta)
 class ItemAtaAdmin(admin.ModelAdmin):
-    list_display = ('categoria', 'ata', 'status', 'created_by', 'data_cadastro', 'ordem')
+    list_display = ('categoria', 'ata', 'responsavel', 'solicitante', 'status', 'created_by', 'data_cadastro', 'ordem')
     list_filter = ('categoria', 'status')
-    search_fields = ('descricao', 'ata__contrato__numero')
+    search_fields = ('descricao', 'responsavel', 'solicitante', 'ata__contrato__numero')
     readonly_fields = ('created_by', 'data_cadastro')
+

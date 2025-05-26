@@ -66,22 +66,26 @@
                       <label class="form-label">Categoria</label>
                       {{ item.categoria|add_class:"form-select" }}
                     </div>
-                    <div class="col-md-5">
-                      <label class="form-label">Descrição</label>
-                      {{ item.descricao|add_class:"form-control" }}
+                    <div class="col-md-3">
+                      <label class="form-label">Solicitante</label>
+                      {{ item.solicitante|add_class:"form-control" }}
                     </div>
-                    <div class="col-md-4">
-                      <div class="d-flex flex-column">
-                        <div class="mb-2">
-                          <label class="form-label">Status</label>
-                          {{ item.status|add_class:"form-select" }}
-                        </div>
-                        <div>
-                          <label class="form-label">Prazo</label>
-                          {{ item.data_prazo|add_class:"form-control" }}
-                        </div>
-                      </div>
+                    <div class="col-md-3">
+                      <label class="form-label">Responsável</label>
+                      {{ item.responsavel|add_class:"form-control" }}
                     </div>
+                    <div class="col-md-3">
+                      <label class="form-label">Status</label>
+                      {{ item.status|add_class:"form-select" }}
+                    </div>
+                  </div>
+                  <div class="mt-2">
+                    <label class="form-label">Descrição</label>
+                    {{ item.descricao|add_class:"form-control" }}
+                  </div>
+                  <div class="mt-2">
+                    <label class="form-label">Prazo</label>
+                    {{ item.data_prazo|add_class:"form-control" }}
                   </div>
 
                   {{ item.id.as_hidden }}
@@ -98,7 +102,6 @@
               {% endfor %}
             </div>
 
-            <!-- Formulário oculto para JS -->
             <div id="empty-form-template" class="d-none">
               <div class="card mb-3 border-0 shadow-sm item-form fade-in">
                 <div class="card-body">
@@ -107,22 +110,26 @@
                       <label class="form-label">Categoria</label>
                       {{ formset.empty_form.categoria|add_class:"form-select" }}
                     </div>
-                    <div class="col-md-5">
-                      <label class="form-label">Descrição</label>
-                      {{ formset.empty_form.descricao|add_class:"form-control" }}
+                    <div class="col-md-3">
+                      <label class="form-label">Solicitante</label>
+                      {{ formset.empty_form.solicitante|add_class:"form-control" }}
                     </div>
-                    <div class="col-md-4">
-                      <div class="d-flex flex-column">
-                        <div class="mb-2">
-                          <label class="form-label">Status</label>
-                          {{ formset.empty_form.status|add_class:"form-select" }}
-                        </div>
-                        <div>
-                          <label class="form-label">Prazo</label>
-                          {{ formset.empty_form.data_prazo|add_class:"form-control" }}
-                        </div>
-                      </div>
+                    <div class="col-md-3">
+                      <label class="form-label">Responsável</label>
+                      {{ formset.empty_form.responsavel|add_class:"form-control" }}
                     </div>
+                    <div class="col-md-3">
+                      <label class="form-label">Status</label>
+                      {{ formset.empty_form.status|add_class:"form-select" }}
+                    </div>
+                  </div>
+                  <div class="mt-2">
+                    <label class="form-label">Descrição</label>
+                    {{ formset.empty_form.descricao|add_class:"form-control" }}
+                  </div>
+                  <div class="mt-2">
+                    <label class="form-label">Prazo</label>
+                    {{ formset.empty_form.data_prazo|add_class:"form-control" }}
                   </div>
 
                   {{ formset.empty_form.id.as_hidden }}
@@ -137,6 +144,7 @@
                 </div>
               </div>
             </div>
+
 
             <div class="mb-3 mt-3">
               <button type="button" class="btn btn-outline-primary" id="add-item">

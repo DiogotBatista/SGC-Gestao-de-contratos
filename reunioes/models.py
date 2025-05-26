@@ -67,6 +67,9 @@ class ItemAta(models.Model):
     ata = models.ForeignKey(AtaReuniao, on_delete=models.CASCADE, related_name='itens')
     categoria = models.ForeignKey(CategoriaItemAta, on_delete=models.SET_NULL, null=True)
     descricao = models.TextField()
+    responsavel = models.CharField(max_length=100, null=True, blank=True,
+                                   help_text="Responsável pela ação")
+    solicitante = models.CharField(max_length=100, null=True, blank=True, help_text="Quem solicitou essa ação")
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% load custom_filters %}
-{% block title %}Editar Ata{% endblock %}
+{% block title %}Cadastrar Ata{% endblock %}
 
 {% block content %}
 <div class="container mt-4 mb-5">
@@ -9,7 +9,7 @@
     <div class="col-lg-10">
       <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">
-          <h2 class="mb-0">Editar Ata de Reunião</h2>
+          <h2 class="mb-0">Cadastrar Ata de Reunião</h2>
         </div>
         <div class="card-body">
 
@@ -59,44 +59,49 @@
 
             <div id="formset-itens">
               {% for item in formset %}
-                <div class="card mb-3 border-0 shadow-sm item-form fade-in">
-                  <div class="card-body">
-                    <div class="row g-3 align-items-start">
-                      <div class="col-md-3">
-                        <label class="form-label">Categoria</label>
-                        {{ item.categoria|add_class:"form-select" }}
-                      </div>
-                      <div class="col-md-5">
-                        <label class="form-label">Descrição</label>
-                        {{ item.descricao|add_class:"form-control" }}
-                      </div>
-                      <div class="col-md-4">
-                        <div class="d-flex flex-column">
-                          <div class="mb-2">
-                            <label class="form-label">Status</label>
-                            {{ item.status|add_class:"form-select" }}
-                          </div>
-                          <div>
-                            <label class="form-label">Prazo</label>
-                            {{ item.data_prazo|add_class:"form-control" }}
-                          </div>
-                        </div>
-                      </div>
+              <div class="card mb-3 border-0 shadow-sm item-form fade-in">
+                <div class="card-body">
+                  <div class="row g-3 align-items-start">
+                    <div class="col-md-3">
+                      <label class="form-label">Categoria</label>
+                      {{ item.categoria|add_class:"form-select" }}
                     </div>
-                    {{ item.id.as_hidden }}
-                    {{ item.ordem.as_hidden }}
-                    {{ item.DELETE.as_hidden }}
-                    <div class="text-end mt-3">
-                      <button type="button" class="btn btn-sm btn-outline-danger remove-item">
-                        <i class="bi bi-x-circle"></i> Remover
-                      </button>
+                    <div class="col-md-3">
+                      <label class="form-label">Solicitante</label>
+                      {{ item.solicitante|add_class:"form-control" }}
+                    </div>
+                    <div class="col-md-3">
+                      <label class="form-label">Responsável</label>
+                      {{ item.responsavel|add_class:"form-control" }}
+                    </div>
+                    <div class="col-md-3">
+                      <label class="form-label">Status</label>
+                      {{ item.status|add_class:"form-select" }}
                     </div>
                   </div>
+                  <div class="mt-2">
+                    <label class="form-label">Descrição</label>
+                    {{ item.descricao|add_class:"form-control" }}
+                  </div>
+                  <div class="mt-2">
+                    <label class="form-label">Prazo</label>
+                    {{ item.data_prazo|add_class:"form-control" }}
+                  </div>
+
+                  {{ item.id.as_hidden }}
+                  {{ item.ordem.as_hidden }}
+                  {{ item.DELETE.as_hidden }}
+
+                  <div class="text-end mt-3">
+                    <button type="button" class="btn btn-sm btn-outline-danger remove-item">
+                      <i class="bi bi-x-circle"></i> Remover
+                    </button>
+                  </div>
                 </div>
+              </div>
               {% endfor %}
             </div>
 
-            <!-- Formulário oculto -->
             <div id="empty-form-template" class="d-none">
               <div class="card mb-3 border-0 shadow-sm item-form fade-in">
                 <div class="card-body">
@@ -105,26 +110,32 @@
                       <label class="form-label">Categoria</label>
                       {{ formset.empty_form.categoria|add_class:"form-select" }}
                     </div>
-                    <div class="col-md-5">
-                      <label class="form-label">Descrição</label>
-                      {{ formset.empty_form.descricao|add_class:"form-control" }}
+                    <div class="col-md-3">
+                      <label class="form-label">Solicitante</label>
+                      {{ formset.empty_form.solicitante|add_class:"form-control" }}
                     </div>
-                    <div class="col-md-4">
-                      <div class="d-flex flex-column">
-                        <div class="mb-2">
-                          <label class="form-label">Status</label>
-                          {{ formset.empty_form.status|add_class:"form-select" }}
-                        </div>
-                        <div>
-                          <label class="form-label">Prazo</label>
-                          {{ formset.empty_form.data_prazo|add_class:"form-control" }}
-                        </div>
-                      </div>
+                    <div class="col-md-3">
+                      <label class="form-label">Responsável</label>
+                      {{ formset.empty_form.responsavel|add_class:"form-control" }}
+                    </div>
+                    <div class="col-md-3">
+                      <label class="form-label">Status</label>
+                      {{ formset.empty_form.status|add_class:"form-select" }}
                     </div>
                   </div>
+                  <div class="mt-2">
+                    <label class="form-label">Descrição</label>
+                    {{ formset.empty_form.descricao|add_class:"form-control" }}
+                  </div>
+                  <div class="mt-2">
+                    <label class="form-label">Prazo</label>
+                    {{ formset.empty_form.data_prazo|add_class:"form-control" }}
+                  </div>
+
                   {{ formset.empty_form.id.as_hidden }}
                   {{ formset.empty_form.ordem.as_hidden }}
                   {{ formset.empty_form.DELETE.as_hidden }}
+
                   <div class="text-end mt-2">
                     <button type="button" class="btn btn-sm btn-outline-danger remove-item">
                       <i class="bi bi-x-circle"></i> Remover
@@ -141,12 +152,12 @@
             </div>
 
             <div class="d-flex justify-content-between mt-4">
-              <a href="{% url 'detalhe_ata' ata.pk %}" class="btn btn-secondary">
-                <i class="bi bi-arrow-left"></i> Voltar
-              </a>
               <button type="submit" class="btn btn-success">
-                <i class="bi bi-check-circle"></i> Salvar Alterações
+                <i class="bi bi-save"></i> Salvar Ata
               </button>
+              <a href="#" onclick="window.history.length > 1 ? history.back() : window.location.href='{% url 'lista_atas' %}'; return false;" class="btn btn-secondary">
+                <i class="bi bi-x-circle"></i> Cancelar
+              </a>
             </div>
           </form>
 
@@ -159,6 +170,7 @@
 
 {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     const formsetDiv = document.getElementById('formset-itens');

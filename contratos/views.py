@@ -153,7 +153,9 @@ class AtasPorContratoView(AccessRequiredMixin, ListView):
     paginate_by = 20
 
     def get_queryset(self):
-        return AtaReuniao.objects.filter(contrato_id=self.kwargs['pk']).select_related('contrato')
+        return AtaReuniao.objects.filter(contrato_id=self.kwargs['pk']).annotate(
+            pendentes=Count('itens', filter=Q(itens__status='pendente'))
+        ).select_related('contrato')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

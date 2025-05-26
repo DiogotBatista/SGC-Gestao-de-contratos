@@ -73,7 +73,6 @@ class MedicaoDeleteView(AccessRequiredMixin, ContratoAccessMixin, DeleteView):
 
 @csrf_exempt
 def api_powerbi_medicoes(request):
-    # TOKEN SECRETO (você pode gerar outro com uuid.uuid4())
     TOKEN_ESPERADO = '8d6e6258-142c-4118-b8a7-03567b7363b3'
 
     token = request.GET.get('token')
@@ -84,7 +83,9 @@ def api_powerbi_medicoes(request):
     dados = [{
         "contrato": m.contrato.numero,
         "identificador": m.identificador,
-        "periodo": m.periodo,
+        "data_inicio": m.data_inicio.strftime("%Y-%m-%d"),
+        "data_fim": m.data_fim.strftime("%Y-%m-%d"),
+        "periodo_formatado": m.periodo_formatado,  # "20/03/25 a 21/04/25"
         "valor": float(m.valor),
         "situacao": m.get_situacao_display(),
         "criado_em": m.criado_em.strftime("%Y-%m-%d %H:%M:%S"),

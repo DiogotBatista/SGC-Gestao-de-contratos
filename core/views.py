@@ -1,7 +1,5 @@
-from django.views.generic import TemplateView
 from contratos.models import Contrato
 from django.db.models import Count
-from .mixins import AccessRequiredMixin
 from django.contrib.auth.views import PasswordResetConfirmView
 from django.contrib.auth.password_validation import password_validators_help_texts
 from django.views.generic import TemplateView

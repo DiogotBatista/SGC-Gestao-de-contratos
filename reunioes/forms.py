@@ -34,10 +34,12 @@ class AtaReuniaoForm(forms.ModelForm):
 class ItemAtaForm(forms.ModelForm):
     class Meta:
         model = ItemAta
-        fields = ['categoria', 'descricao', 'status', 'data_prazo', 'ordem']
+        fields = ['categoria', 'descricao', 'responsavel', 'solicitante', 'status', 'data_prazo', 'ordem']
         labels = {
             'categoria': 'Categoria',
             'descricao': 'Descrição',
+            'responsavel': 'Responsável pela Ação',
+            'solicitante': 'Solicitante',
             'status': 'Status',
             'data_prazo': 'Prazo',
             'ordem': 'Ordem'
@@ -45,6 +47,8 @@ class ItemAtaForm(forms.ModelForm):
         widgets = {
             'categoria': forms.Select(attrs={'class': 'form-select'}),
             'descricao': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'responsavel': forms.TextInput(attrs={'class': 'form-control'}),
+            'solicitante': forms.TextInput(attrs={'class': 'form-control'}),
             'status': forms.Select(attrs={'class': 'form-select'}),
             'data_prazo': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'ordem': forms.HiddenInput(),
