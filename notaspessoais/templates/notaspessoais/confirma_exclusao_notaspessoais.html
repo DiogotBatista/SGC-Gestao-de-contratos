@@ -9,7 +9,7 @@
         <div class="card-body">
             <p class="mb-4">Tem certeza que deseja excluir a nota <strong>"{{ object.titulo }}"</strong>?</p>
 
-            <form method="post">
+            <form method="post" id="form-excluir-nota">
                 {% csrf_token %}
                 <div class="d-flex justify-content-end">
                     <a href="{% url 'detalhe_nota' object.pk %}" class="btn btn-secondary me-2">
@@ -23,4 +23,9 @@
         </div>
     </div>
 </div>
+<script>
+  document.getElementById('form-excluir-nota').addEventListener('submit', function() {
+    showLoadingOverlay();
+  });
+</script>
 {% endblock %}

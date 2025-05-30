@@ -6,24 +6,21 @@ from django.views import View
 from django.views.generic import ListView, DetailView, DeleteView, TemplateView
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, render, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from collections import defaultdict
-from .models import AtaReuniao, ItemAta
+from .models import AtaReuniao, ItemAta, ArquivoAta
 from .forms import AtaReuniaoForm, ItemAtaFormSet
+from .utils_google_drive import create_folder_for_ata, upload_file_to_drive, delete_file_in_drive, delete_folder_in_drive
+from django.http import HttpResponseRedirect
+from django.views.decorators.http import require_POST
 
 class MenuAtasView(AccessRequiredMixin, TemplateView):
-    """
-    Menu de atas
-    """
     template_name = 'reunioes/menu_atas.html'
     allowed_cargos = []
     view_name = 'menu_atas'
 
 @method_decorator(login_required, name='dispatch')
 class AtaReuniaoCreateView(AccessRequiredMixin, View):
-    """
-    Cria Ata de reunião
-    """
     allowed_cargos = ['Gestor']
     view_name = 'criar_atas'
     template_name = 'reunioes/cadastrar_ata.html'
@@ -35,7 +32,7 @@ class AtaReuniaoCreateView(AccessRequiredMixin, View):
         return render(request, self.template_name, {'form': ata_form, 'formset': formset})
 
     def post(self, request):
-        ata_form = AtaReuniaoForm(request.POST, user=request.user)
+        ata_form = AtaReuniaoForm(request.POST, request.FILES, user=request.user)
         formset = ItemAtaFormSet(request.POST, prefix='form')
 
         if ata_form.is_valid() and formset.is_valid():
@@ -45,6 +42,23 @@ class AtaReuniaoCreateView(AccessRequiredMixin, View):
             ata.updated_by = request.user
             ata.save()
 
+            # Criar pasta no Google Drive para esta ata
+            nome_pasta = f"Ata - {ata.contrato.numero} - {ata.data.strftime('%d-%m-%Y')} - ID{ata.pk}"
+            pasta_id = create_folder_for_ata(nome_pasta)
+
+            # Upload de arquivos enviados
+            arquivos = request.FILES.getlist('arquivos')
+            for arquivo in arquivos:
+                link_drive, file_id = upload_file_to_drive(arquivo, arquivo.name, pasta_id)
+                ArquivoAta.objects.create(
+                    ata=ata,
+                    nome=arquivo.name,
+                    link_arquivo=link_drive,
+                    id_arquivo_drive=file_id,
+                    id_pasta_drive=pasta_id
+                )
+
+            # Salvar os itens da ata
             for form_item in formset.forms:
                 instance = form_item.instance
                 cleaned_data = form_item.cleaned_data
@@ -56,7 +70,7 @@ class AtaReuniaoCreateView(AccessRequiredMixin, View):
                 if cleaned_data and not cleaned_data.get('DELETE', False):
                     item = form_item.save(commit=False)
                     item.ata = ata
-                    item.ordem = cleaned_data.get('ordem') or 0  # ← pega a ordem do form
+                    item.ordem = cleaned_data.get('ordem') or 0
                     if not item.pk:
                         item.created_by = request.user
                     item.save()
@@ -66,49 +80,7 @@ class AtaReuniaoCreateView(AccessRequiredMixin, View):
 
         return render(request, self.template_name, {'form': ata_form, 'formset': formset})
 
-class AtaReuniaoListView(AccessRequiredMixin, ListView):
-    """
-    Lista de atas
-    """
-    model = AtaReuniao
-    template_name = 'reunioes/lista_atas.html'
-    context_object_name = 'atas'
-    paginate_by = 10
-    ordering = ['-data']
-    allowed_cargos = []
-    view_name = 'lista_atas'
-
-    def get_queryset(self):
-        contratos_permitidos = self.request.user.userprofile.contratos.all()
-        queryset = super().get_queryset().select_related('contrato', 'autor').filter(contrato__in=contratos_permitidos)
-        query = self.request.GET.get('q')
-        if query:
-            queryset = queryset.filter(
-                Q(contrato__numero__icontains=query) |
-                Q(contrato__contratante__nome__icontains=query) |
-                Q(resumo__icontains=query)
-            )
-        return queryset
-
-class AtaReuniaoDetailView(AccessRequiredMixin, ContratoAccessMixin, DetailView):
-    """
-    Detalhes da ata
-    """
-    model = AtaReuniao
-    template_name = 'reunioes/detalhe_ata.html'
-    context_object_name = 'ata'
-    allowed_cargos = []
-    view_name = 'detalhe_atas'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['itens'] = self.object.itens.select_related('categoria').all()
-        return context
-
 class AtaReuniaoUpdateView(AccessRequiredMixin, ContratoAccessMixin, View):
-    """
-    Atualização de ata
-    """
     allowed_cargos = []
     view_name = 'atualizar_atas'
     template_name = 'reunioes/editar_ata.html'
@@ -122,13 +94,30 @@ class AtaReuniaoUpdateView(AccessRequiredMixin, ContratoAccessMixin, View):
 
     def post(self, request, pk):
         ata = get_object_or_404(AtaReuniao, pk=pk)
-        form = AtaReuniaoForm(request.POST, instance=ata, user=request.user)
+        form = AtaReuniaoForm(request.POST, request.FILES, instance=ata, user=request.user)
         formset = ItemAtaFormSet(request.POST, instance=ata, prefix='form')
 
         if form.is_valid() and formset.is_valid():
             ata = form.save(commit=False)
             ata.updated_by = request.user
             ata.save()
+
+            # Upload de novos arquivos (adiciona à pasta existente)
+            arquivos = request.FILES.getlist('arquivos')
+            pasta_id = ata.arquivos.first().id_pasta_drive if ata.arquivos.exists() else None
+            if not pasta_id:
+                nome_pasta = f"Ata - {ata.contrato.numero} - {ata.data.strftime('%d-%m-%Y')} - ID{ata.pk}"
+                pasta_id = create_folder_for_ata(nome_pasta)
+
+            for arquivo in arquivos:
+                link_drive, file_id = upload_file_to_drive(arquivo, arquivo.name, pasta_id)
+                ArquivoAta.objects.create(
+                    ata=ata,
+                    nome=arquivo.name,
+                    link_arquivo=link_drive,
+                    id_arquivo_drive=file_id,
+                    id_pasta_drive=pasta_id
+                )
 
             for form_item in formset.forms:
                 instance = form_item.instance
@@ -151,10 +140,41 @@ class AtaReuniaoUpdateView(AccessRequiredMixin, ContratoAccessMixin, View):
 
         return render(request, self.template_name, {'form': form, 'formset': formset, 'ata': ata})
 
+class AtaReuniaoListView(AccessRequiredMixin, ListView):
+    model = AtaReuniao
+    template_name = 'reunioes/lista_atas.html'
+    context_object_name = 'atas'
+    paginate_by = 10
+    ordering = ['-data']
+    allowed_cargos = []
+    view_name = 'lista_atas'
+
+    def get_queryset(self):
+        contratos_permitidos = self.request.user.userprofile.contratos.all()
+        queryset = super().get_queryset().select_related('contrato', 'autor').filter(contrato__in=contratos_permitidos)
+        query = self.request.GET.get('q')
+        if query:
+            queryset = queryset.filter(
+                Q(contrato__numero__icontains=query) |
+                Q(contrato__contratante__nome__icontains=query) |
+                Q(resumo__icontains=query)
+            )
+        return queryset
+
+class AtaReuniaoDetailView(AccessRequiredMixin, ContratoAccessMixin, DetailView):
+    model = AtaReuniao
+    template_name = 'reunioes/detalhe_ata.html'
+    context_object_name = 'ata'
+    allowed_cargos = []
+    view_name = 'detalhe_atas'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['itens'] = self.object.itens.select_related('categoria').all()
+        context['arquivos'] = self.object.arquivos.all()
+        return context
+
 class AtaReuniaoDeleteView(AccessRequiredMixin, ContratoAccessMixin, DeleteView):
-    """
-    Deletar atas
-    """
     model = AtaReuniao
     template_name = 'reunioes/excluir_ata.html'
     success_url = reverse_lazy('lista_atas')
@@ -163,13 +183,15 @@ class AtaReuniaoDeleteView(AccessRequiredMixin, ContratoAccessMixin, DeleteView)
     no_permission_redirect_url = 'lista_atas'
 
     def form_valid(self, form):
+        ata = self.object
+        # Excluir a pasta e arquivos no Drive
+        pasta_id = ata.arquivos.first().id_pasta_drive if ata.arquivos.exists() else None
+        if pasta_id:
+            delete_folder_in_drive(pasta_id)
         messages.success(self.request, 'Ata excluída com sucesso.')
         return super().form_valid(form)
 
 class AtasAgrupadasView(AccessRequiredMixin, View):
-    """
-    atas agrupadas por contrato
-    """
     template_name = 'reunioes/atas_agrupadas.html'
     allowed_cargos = []
     view_name = 'atas_agrupadas'
@@ -184,9 +206,48 @@ class AtasAgrupadasView(AccessRequiredMixin, View):
             ata.itens_pendentes = ata.itens.filter(status='pendente').count()
             agrupado[ata.contrato].append(ata)
 
-        # ordena os contratos pelo número
         atas_grouped = dict(sorted(agrupado.items(), key=lambda c: c[0].numero))
 
         return render(request, self.template_name, {
             'atas_grouped': atas_grouped
         })
+
+@require_POST
+def excluir_arquivo_ata(request, pk):
+    arquivo = get_object_or_404(ArquivoAta, pk=pk)
+    ata_pk = arquivo.ata.pk
+    try:
+        delete_file_in_drive(arquivo.id_arquivo_drive)
+        arquivo.delete()
+        messages.success(request, "Arquivo excluído com sucesso.")
+    except Exception as e:
+        messages.error(request, f"Erro ao excluir o arquivo: {e}")
+    return HttpResponseRedirect(reverse('detalhe_ata', args=[ata_pk]))
+
+@require_POST
+def adicionar_arquivos_ata(request, pk):
+    ata = get_object_or_404(AtaReuniao, pk=pk)
+    arquivos = request.FILES.getlist('arquivos')
+
+    if not arquivos:
+        messages.warning(request, "Nenhum arquivo selecionado.")
+        return redirect('detalhe_ata', pk=pk)
+
+    # Usa a pasta existente da ata ou cria uma nova se não existir
+    pasta_id = ata.arquivos.first().id_pasta_drive if ata.arquivos.exists() else None
+    if not pasta_id:
+        nome_pasta = f"Ata - {ata.contrato.numero} - {ata.data.strftime('%d-%m-%Y')} - ID{ata.pk}"
+        pasta_id = create_folder_for_ata(nome_pasta)
+
+    for arquivo in arquivos:
+        link_drive, file_id = upload_file_to_drive(arquivo, arquivo.name, pasta_id)
+        ArquivoAta.objects.create(
+            ata=ata,
+            nome=arquivo.name,
+            link_arquivo=link_drive,
+            id_arquivo_drive=file_id,
+            id_pasta_drive=pasta_id
+        )
+
+    messages.success(request, f"{len(arquivos)} arquivo(s) anexado(s) com sucesso.")
+    return redirect('detalhe_ata', pk=pk)

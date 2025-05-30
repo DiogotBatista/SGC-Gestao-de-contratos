@@ -1,11 +1,16 @@
 from django import forms
-from .models import AtaReuniao, ItemAta, CategoriaItemAta
+from .models import AtaReuniao, ItemAta, CategoriaItemAta, ArquivoAta
 from django.forms import inlineformset_factory
 from django.forms.widgets import DateInput
 from contratos.models import Contrato
 
-
 class AtaReuniaoForm(forms.ModelForm):
+    arquivos = forms.FileField(
+        required=False,
+        widget=forms.ClearableFileInput(attrs={'class': 'form-control'}),
+        label='Arquivos Digitalizados'
+    )
+
     class Meta:
         model = AtaReuniao
         fields = ['contrato', 'data', 'resumo']

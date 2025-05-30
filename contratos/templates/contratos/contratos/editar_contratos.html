@@ -19,7 +19,7 @@
             </div>
           {% endif %}
 
-          <form method="post" novalidate>
+          <form method="post" novalidate id="form-editar-contrato">
             {% csrf_token %}
             <div class="row g-3">
               {% for field in form %}
@@ -66,6 +66,10 @@
 <script>
   $(document).ready(function(){
     $('.moeda').mask('#.##0,00', {reverse: true});
+  });
+
+  document.getElementById('form-editar-contrato').addEventListener('submit', function() {
+    showLoadingOverlay();
   });
 </script>
 {% endblock %}

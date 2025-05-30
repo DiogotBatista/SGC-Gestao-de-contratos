@@ -46,6 +46,39 @@
             <div class="border rounded p-2 bg-light">{{ ata.resumo|linebreaksbr }}</div>
           </div>
           {% endif %}
+
+          <div class="mt-4">
+            <h5>Arquivos Anexados</h5>
+            {% if arquivos %}
+              <ul class="list-group">
+                {% for arquivo in arquivos %}
+                  <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <a href="{{ arquivo.link_arquivo }}" target="_blank">{{ arquivo.nome }}</a>
+                    <form method="post" action="{% url 'excluir_arquivo_ata' arquivo.pk %}" style="display:inline;" class="form-excluir-arquivo">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-sm btn-outline-danger">
+                        <i class="bi bi-trash"></i> Excluir
+                      </button>
+                    </form>
+                  </li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <p class="text-muted">Nenhum arquivo anexado.</p>
+            {% endif %}
+
+            <form method="post" enctype="multipart/form-data" class="mt-3" id="form-anexo" action="{% url 'adicionar_arquivos_ata' ata.pk %}">
+              {% csrf_token %}
+              <div class="input-group">
+                <input type="file" name="arquivos" class="form-control" multiple required>
+                <button type="submit" class="btn btn-outline-success" id="btn-anexar">
+                  <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true" id="spinner-anexo"></span>
+                  <span id="btn-text-anexo"><i class="bi bi-upload"></i> Anexar Arquivo(s)</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
         </div>
       </div>
 
@@ -110,4 +143,18 @@
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.getElementById('form-anexo').addEventListener('submit', function() {
+    showLoadingOverlay();
+  });
+
+  document.querySelectorAll('.form-excluir-arquivo').forEach(function(form) {
+    form.addEventListener('submit', function() {
+      showLoadingOverlay();
+    });
+  });
+</script>
 {% endblock %}

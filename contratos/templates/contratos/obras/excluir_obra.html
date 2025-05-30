@@ -14,7 +14,7 @@
             Se a obra não estiver mais ativa, você pode apenas desmarcar o campo <strong>"Ativo"</strong> na <a href="{% url 'editar_obra' object.pk %}">edição</a>.
           </p>
 
-          <form method="post" id="form-exclusao">
+          <form method="post" id="form-excluir-obra">
             {% csrf_token %}
             <div class="form-check mb-4">
               <input class="form-check-input" type="checkbox" id="confirmarExclusao">
@@ -27,7 +27,7 @@
               <button type="submit" id="btn-excluir" class="btn btn-danger" disabled>
                 <i class="bi bi-trash"></i> Confirmar Exclusão
               </button>
-                <a href="#" onclick="window.history.length > 1 ? history.back() : window.location.href='{% url 'detalhes_obra' object.pk %}'; return false;" class="btn btn-outline-secondary">
+              <a href="#" onclick="window.history.length > 1 ? history.back() : window.location.href='{% url 'detalhes_obra' object.pk %}'; return false;" class="btn btn-outline-secondary">
                 <i class="bi bi-x-circle"></i> Cancelar
               </a>
             </div>
@@ -38,13 +38,21 @@
   </div>
 </div>
 
+{% endblock %}
+
+{% block extra_js %}
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     const checkbox = document.getElementById("confirmarExclusao");
     const botao = document.getElementById("btn-excluir");
+    const form = document.getElementById("form-excluir-obra");
 
     checkbox.addEventListener("change", function () {
       botao.disabled = !this.checked;
+    });
+
+    form.addEventListener('submit', function() {
+      showLoadingOverlay();
     });
   });
 </script>

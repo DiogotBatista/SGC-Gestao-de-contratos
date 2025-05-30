@@ -43,6 +43,7 @@
     </style>
     {% endblock extra_head %}
 </head>
+
 <body class="d-flex flex-column min-vh-100">
     <header>
         {% block header %}
@@ -192,5 +193,251 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
 
     {% block extra_js %}{% endblock extra_js %}
+
+<!-- Overlay de Carregamento -->
+<!--
+<div id="loading-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999; align-items:center; justify-content:center;">
+  <div class="spinner-border text-light" role="status" style="width: 4rem; height: 4rem;"></div>
+</div>
+
+<script>
+  function showLoadingOverlay() {
+    document.getElementById('loading-overlay').style.display = 'flex';
+  }
+</script>
+-->
+
+<!-- Overlay Estilo Hackerman (comentado) -->
+<!--
+<div id="loading-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); color:#00ff00; z-index:9999; align-items:center; justify-content:center; flex-direction: column; font-family: monospace; text-align: center; font-size: 1.5rem;">
+  <h1 id="loading-text">Carregando...</h1>
+</div>
+<script>
+  const frases = [
+    "Processando com carinho... Aguenta aí, guerreiro!",
+    "O sistema é forte, o backend é ligeiro!",
+    "Relaxou? Backend no corre aqui!",
+    "Só um segundo... quase lá!"
+  ];
+  let fraseInterval = null;
+  function showLoadingOverlay() {
+    const overlay = document.getElementById('loading-overlay');
+    const text = document.getElementById('loading-text');
+    overlay.style.display = 'flex';
+    let index = 0;
+    fraseInterval = setInterval(() => {
+      text.textContent = frases[index % frases.length];
+      index++;
+    }, 1500);
+  }
+</script>
+-->
+
+<!-- Overlay Estilo GIF Temático (ATIVO) -->
+<!--
+<div id="loading-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; align-items:center; justify-content:center;">
+  <img src="https://media.giphy.com/media/3o7TKU8RvQuomFfUUU/giphy.gif" style="width:150px; height:150px;" alt="Carregando...">
+</div>
+<script>
+  function showLoadingOverlay() {
+    document.getElementById('loading-overlay').style.display = 'flex';
+  }
+</script>
+-->
+
+<!-- Overlay Estilo Partículas (ATIVO) -->
+<!--
+<div id="loading-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: radial-gradient(circle at center, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.95) 100%); z-index:9999; align-items:center; justify-content:center; flex-direction: column; font-family: monospace; text-align: center; font-size: 1.5rem;">
+  <div class="dots"></div>
+  <h1 style="color: #bb00ff; margin-top: 60px;">Sistema em operação...</h1>
+</div>
+
+<style>
+  .dots {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #00ffff, #0088ff);
+    box-shadow:
+      0 0 30px #00ffff,
+      0 0 60px #00ffff,
+      0 0 90px #00ffff,
+      0 0 120px #00ffff;
+    animation: pulse 1.2s infinite alternate;
+  }
+
+  @keyframes pulse {
+    0% { transform: scale(1); opacity: 0.8; }
+    100% { transform: scale(1.5); opacity: 1; }
+  }
+</style>
+
+<script>
+  function showLoadingOverlay() {
+    document.getElementById('loading-overlay').style.display = 'flex';
+  }
+</script>
+-->
+
+<!-- Fundo Pulsante Energizado (ATIVO) -->
+<!--
+<div id="loading-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: linear-gradient(45deg, #6f00ff, #00ffff); background-size: 400% 400%; z-index:9999; align-items:center; justify-content:center; flex-direction: column; font-family: monospace; text-align: center; font-size: 1.5rem; animation: gradientMove 3s ease infinite;">
+  <h1 style="color: #ffffff; text-shadow: 0 0 10px #ffffff;">Carregando dados... 🚀</h1>
+</div>
+
+<style>
+  @keyframes gradientMove {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+</style>
+
+<script>
+  function showLoadingOverlay() {
+    document.getElementById('loading-overlay').style.display = 'flex';
+  }
+</script>
+-->
+
+<!-- Partícula Flutuante Estilo "Sistema terra sol" -->
+
+<div id="loading-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(18,18,18,0.9); z-index:9999; align-items:center; justify-content:center; flex-direction: column; font-family: monospace; text-align: center; font-size: 1.5rem; overflow: hidden;">
+  <div class="orbita-container">
+    <div class="nucleo"></div>
+    <div class="orbit"></div>
+  </div>
+  <h1 style="color: #e0e0e0; margin-top: 80px;">Processando.... Sincronizando dados...</h1>
+</div>
+
+<style>
+  .orbita-container {
+    position: relative;
+    width: 200px;
+    height: 200px;
+  }
+
+  .nucleo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 40px;
+    height: 40px;
+    background: radial-gradient(circle, #ffcc00, #ffaa00);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow:
+      0 0 10px #ffcc00,
+      0 0 20px #ffcc00;
+  }
+
+  .orbit {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 150px;
+    height: 150px;
+    border: 2px dashed rgba(0, 188, 212, 0.4);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: spin 3s linear infinite;
+  }
+
+  .orbit::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    width: 16px;
+    height: 16px;
+    background-color: #00bcd4;
+    border-radius: 50%;
+    box-shadow:
+      0 0 5px #00bcd4,
+      0 0 10px #00bcd4;
+    transform: translate(-50%, -50%);
+  }
+
+  @keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+  }
+</style>
+
+<script>
+  function showLoadingOverlay() {
+    document.getElementById('loading-overlay').style.display = 'flex';
+  }
+</script>
+
+
+<!-- Foguete orbitando a terra -->
+<!--
+<div id="loading-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color: rgba(18,18,18,0.9); z-index:9999; align-items:center; justify-content:center; flex-direction: column; font-family: monospace; text-align: center; font-size: 1.5rem; overflow: hidden;">
+  <div class="orbita-container">
+    <div class="terra"></div>
+    <div class="orbit">
+      <div class="foguete">🚀</div>
+    </div>
+  </div>
+  <h1 style="color: #e0e0e0; margin-top: 80px;">Processando... Sincronizando dados...</h1>
+</div>
+
+<style>
+  .orbita-container {
+    position: relative;
+    width: 200px;
+    height: 200px;
+  }
+
+  .terra {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 50px;
+    height: 50px;
+    background: radial-gradient(circle, #00bcd4, #0088aa);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow:
+      0 0 10px #00bcd4,
+      0 0 20px #00bcd4;
+  }
+
+  .orbit {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: spin 5s linear infinite;
+  }
+
+  .foguete {
+    position: absolute;
+    top: 50%;
+    left: 100%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+    font-size: 1.8rem;
+    filter: drop-shadow(0 0 3px #00bcd4);
+  }
+
+  @keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(-360deg); }
+  }
+</style>
+
+<script>
+  function showLoadingOverlay() {
+    document.getElementById('loading-overlay').style.display = 'flex';
+  }
+</script>
+-->
+
+
+
 </body>
 </html>

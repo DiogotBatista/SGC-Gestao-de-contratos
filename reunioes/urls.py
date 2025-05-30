@@ -8,6 +8,8 @@ from .views import (AtaReuniaoCreateView,
                     AtaReuniaoDeleteView,
                     AtasAgrupadasView,
                     MenuAtasView,
+                    excluir_arquivo_ata,
+                    adicionar_arquivos_ata,
                     )
 
 urlpatterns = [
@@ -18,4 +20,7 @@ urlpatterns = [
     path('atas/<int:pk>/', AtaReuniaoDetailView.as_view(), name='detalhe_ata'),
     path('atas/<int:pk>/editar/', AtaReuniaoUpdateView.as_view(), name='editar_ata'),
     path('atas/<int:pk>/excluir/', AtaReuniaoDeleteView.as_view(), name='excluir_ata'),
+    path('excluir-arquivo/<int:pk>/', excluir_arquivo_ata, name='excluir_arquivo_ata'),
+    path('adicionar-arquivos/<int:pk>/', adicionar_arquivos_ata, name='adicionar_arquivos_ata'),
+
 ]

@@ -15,6 +15,9 @@ media
 Arquivos/
 staticfiles/
 su.py
+config/drive_service_account.json
+config/
+Guias Digitalizadas SGM/
 
 
 # If your build process includes running collectstatic, then you probably don't need or want to include staticfiles/

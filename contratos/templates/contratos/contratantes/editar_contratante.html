@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% load custom_filters %}
-{% block title %}Editar Empresa{% endblock %}
+{% block title %}Editar Contratante{% endblock %}
 {% block content %}
 <div class="container mt-4">
   <div class="row justify-content-center">
     <div class="col-md-8">
       <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">
-          <h2 class="mb-0">Editar Empresa</h2>
+          <h2 class="mb-0">Editar Contratante</h2>
         </div>
         <div class="card-body">
           {% if form.non_field_errors %}
@@ -17,46 +17,43 @@
               {% endfor %}
             </div>
           {% endif %}
-
-          <form method="post" novalidate>
+          <form method="post" novalidate autocomplete="off" id="form-editar-contratante">
             {% csrf_token %}
             {% for field in form %}
               <div class="mb-3">
-                {% if field.name == "ativo" %}
-                  <div class="form-check form-switch">
-                    {{ field|add_class:"form-check-input" }}
-                    <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-                  </div>
-                {% else %}
-                  <label for="{{ field.id_for_label }}" class="form-label">
-                    {{ field.label }}
-                  </label>
-                  {{ field|add_class:"form-control form-control-lg" }}
-                {% endif %}
-
+                <label for="{{ field.id_for_label }}" class="form-label">
+                  {{ field.label }}
+                </label>
+                {{ field|add_class:"form-control form-control-lg" }}
                 {% if field.help_text %}
                   <small class="form-text text-muted">{{ field.help_text }}</small>
                 {% endif %}
-
                 {% for error in field.errors %}
                   <div class="text-danger small">{{ error }}</div>
                 {% endfor %}
               </div>
             {% endfor %}
-
             <div class="d-flex justify-content-between">
-              <button type="submit" class="btn btn-primary">
-                <i class="bi bi-pencil-square"></i> Atualizar
+              <button type="submit" class="btn btn-success">
+                <i class="bi bi-save"></i> Salvar Alterações
               </button>
               <a href="{% url 'lista_contratantes' %}" class="btn btn-outline-secondary">
                 <i class="bi bi-x-circle"></i> Cancelar
               </a>
             </div>
           </form>
-
         </div>
       </div>
     </div>
   </div>
 </div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.getElementById('form-editar-contratante').addEventListener('submit', function() {
+    showLoadingOverlay();
+  });
+</script>
 {% endblock %}

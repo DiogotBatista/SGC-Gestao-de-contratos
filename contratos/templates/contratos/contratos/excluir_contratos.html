@@ -18,8 +18,7 @@
             Se o contrato estiver inativo, considere apenas desmarcar o campo <strong>"Ativo"</strong> no formulário de <strong><a href="{% url 'editar_contrato' object.pk %}">edição</a></strong> em vez de excluí-lo.
           </p>
 
-
-          <form method="post" id="form-exclusao">
+          <form method="post" id="form-excluir-contrato">
             {% csrf_token %}
             <div class="form-check mb-4">
               <input class="form-check-input" type="checkbox" id="confirmarExclusao">
@@ -32,10 +31,9 @@
               <button type="submit" id="btn-excluir" class="btn btn-danger" disabled>
                 <i class="bi bi-trash"></i> Confirmar Exclusão
               </button>
-             <a href="{% url 'detalhes_contrato' object.pk %}" class="btn btn-outline-secondary">
-              <i class="bi bi-x-circle"></i> Cancelar
-            </a>
-
+              <a href="{% url 'detalhes_contrato' object.pk %}" class="btn btn-outline-secondary">
+                <i class="bi bi-x-circle"></i> Cancelar
+              </a>
             </div>
           </form>
         </div>
@@ -48,9 +46,14 @@
   document.addEventListener("DOMContentLoaded", function () {
     const checkbox = document.getElementById("confirmarExclusao");
     const botao = document.getElementById("btn-excluir");
+    const form = document.getElementById("form-excluir-contrato");
 
     checkbox.addEventListener("change", function () {
       botao.disabled = !this.checked;
+    });
+
+    form.addEventListener('submit', function() {
+      showLoadingOverlay();
     });
   });
 </script>

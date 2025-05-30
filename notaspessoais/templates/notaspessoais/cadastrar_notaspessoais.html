@@ -16,7 +16,7 @@
                 </div>
 
                 <div class="card-body">
-                    <form method="post" autocomplete="off">
+                    <form method="post" autocomplete="off" id="form-notas-pessoais">
                         {% csrf_token %}
 
                         <div class="mb-3">
@@ -50,4 +50,12 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.getElementById('form-notas-pessoais').addEventListener('submit', function() {
+    showLoadingOverlay();
+  });
+</script>
 {% endblock %}

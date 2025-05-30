@@ -37,8 +37,14 @@
   document.addEventListener("DOMContentLoaded", function () {
     const checkbox = document.getElementById("confirmarExclusao");
     const botao = document.getElementById("btn-excluir");
+    const form = document.getElementById("form-exclusao");
+
     checkbox.addEventListener("change", function () {
       botao.disabled = !this.checked;
+    });
+
+    form.addEventListener('submit', function() {
+      showLoadingOverlay();
     });
   });
 </script>

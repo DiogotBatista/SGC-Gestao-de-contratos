@@ -19,7 +19,7 @@
             </div>
           {% endif %}
 
-          <form method="post" novalidate autocomplete="off">
+          <form method="post" novalidate autocomplete="off" id="form-cadastrar-obra">
             {% csrf_token %}
             <div class="row g-3">
               {% for field in form %}
@@ -50,4 +50,12 @@
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.getElementById('form-cadastrar-obra').addEventListener('submit', function() {
+    showLoadingOverlay();
+  });
+</script>
 {% endblock %}

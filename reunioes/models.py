@@ -5,7 +5,6 @@ from django.conf import settings
 from contratos.models import Contrato
 from django.utils import timezone
 
-
 class AtaReuniao(models.Model):
     nome = models.CharField(max_length=255, editable=False, blank=True)
     contrato = models.ForeignKey(Contrato, on_delete=models.CASCADE, related_name='atas')
@@ -52,9 +51,6 @@ class CategoriaItemAta(models.Model):
     def __str__(self):
         return self.nome
 
-from django.db import models
-from django.conf import settings
-
 from django.utils import timezone
 
 class ItemAta(models.Model):
@@ -96,6 +92,18 @@ class ItemAta(models.Model):
         if self.data_prazo and self.status == 'pendente':
             return "atrasado" if self.data_prazo < timezone.now().date() else "em_dia"
         return None
+
+class ArquivoAta(models.Model):
+    ata = models.ForeignKey(AtaReuniao, on_delete=models.CASCADE, related_name='arquivos')
+    nome = models.CharField(max_length=255, help_text="Nome original do arquivo")
+    link_arquivo = models.URLField("Link no Drive")
+    id_arquivo_drive = models.CharField("ID do Arquivo no Drive", max_length=100)
+    id_pasta_drive = models.CharField("ID da Pasta no Drive", max_length=100, blank=True, null=True)
+    data_upload = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.nome
+
 
 
 

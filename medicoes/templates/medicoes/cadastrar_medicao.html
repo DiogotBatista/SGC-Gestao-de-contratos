@@ -16,7 +16,7 @@
               {% for error in form.non_field_errors %}{{ error }}<br>{% endfor %}
             </div>
           {% endif %}
-          <form method="post" novalidate autocomplete="off">
+          <form method="post" novalidate autocomplete="off" id="form-cadastrar-medicao">
             {% csrf_token %}
             <div class="row g-3">
               {% for field in form %}
@@ -46,4 +46,12 @@
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.getElementById('form-cadastrar-medicao').addEventListener('submit', function() {
+    showLoadingOverlay();
+  });
+</script>
 {% endblock %}

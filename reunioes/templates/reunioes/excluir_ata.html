@@ -15,10 +15,10 @@
             de <strong>{{ object.data|date:"d/m/Y" }}</strong>?
           </p>
           <p class="small text-muted">
-            <strong>Atenção:</strong> essa ação é irreversível e removerá também os itens vinculados à ata.
+            <strong>Atenção:</strong> essa ação é irreversível e removerá também os itens e arquivos vinculados à ata.
           </p>
 
-          <form method="post">
+          <form method="post" id="form-excluir-ata">
             {% csrf_token %}
 
             <div class="form-check mb-3">
@@ -50,9 +50,14 @@
   document.addEventListener("DOMContentLoaded", function () {
     const checkbox = document.getElementById('confirmar');
     const btnExcluir = document.getElementById('btn-excluir');
+    const formExcluir = document.getElementById('form-excluir-ata');
 
     checkbox.addEventListener('change', function () {
       btnExcluir.disabled = !this.checked;
+    });
+
+    formExcluir.addEventListener('submit', function () {
+      showLoadingOverlay();
     });
   });
 </script>

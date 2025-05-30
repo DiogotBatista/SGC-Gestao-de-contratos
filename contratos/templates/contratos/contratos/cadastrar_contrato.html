@@ -19,7 +19,7 @@
             </div>
           {% endif %}
 
-          <form method="post" novalidate autocomplete="off">
+          <form method="post" novalidate autocomplete="off" id="form-cadastrar-contrato">
             {% csrf_token %}
             <div class="row g-3">
               {% for field in form %}
@@ -57,12 +57,16 @@
 {% endblock %}
 
 {% block extra_js %}
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
-  <script>
-    $(document).ready(function(){
-      $('[name="cnpj"]').mask('00.000.000/0000-00');
-      $('.moeda').mask('#.##0,00', {reverse: true});
-    });
-  </script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+<script>
+  $(document).ready(function(){
+    $('[name="cnpj"]').mask('00.000.000/0000-00');
+    $('.moeda').mask('#.##0,00', {reverse: true});
+  });
+
+  document.getElementById('form-cadastrar-contrato').addEventListener('submit', function() {
+    showLoadingOverlay();
+  });
+</script>
 {% endblock %}

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% load custom_filters %}
-{% block title %}Cadastrar Ata{% endblock %}
+{% block title %}Editar Ata{% endblock %}
 
 {% block content %}
 <div class="container mt-4 mb-5">
@@ -9,7 +9,7 @@
     <div class="col-lg-10">
       <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">
-          <h2 class="mb-0">Cadastrar Ata de Reunião</h2>
+          <h2 class="mb-0">Editar Ata de Reunião</h2>
         </div>
         <div class="card-body">
 
@@ -26,31 +26,27 @@
             </div>
           {% endif %}
 
-          <form method="post" novalidate id="form-ata">
+          <form method="post" enctype="multipart/form-data" novalidate id="form-ata">
             {% csrf_token %}
 
             <div class="mb-3">
               <label class="form-label">Contrato</label>
               {{ form.contrato|add_class:"form-select" }}
-              {% for error in form.contrato.errors %}
-                <div class="invalid-feedback d-block">{{ error }}</div>
-              {% endfor %}
             </div>
 
             <div class="mb-3">
               <label class="form-label">Data da Reunião</label>
               {{ form.data|add_class:"form-control" }}
-              {% for error in form.data.errors %}
-                <div class="invalid-feedback d-block">{{ error }}</div>
-              {% endfor %}
             </div>
 
             <div class="mb-3">
               <label class="form-label">Resumo</label>
               {{ form.resumo|add_class:"form-control" }}
-              {% for error in form.resumo.errors %}
-                <div class="invalid-feedback d-block">{{ error }}</div>
-              {% endfor %}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Arquivos Digitalizados (adicionar novos)</label>
+              <input type="file" name="arquivos" class="form-control" multiple>
             </div>
 
             <hr>
@@ -152,10 +148,11 @@
             </div>
 
             <div class="d-flex justify-content-between mt-4">
-              <button type="submit" class="btn btn-success">
-                <i class="bi bi-save"></i> Salvar Ata
+              <button type="submit" class="btn btn-success" id="submitBtn">
+                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true" id="loadingSpinner"></span>
+                <span id="btnText"><i class="bi bi-save"></i> Salvar Ata</span>
               </button>
-              <a href="#" onclick="window.history.length > 1 ? history.back() : window.location.href='{% url 'lista_atas' %}'; return false;" class="btn btn-secondary">
+              <a href="{% url 'detalhe_ata' ata.pk %}" class="btn btn-secondary">
                 <i class="bi bi-x-circle"></i> Cancelar
               </a>
             </div>
@@ -170,7 +167,6 @@
 
 {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     const formsetDiv = document.getElementById('formset-itens');
@@ -178,7 +174,6 @@
     const totalForms = document.getElementById('id_form-TOTAL_FORMS');
     const emptyFormHtml = document.getElementById('empty-form-template').innerHTML;
 
-    // Sortable
     Sortable.create(formsetDiv, {
       handle: '.card-body',
       animation: 150,
@@ -191,7 +186,6 @@
       }
     });
 
-    // Adicionar
     addButton.addEventListener('click', function () {
       const index = parseInt(totalForms.value);
       const newForm = emptyFormHtml.replace(/__prefix__/g, index);
@@ -203,7 +197,6 @@
       totalForms.value = index + 1;
     });
 
-    // Remover
     formsetDiv.addEventListener('click', function (e) {
       if (e.target.closest('.remove-item')) {
         const card = e.target.closest('.item-form');
@@ -212,43 +205,13 @@
           deleteInput.value = 'on';
           card.classList.add('fade-out');
           setTimeout(() => { card.style.display = 'none'; }, 300);
-        } else {
-          card.classList.add('fade-out');
-          setTimeout(() => {
-            card.remove();
-            totalForms.value = parseInt(totalForms.value) - 1;
-          }, 300);
         }
       }
     });
+
+    document.getElementById('form-ata').addEventListener('submit', function() {
+      showLoadingOverlay();
+    });
   });
 </script>
-<style>
-  .fade-in {
-    opacity: 0;
-    transform: translateY(-10px);
-    animation: fadeInMove 0.3s ease forwards;
-  }
-
-  @keyframes fadeInMove {
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .fade-out {
-    animation: fadeOutMove 0.3s ease forwards;
-  }
-
-  @keyframes fadeOutMove {
-    to {
-      opacity: 0;
-      transform: translateX(100px);
-      height: 0;
-      margin: 0;
-      padding: 0;
-    }
-  }
-</style>
 {% endblock %}

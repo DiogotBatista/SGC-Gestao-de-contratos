@@ -17,7 +17,7 @@
               {% endfor %}
             </div>
           {% endif %}
-          <form method="post" novalidate autocomplete="off">
+          <form method="post" novalidate autocomplete="off" id="form-cadastrar-contratante">
             {% csrf_token %}
             {% for field in form %}
               <div class="mb-3">
@@ -47,4 +47,13 @@
     </div>
   </div>
 </div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.getElementById('form-cadastrar-contratante').addEventListener('submit', function() {
+    showLoadingOverlay();
+  });
+</script>
 {% endblock %}
