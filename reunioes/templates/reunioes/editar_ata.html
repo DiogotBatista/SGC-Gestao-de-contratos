@@ -42,7 +42,12 @@
             <div class="mb-3">
               <label class="form-label">Resumo</label>
               {{ form.resumo|add_class:"form-control" }}
+             <button id="btn-gerar-resumo" type="button" class="btn btn-outline-primary mt-3">
+              <i class="bi bi-robot"></i> Gerar Resumo automático
+             </button>
             </div>
+
+
 
             <div class="mb-3">
               <label class="form-label">Arquivos Digitalizados (adicionar novos)</label>
@@ -163,6 +168,45 @@
     </div>
   </div>
 </div>
+
+<!-- Modal de Confirmação para Gerar Resumo -->
+<div class="modal fade" id="modalConfirmarResumo" tabindex="-1" aria-labelledby="modalConfirmarResumoLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="modalConfirmarResumoLabel"><i class="bi bi-robot"></i> Gerar Resumo com IA</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        Deseja gerar o resumo automático? Isso pode substituir o resumo atual.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="confirmarGerarResumo">Sim, gerar resumo</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Erro -->
+<div class="modal fade" id="modalErroResumo" tabindex="-1" aria-labelledby="modalErroResumoLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="modalErroResumoLabel"><i class="bi bi-exclamation-triangle"></i> Erro</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body" id="modalErroResumoTexto">
+        <!-- Texto do erro aqui -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 {% endblock %}
 
 {% block extra_js %}
@@ -213,5 +257,51 @@
       showLoadingOverlay();
     });
   });
+
+  let gerarResumoUrl = "{% url 'gerar_resumo_ia' ata.id %}";
+
+  document.getElementById('btn-gerar-resumo').addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    let modal = new bootstrap.Modal(document.getElementById('modalConfirmarResumo'));
+    modal.show();
+  });
+
+  document.getElementById('confirmarGerarResumo').addEventListener('click', function() {
+    let modal = bootstrap.Modal.getInstance(document.getElementById('modalConfirmarResumo'));
+    modal.hide();
+
+    showLoadingOverlay();
+
+    fetch(gerarResumoUrl, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': '{{ csrf_token }}'
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.resumo) {
+        document.getElementById('id_resumo').value = data.resumo;
+        // Remove o alert de sucesso aqui
+      } else {
+        showErrorModal("Erro: " + data.erro);
+      }
+    })
+    .catch(error => {
+      showErrorModal("Erro: " + error);
+    })
+    .finally(() => {
+      showLoadingOverlay(false); // Isso garante que o overlay sempre será escondido
+    });
+  });
+
+  // Função para exibir erros como modal
+  function showErrorModal(mensagem) {
+    let modalErro = new bootstrap.Modal(document.getElementById('modalErroResumo'));
+    document.getElementById('modalErroResumoTexto').innerText = mensagem;
+    modalErro.show();
+  }
 </script>
 {% endblock %}

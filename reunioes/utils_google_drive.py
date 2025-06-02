@@ -1,7 +1,8 @@
 import os
+import io
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
-from googleapiclient.http import MediaIoBaseUpload
+from googleapiclient.http import MediaIoBaseUpload, MediaIoBaseDownload
 from io import BytesIO
 from django.conf import settings
 
@@ -67,3 +68,20 @@ def delete_folder_in_drive(folder_id):
         service.files().delete(fileId=folder_id).execute()
     except Exception as e:
         print(f"Erro ao excluir pasta {folder_id}: {e}")
+
+def download_file_from_drive(file_id, destino_local):
+    """
+    Baixa um arquivo do Google Drive usando o ID e salva no caminho destino_local.
+    """
+    service = get_drive_service()
+    request = service.files().get_media(fileId=file_id)
+    fh = io.FileIO(destino_local, mode='wb')
+    downloader = MediaIoBaseDownload(fh, request)
+    done = False
+
+    while not done:
+        status, done = downloader.next_chunk()
+        if status:
+            print(f"Download {int(status.progress() * 100)}% concluído.")
+
+    fh.close()

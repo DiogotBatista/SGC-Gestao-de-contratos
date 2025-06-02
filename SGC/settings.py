@@ -17,6 +17,8 @@ from decouple import config, Csv
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 GOOGLE_DRIVE_FOLDER_ID = config('GOOGLE_DRIVE_FOLDER_ID')
+OPENAI_API_KEY = config("OPENAI_API_KEY")
+OPENROUTER_API_KEY = config("OPENROUTER_API_KEY")
 
 
 # Quick-start development settings - unsuitable for production

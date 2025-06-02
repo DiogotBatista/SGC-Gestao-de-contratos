@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from core.mixins import AccessRequiredMixin, ContratoAccessMixin
 from django.utils.decorators import method_decorator
 from django.views import View
-from django.views.generic import ListView, DetailView, DeleteView, TemplateView
+from django.views.generic import ListView, DetailView, DeleteView, TemplateView, UpdateView
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse_lazy, reverse
@@ -13,6 +13,9 @@ from .forms import AtaReuniaoForm, ItemAtaFormSet
 from .utils_google_drive import create_folder_for_ata, upload_file_to_drive, delete_file_in_drive, delete_folder_in_drive
 from django.http import HttpResponseRedirect
 from django.views.decorators.http import require_POST
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .utils_ai import gerar_resumo_ata
 
 class MenuAtasView(AccessRequiredMixin, TemplateView):
     template_name = 'reunioes/menu_atas.html'
@@ -80,11 +83,14 @@ class AtaReuniaoCreateView(AccessRequiredMixin, View):
 
         return render(request, self.template_name, {'form': ata_form, 'formset': formset})
 
-class AtaReuniaoUpdateView(AccessRequiredMixin, ContratoAccessMixin, View):
+class AtaReuniaoUpdateView(AccessRequiredMixin, ContratoAccessMixin, UpdateView):
+    model = AtaReuniao
+    form_class = AtaReuniaoForm
+    template_name = 'reunioes/editar_ata.html'
     allowed_cargos = []
     view_name = 'atualizar_atas'
-    template_name = 'reunioes/editar_ata.html'
     no_permission_redirect_url = 'lista_atas'
+
 
     def get(self, request, pk):
         ata = get_object_or_404(AtaReuniao, pk=pk)
@@ -251,3 +257,13 @@ def adicionar_arquivos_ata(request, pk):
 
     messages.success(request, f"{len(arquivos)} arquivo(s) anexado(s) com sucesso.")
     return redirect('detalhe_ata', pk=pk)
+
+@method_decorator(csrf_exempt, name='dispatch')
+class GerarResumoIAView(View):
+    def post(self, request, ata_id):
+        try:
+            resumo = gerar_resumo_ata(ata_id)
+            return JsonResponse({"resumo": resumo})
+        except Exception as e:
+            return JsonResponse({"erro": str(e)}, status=500)
+

@@ -10,6 +10,7 @@ from .views import (AtaReuniaoCreateView,
                     MenuAtasView,
                     excluir_arquivo_ata,
                     adicionar_arquivos_ata,
+                    GerarResumoIAView,
                     )
 
 urlpatterns = [
@@ -22,5 +23,6 @@ urlpatterns = [
     path('atas/<int:pk>/excluir/', AtaReuniaoDeleteView.as_view(), name='excluir_ata'),
     path('excluir-arquivo/<int:pk>/', excluir_arquivo_ata, name='excluir_arquivo_ata'),
     path('adicionar-arquivos/<int:pk>/', adicionar_arquivos_ata, name='adicionar_arquivos_ata'),
+    path('gerar-resumo/<int:ata_id>/', GerarResumoIAView.as_view(), name='gerar_resumo_ia'),
 
 ]
