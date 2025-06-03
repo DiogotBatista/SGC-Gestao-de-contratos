@@ -142,6 +142,9 @@ class AtaReuniaoUpdateView(AccessRequiredMixin, ContratoAccessMixin, UpdateView)
                     item.save()
 
             messages.success(request, 'Ata atualizada com sucesso.')
+            next_url = request.POST.get('next')
+            if next_url:
+                return redirect(f"{reverse('detalhe_ata', args=[ata.pk])}?next={next_url}")
             return redirect('detalhe_ata', pk=ata.pk)
 
         return render(request, self.template_name, {'form': form, 'formset': formset, 'ata': ata})
@@ -196,6 +199,13 @@ class AtaReuniaoDeleteView(AccessRequiredMixin, ContratoAccessMixin, DeleteView)
             delete_folder_in_drive(pasta_id)
         messages.success(self.request, 'Ata excluída com sucesso.')
         return super().form_valid(form)
+
+    def get_success_url(self):
+        next_url = self.request.POST.get('next') or self.request.GET.get('next')
+        if next_url:
+            return str(next_url)
+        return reverse('lista_atas')
+
 
 class AtasAgrupadasView(AccessRequiredMixin, View):
     template_name = 'reunioes/atas_agrupadas.html'

@@ -36,7 +36,6 @@
         <tr>
           <th class="text-center">Data</th>
           <th class="text-center">Contrato</th>
-          <th class="text-center">Autor</th>
           <th class="text-center">Resumo</th>
           <th class="text-center" style="min-width: 120px;">Ações</th>
         </tr>
@@ -46,12 +45,12 @@
           <tr>
             <td class="text-center">{{ ata.data|date:"d/m/Y" }}</td>
             <td class="text-center">{{ ata.contrato.numero }}</td>
-            <td class="text-center">{{ ata.autor.get_full_name|default:ata.autor.username }}</td>
             <td>{{ ata.resumo|truncatewords:10 }}</td>
             <td class="text-center">
-              <a href="{% url 'detalhe_ata' ata.pk %}" class="btn btn-outline-primary btn-sm">
+              <a href="{% url 'detalhe_ata' ata.pk %}?next={{ request.path }}" class="btn btn-outline-primary btn-sm">
                 <i class="bi bi-eye"></i> Detalhes
               </a>
+
             </td>
           </tr>
         {% empty %}

@@ -20,6 +20,8 @@
 
           <form method="post" id="form-excluir-ata">
             {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.GET.next }}">
+
 
             <div class="form-check mb-3">
               <input type="checkbox" class="form-check-input" id="confirmar" required>
@@ -32,7 +34,8 @@
               <button type="submit" class="btn btn-danger" id="btn-excluir" disabled>
                 <i class="bi bi-trash"></i> Confirmar Exclusão
               </button>
-              <a href="{% url 'detalhe_ata' object.pk %}" class="btn btn-secondary">
+              <a href="{% url 'detalhe_ata' object.pk %}?next={{ request.GET.next|urlencode }}" class="btn btn-secondary">
+
                 <i class="bi bi-x-circle"></i> Cancelar
               </a>
             </div>

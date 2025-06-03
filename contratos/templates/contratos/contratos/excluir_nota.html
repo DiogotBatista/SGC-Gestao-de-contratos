@@ -22,7 +22,7 @@
               </label>
             </div>
             <div class="d-flex justify-content-between">
-            <a href="#" onclick="window.history.length > 1 ? history.back() : window.location.href='{% url 'detalhes_contrato' object.contrato.pk %}'; return false;" class="btn btn-secondary">
+            <a href="{% url 'detalhes_contrato' object.contrato.pk %}" class="btn btn-secondary">
               <i class="bi bi-x-circle"></i> Cancelar
             </a>
 

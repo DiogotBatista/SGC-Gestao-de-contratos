@@ -158,9 +158,15 @@
               <button type="submit" class="btn btn-success me-2">
                 <i class="bi bi-save"></i> Salvar
               </button>
+              {% if form.instance.pk %}
+              <a href="{% url 'detalhe_proposta' object.pk %}" class="btn btn-secondary">
+                <i class="bi bi-x-circle"></i> Cancelar
+              </a>
+              {% else %}
               <a href="{% url 'lista_propostas' %}" class="btn btn-secondary">
                 <i class="bi bi-x-circle"></i> Cancelar
               </a>
+              {% endif %}
             </div>
 
           </form>
