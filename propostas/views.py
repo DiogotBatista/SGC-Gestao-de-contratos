@@ -22,11 +22,12 @@ class PropostaListView(AccessRequiredMixin, ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        q = self.request.GET.get("q")
-        data_inicio = self.request.GET.get("data_inicio")
-        data_fim = self.request.GET.get("data_fim")
-        situacao = self.request.GET.get("situacao")
-        etapa = self.request.GET.get("etapa")
+        request = self.request
+        q = request.GET.get("q")
+        data_inicio = request.GET.get("data_inicio")
+        data_fim = request.GET.get("data_fim")
+        situacao = request.GET.get("situacao")
+        etapa = request.GET.get("etapa")
 
         if q:
             queryset = queryset.filter(
@@ -46,7 +47,29 @@ class PropostaListView(AccessRequiredMixin, ListView):
         if etapa:
             queryset = queryset.filter(etapa_atual=etapa)
 
-        return queryset
+        # Ordenação
+        sort = request.GET.get("sort", "data_cadastro")
+        dir = request.GET.get("dir", "desc")
+
+        # Mapeia os nomes amigáveis para os campos reais
+        sort_map = {
+            "titulo": "titulo",
+            "contratante": "contratante__nome",
+            "local": "local_execucao",
+            "valor": "valor_estimado",
+            "recebido": "data_recebimento",
+            "situacao": "situacao",
+            "etapa": "etapa_atual",
+            "criado": "data_cadastro",
+            "atualizado": "data_alteracao",
+        }
+
+        sort_field = sort_map.get(sort, "data_cadastro")
+        if dir == "desc":
+            sort_field = f"-{sort_field}"
+
+        return queryset.order_by(sort_field)
+
 
 class PropostaCreateView(AccessRequiredMixin, CreateView):
     """

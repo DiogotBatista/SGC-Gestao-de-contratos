@@ -115,6 +115,16 @@ class PropostaOrcamento(models.Model):
         ordering = ['-data_cadastro']
         verbose_name = "Proposta de Orçamento"
         verbose_name_plural = "Propostas de Orçamento"
+        indexes = [
+            models.Index(fields=["contratante"]),
+            models.Index(fields=["local_execucao"]),
+            models.Index(fields=["valor_estimado"]),
+            models.Index(fields=["data_recebimento"]),
+            models.Index(fields=["situacao"]),
+            models.Index(fields=["etapa_atual"]),
+            models.Index(fields=["data_cadastro"]),
+            models.Index(fields=["data_alteracao"]),
+        ]
 
     def __str__(self):
         valor = f"R$ {self.valor_estimado:,.2f}" if self.valor_estimado is not None else "Valor indefinido"
