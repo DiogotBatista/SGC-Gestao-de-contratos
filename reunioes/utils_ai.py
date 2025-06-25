@@ -98,12 +98,12 @@ def gerar_resumo_openrouter(texto):
 
     headers = {
         "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-        "HTTP-Referer": "https://seusite.com",  # Substitui pelo domínio do teu sistema ou deixa genérico
+        "HTTP-Referer": "https://sgccro.dbsistemas.com.br/",  # Substitui pelo domínio do teu sistema ou deixa genérico
         "X-Title": "SGC Resumo"
     }
 
     data = {
-        "model": "openai/gpt-3.5-turbo",
+        "model": "mistralai/mistral-small-3.2-24b-instruct",
         "messages": [
             {"role": "system", "content": "Você é um assistente especialista em gerar resumos claros e objetivos de atas de reunião."},
             {"role": "user", "content": prompt}

@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'contratos',
     'reunioes',
     'dashboards',
+    'logs',
     'notaspessoais',
     'tarefas',
     'propostas',
@@ -67,6 +68,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'logs.middleware.erro_logger.LogErroMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

@@ -477,3 +477,9 @@ class NotaObraDeleteView(AccessRequiredMixin, DeleteView):
     def get_success_url(self):
         messages.success(self.request, 'Anotação excluída com sucesso.')
         return reverse_lazy('detalhes_obra', kwargs={'pk': self.object.obra.pk})
+
+from django.http import HttpResponse
+
+def view_com_erro(request):
+    x = 1 / 0  # isso vai causar ZeroDivisionError
+    return HttpResponse("Isso nunca será exibido.")

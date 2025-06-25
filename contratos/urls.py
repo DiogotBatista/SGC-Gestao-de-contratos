@@ -24,6 +24,7 @@ from .views import (
     NotaObraCreateView,
     NotaObraUpdateView,
     NotaObraDeleteView,
+    view_com_erro,
 )
 
 urlpatterns = [
@@ -57,4 +58,6 @@ urlpatterns = [
     path('contratante/<int:pk>/excluir/', ContratanteDeleteView.as_view(), name='excluir_contratante'),
 
     # futuramente: path('contratos/novo/', views.criar_contrato, name='criar_contrato'),
+
+    path('forcar-erro/', view_com_erro, name='forcar_erro'),
 ]
