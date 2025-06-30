@@ -6,6 +6,8 @@ class ErroSistema(models.Model):
     usuario = models.CharField(max_length=255, blank=True)
     mensagem = models.TextField()
     stack_trace = models.TextField(blank=True)
+    corrigido = models.BooleanField("Corrigido?", default=False)
+    acao_corretiva = models.TextField("Ação corretiva", blank=True)
 
     def __str__(self):
         return f"[{self.data.strftime('%d/%m/%Y %H:%M:%S')}] {self.view or 'view desconhecida'}"

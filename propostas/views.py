@@ -17,7 +17,7 @@ class PropostaListView(AccessRequiredMixin, ListView):
     model = PropostaOrcamento
     template_name = 'propostas/lista_propostas.html'
     context_object_name = 'propostas'
-    ordering = ['-data_cadastro']
+    ordering = ['-data_alteracao']
     paginate_by = 25
 
     def get_queryset(self):
