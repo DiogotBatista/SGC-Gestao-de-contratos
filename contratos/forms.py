@@ -102,24 +102,34 @@ class ContratanteForm(forms.ModelForm):
 class ObraForm(forms.ModelForm):
     class Meta:
         model = Obra
-        fields = ['codigo', 'contrato', 'descricao', 'local', 'porcentagem_execucao', 'ativo']
+        fields = [
+            'codigo', 'contrato', 'descricao', 'local',
+            'data_inicio_atividade', 'data_termino_previsto',
+            'porcentagem_execucao', 'ativo'
+        ]
         labels = {
             'codigo': 'Cod. Obra',
-            'local': 'Local',
             'contrato': 'Contrato',
             'descricao': 'Descrição',
+            'local': 'Local',
+            'data_inicio_atividade': 'Início das Atividades',
+            'data_termino_previsto': 'Término Previsto',
             'porcentagem_execucao': 'Execução (%)',
             'ativo': 'Ativo',
         }
         help_texts = {
             'codigo': 'Código da obra/serviço',
-            'local': 'Local de execução da obra',
             'contrato': 'Informar o contrato da obra',
             'descricao': 'Descrição ou observações sobre a obra',
+            'local': 'Local de execução da obra',
+            'data_inicio_atividade': 'Data prevista para início das atividades da obra',
+            'data_termino_previsto': 'Data prevista para término da obra',
             'porcentagem_execucao': 'Percentual de execução da obra',
             'ativo': 'Indica se a obra está ativa',
         }
         widgets = {
+            'data_inicio_atividade': DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'data_termino_previsto': DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'porcentagem_execucao': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01', 'min': '0', 'max': '100'}),
             'ativo': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
@@ -138,6 +148,14 @@ class ObraForm(forms.ModelForm):
                 self.fields['contrato'].queryset = user.userprofile.contratos.filter(ativo=True)
 
         self.fields['contrato'].label_from_instance = lambda obj: f"{obj.numero} - {obj.contratante}"
+
+    def clean(self):
+        cleaned_data = super().clean()
+        inicio = cleaned_data.get("data_inicio_atividade")
+        fim = cleaned_data.get("data_termino_previsto")
+
+        if inicio and fim and fim < inicio:
+            self.add_error("data_termino_previsto", "A data de término previsto não pode ser anterior à data de início.")
 
 class NotaObraForm(forms.ModelForm):
     class Meta:

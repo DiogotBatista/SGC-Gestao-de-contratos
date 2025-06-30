@@ -172,6 +172,18 @@ class Obra(models.Model):
     codigo = models.CharField(max_length=50, unique=True,verbose_name='Cod/Nome Obra', help_text="Código da obra/serviço")
     contrato = models.ForeignKey(Contrato, on_delete=models.CASCADE, related_name='obras')
     local = models.CharField(max_length=100, help_text="Local de execução da obra")
+    data_inicio_atividade = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name="Início das Atividades",
+        help_text="Data prevista para início das atividades da obra"
+    )
+    data_termino_previsto = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name="Término Previsto",
+        help_text="Data prevista para término da obra"
+    )
     descricao = models.TextField(blank=True, null=True, help_text="Descrição ou observações sobre a obra")
     ativo = models.BooleanField(default=True, help_text="Indica que a obra será tratada como ativa. Ao invés de exclui-la, desmarque isso.")
     porcentagem_execucao = models.DecimalField(
@@ -204,6 +216,12 @@ class Obra(models.Model):
 
     def __str__(self):
         return self.codigo
+
+    @property
+    def dias_previstos(self):
+        if self.data_inicio_atividade and self.data_termino_previsto:
+            return (self.data_termino_previsto - self.data_inicio_atividade).days
+        return None
 
 class NotaContrato(models.Model):
     contrato = models.ForeignKey(Contrato, on_delete=models.CASCADE, related_name='notas')

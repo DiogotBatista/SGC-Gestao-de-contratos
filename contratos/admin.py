@@ -21,7 +21,7 @@ class ContratoAdmin(admin.ModelAdmin):
 
 @admin.register(Obra)
 class ObraAdmin(admin.ModelAdmin):
-    list_display = ['codigo', 'contrato', 'local', 'ativo', 'porcentagem_execucao']
+    list_display = ['codigo', 'contrato', 'local', 'ativo', 'porcentagem_execucao', 'data_inicio_atividade', 'data_termino_previsto']
     list_filter = ['ativo', 'contrato']
     search_fields = ['codigo', 'local', 'contrato__numero']
     ordering = ['codigo']

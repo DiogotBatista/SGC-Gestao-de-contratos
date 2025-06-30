@@ -79,7 +79,7 @@
       <!-- Execução -->
       <p class="mb-2"><strong>Execução:</strong> {{ obra.porcentagem_execucao|floatformat:2 }}%</p>
 
-      <div class="progress" style="height: 20px;">
+      <div class="progress mb-3" style="height: 20px;">
         <div class="progress-bar
           {% if obra.porcentagem_execucao >= 100 %}
             bg-success
@@ -96,9 +96,35 @@
           {{ obra.porcentagem_execucao|floatformat:0 }}%
         </div>
       </div>
+
+      <!-- Datas e Prazo -->
+      <p class="mb-1"><strong>Início das Atividades:</strong>
+        {% if obra.data_inicio_atividade %}
+          {{ obra.data_inicio_atividade|date:"d/m/Y" }}
+        {% else %}
+          <span class="text-muted">Não informado</span>
+        {% endif %}
+      </p>
+
+      <p class="mb-1"><strong>Término Previsto:</strong>
+        {% if obra.data_termino_previsto %}
+          {{ obra.data_termino_previsto|date:"d/m/Y" }}
+        {% else %}
+          <span class="text-muted">Não informado</span>
+        {% endif %}
+      </p>
+
+      <p class="mb-0"><strong>Dias Previstos:</strong>
+        {% if obra.dias_previstos %}
+          {{ obra.dias_previstos }} dias
+        {% else %}
+          <span class="text-muted">--</span>
+        {% endif %}
+      </p>
     </div>
   </div>
 </div>
+
 
       </div>
 
