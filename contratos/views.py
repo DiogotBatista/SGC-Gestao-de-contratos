@@ -91,7 +91,7 @@ class ContratoDetailView(AccessRequiredMixin, ContratoAccessMixin, DetailView):
         total_itens = ItemAta.objects.filter(ata__contrato=contrato).count()
         pendentes = ItemAta.objects.filter(ata__contrato=contrato, status='pendente').count()
         concluidos = ItemAta.objects.filter(ata__contrato=contrato, status='concluido').count()
-        medicoes = Medicao.objects.filter(contrato=contrato).order_by('criado_em')
+        medicoes = Medicao.objects.filter(contrato=contrato).order_by('-criado_em')
         ultima_ata = atas.order_by('-data').first()
 
         context.update({
@@ -149,13 +149,13 @@ class AtasPorContratoView(AccessRequiredMixin, ListView):
     context_object_name = 'atas'
     allowed_cargos = []
     view_name = 'atas_por_contrato'
-
     paginate_by = 20
 
     def get_queryset(self):
-        return AtaReuniao.objects.filter(contrato_id=self.kwargs['pk']).annotate(
-            pendentes=Count('itens', filter=Q(itens__status='pendente'))
-        ).select_related('contrato')
+        return AtaReuniao.objects.filter(contrato_id=self.kwargs['pk']) \
+            .annotate(pendentes=Count('itens', filter=Q(itens__status='pendente'))) \
+            .select_related('contrato') \
+            .order_by('-data')  # <- aqui está o ajuste que faltava
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -174,7 +174,9 @@ class ObrasPorContratoView(AccessRequiredMixin, ListView):
     paginate_by = 20
 
     def get_queryset(self):
-        return Obra.objects.filter(contrato_id=self.kwargs['pk']).select_related('contrato')
+        return Obra.objects.filter(contrato_id=self.kwargs['pk'])\
+            .select_related('contrato')\
+            .order_by('codigo')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
