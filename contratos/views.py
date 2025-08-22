@@ -9,6 +9,8 @@ from reunioes.models import AtaReuniao, ItemAta
 from django.shortcuts import  get_object_or_404, redirect
 from django.http import HttpResponseRedirect
 from medicoes.models import Medicao
+from django.db.models import Q, Count, Max, Sum
+
 
 # MENU
 class MenuView(AccessRequiredMixin, TemplateView):
@@ -92,6 +94,7 @@ class ContratoDetailView(AccessRequiredMixin, ContratoAccessMixin, DetailView):
         pendentes = ItemAta.objects.filter(ata__contrato=contrato, status='pendente').count()
         concluidos = ItemAta.objects.filter(ata__contrato=contrato, status='concluido').count()
         medicoes = Medicao.objects.filter(contrato=contrato).order_by('-criado_em')
+        total_medicoes = medicoes.aggregate(total=Sum('valor'))['total'] or 0
         ultima_ata = atas.order_by('-data').first()
 
         context.update({
@@ -103,6 +106,7 @@ class ContratoDetailView(AccessRequiredMixin, ContratoAccessMixin, DetailView):
         })
         context['medicoes'] = medicoes
         context['nota_form'] = NotaContratoForm()
+        context['total_medicoes'] = total_medicoes
         return context
 
 class ContratoUpdateView(AccessRequiredMixin, ContratoAccessMixin, UpdateView):

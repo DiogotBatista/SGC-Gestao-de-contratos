@@ -1,3 +1,4 @@
+# medicoes/views.py
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from .models import Medicao
@@ -40,6 +41,11 @@ class MedicaoCreateView(AccessRequiredMixin, CreateView):
     allowed_cargos = []
     view_name = 'criar_medicao'
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
     def form_valid(self, form):
         form.instance.created_by = self.request.user
         form.instance.updated_by = self.request.user
@@ -53,6 +59,11 @@ class MedicaoUpdateView(AccessRequiredMixin, ContratoAccessMixin, UpdateView):
     success_url = reverse_lazy('lista_medicoes')
     allowed_cargos = []
     view_name = 'atualizar_medicao'
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
     def form_valid(self, form):
         form.instance.updated_by = self.request.user

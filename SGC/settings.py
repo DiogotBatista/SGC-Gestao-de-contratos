@@ -20,32 +20,46 @@ GOOGLE_DRIVE_FOLDER_ID = config('GOOGLE_DRIVE_FOLDER_ID')
 OPENAI_API_KEY = config("OPENAI_API_KEY")
 OPENROUTER_API_KEY = config("OPENROUTER_API_KEY")
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('DJANGO_SECRET_KEY', default='unsafe-secret-for-dev')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Ambiente: 'production' ou 'development'
+ENV = config('ENV', default='production')
 
-## Recursos Extras de Segurança do Django
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-SECURE_HSTS_PRELOAD = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-SECURE_HSTS_SECONDS = 31536000
-SECURE_CONTENT_TYPE_NOSNIFF = True
-SECURE_BROWSER_XSS_FILTER = True
-CSRF_COOKIE_HTTPONLY = True
-X_FRAME_OPTIONS = 'DENY'
-SESSION_COOKIE_AGE = 60 * 60 * 5  # Tempo limite para ficar logado é de 5 horas
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Usuário será deslogado ao fechar o navegador
-# SECURE_SSL_REDIRECT = True
+# DEBUG controlado por env (em prod cai pra False por padrão)
+DEBUG = config('DEBUG', cast=bool, default=(ENV != 'production'))
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv(), default='localhost,127.0.0.1')
+# Hosts permitidos
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv(), default=['127.0.0.1', 'localhost'])
 
+# CSRF: origens confiáveis (scheme + domínio [+ porta])
+# Ex.: em dev: http://localhost:8000 ; em prod: https://sgccro.dbsistemas.com.br
+CSRF_TRUSTED_ORIGINS = config(
+    'CSRF_TRUSTED_ORIGINS',
+    cast=Csv(),
+    default=['http://localhost:8000', 'http://127.0.0.1:8000'] if ENV != 'production'
+            else ['https://sgccro.dbsistemas.com.br']
+)
+
+# Sessão (ex.: 5h e não expira ao fechar o navegador)
+SESSION_COOKIE_AGE = config('SESSION_COOKIE_AGE', cast=int, default=60*60*5)
+SESSION_EXPIRE_AT_BROWSER_CLOSE = config('SESSION_EXPIRE_AT_BROWSER_CLOSE', cast=bool, default=False)
+
+# Segurança por ambiente
+if ENV == 'production':
+    SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', cast=bool, default=True)
+    SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', cast=bool, default=True)
+    CSRF_COOKIE_SECURE = config('CSRF_COOKIE_SECURE', cast=bool, default=True)
+    SECURE_HSTS_SECONDS = config('SECURE_HSTS_SECONDS', cast=int, default=31536000)  # 1 ano
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = config('SECURE_HSTS_INCLUDE_SUBDOMAINS', cast=bool, default=True)
+    SECURE_HSTS_PRELOAD = config('SECURE_HSTS_PRELOAD', cast=bool, default=True)
+    # Se estiver atrás de proxy (Cloudflare/Nginx) que termina TLS:
+    # SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+else:
+    # Dev-friendly
+    SECURE_SSL_REDIRECT = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
 
 # Application definition
 

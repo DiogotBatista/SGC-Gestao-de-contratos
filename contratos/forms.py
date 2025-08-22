@@ -1,3 +1,4 @@
+# contratos/forms.py
 from django import forms
 from .models import Contrato, Contratante, Obra, NotaContrato, NotaObra
 from django.forms import DateInput
@@ -138,24 +139,54 @@ class ObraForm(forms.ModelForm):
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
 
+        # em criação, mantém sua regra de ocultar o campo "ativo"
         if not self.instance.pk:
-            self.fields.pop('ativo')
+            self.fields.pop('ativo', None)
 
+        # base: apenas contratos ATIVOS e permitidos ao usuário
         if user:
-            if user.is_superuser:
-                self.fields['contrato'].queryset = Contrato.objects.filter(ativo=True)
+            if getattr(user, "is_superuser", False):
+                qs = Contrato.objects.filter(ativo=True)
             else:
-                self.fields['contrato'].queryset = user.userprofile.contratos.filter(ativo=True)
+                profile = getattr(user, "userprofile", None)
+                qs = profile.contratos.filter(ativo=True) if profile else Contrato.objects.none()
+        else:
+            qs = Contrato.objects.none()
 
+        # inclui o contrato atual (mesmo INATIVO) para não sumir no select ao editar
+        if self.instance and self.instance.pk and self.instance.contrato_id:
+            qs = Contrato.objects.filter(pk=self.instance.contrato_id) | qs
+
+        self.fields['contrato'].queryset = qs.distinct()
+        self.fields['contrato'].empty_label = None
         self.fields['contrato'].label_from_instance = lambda obj: f"{obj.numero} - {obj.contratante}"
 
-    def clean(self):
-        cleaned_data = super().clean()
-        inicio = cleaned_data.get("data_inicio_atividade")
-        fim = cleaned_data.get("data_termino_previsto")
+        # se o contrato atual está INATIVO: mostrar, mas BLOQUEAR edição (sem erro de obrigatório)
+        if self.instance and self.instance.pk and getattr(self.instance, 'contrato', None):
+            contrato_atual = self.instance.contrato
+            if contrato_atual and not getattr(contrato_atual, 'ativo', True):
+                self.fields['contrato'].disabled = True
+                self.fields['contrato'].required = False
+                self.fields['contrato'].initial = contrato_atual.pk
 
+    def clean(self):
+        cleaned = super().clean()
+        inicio = cleaned.get("data_inicio_atividade")
+        fim = cleaned.get("data_termino_previsto")
+
+        # mantém sua validação de datas
         if inicio and fim and fim < inicio:
-            self.add_error("data_termino_previsto", "A data de término previsto não pode ser anterior à data de início.")
+            self.add_error("data_termino_previsto",
+                           "A data de término previsto não pode ser anterior à data de início.")
+
+        # se o contrato da obra é INATIVO, preserva-o (campo vem desabilitado e não é enviado no POST)
+        if self.instance and self.instance.pk and getattr(self.instance, 'contrato', None):
+            contrato_atual = self.instance.contrato
+            if contrato_atual and not getattr(contrato_atual, 'ativo', True):
+                cleaned['contrato'] = contrato_atual
+
+        return cleaned
+
 
 class NotaObraForm(forms.ModelForm):
     class Meta:

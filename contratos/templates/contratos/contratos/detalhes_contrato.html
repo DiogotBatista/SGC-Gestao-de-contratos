@@ -24,48 +24,6 @@
 
       <h2 class="mb-4"><i class="bi bi-file-earmark-text"></i> Contrato {{ contrato.numero }}</h2>
 
-<!--      &lt;!&ndash; Painel de Resumo &ndash;&gt;-->
-<!--      <div class="row g-3 mt-3">-->
-<!--        <div class="col-md-3">-->
-<!--          <div class="card border-primary shadow-sm text-center">-->
-<!--            <div class="card-body">-->
-<!--              <h6 class="text-muted">Total de Atas</h6>-->
-<!--              <h4 class="mb-0">{{ total_atas }}</h4>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--        <div class="col-md-3">-->
-<!--          <div class="card border-secondary shadow-sm text-center">-->
-<!--            <div class="card-body">-->
-<!--              <h6 class="text-muted">Itens Totais</h6>-->
-<!--              <h4 class="mb-0">{{ total_itens }}</h4>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--        <div class="col-md-3">-->
-<!--          <div class="card border-warning shadow-sm text-center">-->
-<!--            <div class="card-body">-->
-<!--              <h6 class="text-muted">Pendentes</h6>-->
-<!--              <h4 class="mb-0 text-warning">{{ pendentes }}</h4>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--        <div class="col-md-3">-->
-<!--          <div class="card border-success shadow-sm text-center">-->
-<!--            <div class="card-body">-->
-<!--              <h6 class="text-muted">Concluídos</h6>-->
-<!--              <h4 class="mb-0 text-success">{{ concluidos }}</h4>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--      </div>-->
-
-<!--      {% if ultima_ata %}-->
-<!--        <div class="mt-3 text-muted small">-->
-<!--          Última ata cadastrada em <strong>{{ ultima_ata.data|date:"d/m/Y" }}</strong>-->
-<!--        </div>-->
-<!--      {% endif %}-->
-
       <!-- Cards de detalhes -->
       <div class="row g-4 mt-3">
         <!-- Contratante -->
@@ -229,6 +187,14 @@
               </tr>
               {% endfor %}
             </tbody>
+            <tfoot>
+              <tr>
+                <th class="text-end" colspan="2">Total das medições</th>
+                <th class="text-center">{{ total_medicoes|br_currency }}</th>
+                <th></th>
+              </tr>
+            </tfoot>
+
           </table>
         </div>
         {% else %}
