@@ -24,284 +24,119 @@
 
     {% block extra_head %}
     <style>
-        .navbar-nav .nav-link {
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-        .navbar-nav .nav-link:hover {
-            background-color: rgba(0, 123, 255, 0.1);
-            color: #007bff;
-            border-radius: 4px;
-        }
-        .ui-autocomplete {
-            z-index: 9999;
-        }
-        .fade-out {
-            opacity: 0;
-            transform: translateX(30px);
-            transition: all 0.4s ease;
-        }
+        .navbar-nav .nav-link { transition: background-color .3s ease, color .3s ease; }
+        .navbar-nav .nav-link:hover { background-color: rgba(0,123,255,.1); color: #007bff; border-radius: 4px; }
+        .ui-autocomplete { z-index: 9999; }
+        .fade-out { opacity: 0; transform: translateX(30px); transition: all .4s ease; }
     </style>
     {% endblock extra_head %}
 </head>
 
 <body class="d-flex flex-column min-vh-100">
-    <header>
-        {% block header %}
-        <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="{% url 'index' %}">
-                    <i class="bi bi-clipboard-data"></i> SGC
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+<header>
+{% block header %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{% url 'index' %}">
+      <i class="bi bi-clipboard-data"></i> SGC - CRO
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    {% if user.is_authenticated %}
-                    <ul class="navbar-nav me-auto">
-                        <!-- Início -->
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'index' %}">
-                                <i class="bi bi-house"></i> Início
-                            </a>
-                        </li>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      {% if user.is_authenticated %}
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link" href="{% url 'index' %}"><i class="bi bi-house"></i> Início</a></li>
 
-                        <!-- Contratos -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="contratoDropdown" data-bs-toggle="dropdown">
-                                <i class="bi bi-clipboard-data"></i> Contratos
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="contratoDropdown">
-                                <li><a class="dropdown-item" href="{% url 'menu_contratos' %}"><i class="bi bi-list-ul"></i> Menu</a></li>
-                                <li><a class="dropdown-item" href="{% url 'lista_contratos' %}"><i class="bi bi-file-earmark-text"></i> Contratos</a></li>
-                                <li><a class="dropdown-item" href="{% url 'lista_obras' %}"><i class="bi bi-building"></i> Obras</a></li>
-                                <li><a class="dropdown-item" href="{% url 'lista_contratantes' %}"><i class="bi bi-buildings"></i> Contratantes</a></li>
-                                <li><a class="dropdown-item" href="{% url 'lista_medicoes' %}"><i class="bi bi-clipboard2-check"></i> Medições</a></li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="contratoDropdown" data-bs-toggle="dropdown">
+            <i class="bi bi-clipboard-data"></i> Contratos
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="contratoDropdown">
+            <li><a class="dropdown-item" href="{% url 'menu_contratos' %}"><i class="bi bi-list-ul"></i> Menu</a></li>
+            <li><a class="dropdown-item" href="{% url 'lista_contratos' %}"><i class="bi bi-file-earmark-text"></i> Contratos</a></li>
+            <li><a class="dropdown-item" href="{% url 'lista_obras' %}"><i class="bi bi-building"></i> Obras</a></li>
+            <li><a class="dropdown-item" href="{% url 'lista_contratantes' %}"><i class="bi bi-buildings"></i> Contratantes</a></li>
+            <li><a class="dropdown-item" href="{% url 'lista_medicoes' %}"><i class="bi bi-clipboard2-check"></i> Medições</a></li>
+          </ul>
+        </li>
 
-                            </ul>
-                        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="reunioesDropdown" data-bs-toggle="dropdown">
+            <i class="bi bi-journal-text"></i> Reuniões
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="reunioesDropdown">
+            <li><a class="dropdown-item" href="{% url 'lista_atas' %}"><i class="bi bi-journal-text"></i> Listar Atas</a></li>
+            <li><a class="dropdown-item" href="{% url 'atas_agrupadas' %}"><i class="bi bi-folder2-open"></i> Atas por Contrato</a></li>
+          </ul>
+        </li>
 
-                        <!-- Reuniões -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="reunioesDropdown" data-bs-toggle="dropdown">
-                                <i class="bi bi-journal-text"></i> Reuniões
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="reunioesDropdown">
-                                <li><a class="dropdown-item" href="{% url 'lista_atas' %}"><i class="bi bi-journal-text"></i> Listar Atas</a></li>
-                                <li><a class="dropdown-item" href="{% url 'atas_agrupadas' %}"><i class="bi bi-folder2-open"></i> Atas por Contrato</a></li>
-                            </ul>
-                        </li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'lista_propostas' %}"><i class="bi bi-cash-coin"></i> Propostas</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}"><i class="bi bi-bar-chart-line"></i> Dashboard</a></li>
 
-                        <!-- Propostas -->
-                        <li class="nav-item">
-                          <a class="nav-link" href="{% url 'lista_propostas' %}">
-                            <i class="bi bi-cash-coin"></i> Propostas
-                          </a>
-                        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="externosDropdown" data-bs-toggle="dropdown">
+            <i class="bi bi-share"></i> Sistemas
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="externosDropdown">
+            <li><a class="dropdown-item" href="https://sgmcro.dbsistemas.com.br/" target="_blank"><i class="bi bi-box-seam"></i> GSM - Gestão de Materiais</a></li>
+            <li><a class="dropdown-item" href="https://janos.dbsistemas.com.br/" target="_blank"><i class="bi bi-lightning-charge"></i> JANOS - Chaves Cemig</a></li>
+          </ul>
+        </li>
 
-                        <!-- Dashboard -->
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'dashboard' %}">
-                                <i class="bi bi-bar-chart-line"></i> Dashboard
-                            </a>
-                        </li>
-
-                        <!-- Links externos -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="externosDropdown" data-bs-toggle="dropdown">
-                                <i class="bi bi-share"></i> Sistemas
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="externosDropdown">
-                                <li>
-                                    <a class="dropdown-item" href="https://sgmcro.dbsistemas.com.br/" target="_blank">
-                                        <i class="bi bi-box-seam"></i> GSM - Gestão de Materiais
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="https://janos.dbsistemas.com.br/" target="_blank">
-                                        <i class="bi bi-lightning-charge"></i> JANOS - Chaves Cemig
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-
-                        <!-- Admin -->
-                        {% if user.is_superuser %}
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="superDropdown" data-bs-toggle="dropdown">
-                                <i class="bi bi-shield-lock"></i> ADM
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="superDropdown">
-                                <li><a class="dropdown-item" href="{% url 'lista_notas' %}"><i class="bi bi-journal-bookmark"></i> Notas Pessoais</a></li>
-                                <li><a class="dropdown-item" href="{% url 'lista_tarefas' %}"><i class="bi bi-check2-square"></i> Tarefas</a></li>
-                                <li><a class="dropdown-item" href="{% url 'admin:index' %}"><i class="bi bi-gear-wide-connected"></i> Admin</a></li>
-                            </ul>
-                        </li>
-                        {% endif %}
-                    </ul>
-
-                    <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <span class="nav-link disabled">
-                                <i class="bi bi-person-circle"></i>
-                                {% with user.get_full_name|default:user.username as full_name %}
-                                    {% if full_name %}
-                                        {% with full_name|split:" " as name_parts %}
-                                            {{ name_parts.0 }} {{ name_parts|last }}
-                                        {% endwith %}
-                                    {% else %}
-                                        {{ user.username }}
-                                    {% endif %}
-                                {% endwith %}
-                            </span>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'logout' %}">
-                                <i class="bi bi-box-arrow-right"></i> Sair
-                            </a>
-                        </li>
-                    </ul>
-                    {% endif %}
-                </div>
-            </div>
-        </nav>
-        {% endblock header %}
-    </header>
-
-    <main role="main" class="flex-grow-1 container" style="max-width: 1400px; margin: 70px auto; padding: 0 10px 80px 10px;">
-        {% if messages %}
-        <div class="container mt-3">
-            {% for message in messages %}
-            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-                {{ message }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            {% endfor %}
-        </div>
+        {% if user.is_superuser %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="superDropdown" data-bs-toggle="dropdown">
+            <i class="bi bi-shield-lock"></i> ADM
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="superDropdown">
+            <li><a class="dropdown-item" href="{% url 'lista_notas' %}"><i class="bi bi-journal-bookmark"></i> Notas Pessoais</a></li>
+            <li><a class="dropdown-item" href="{% url 'lista_tarefas' %}"><i class="bi bi-check2-square"></i> Tarefas</a></li>
+            <li><a class="dropdown-item" href="{% url 'admin:index' %}"><i class="bi bi-gear-wide-connected"></i> Admin</a></li>
+          </ul>
+        </li>
         {% endif %}
-        {% block content %}{% endblock %}
-    </main>
+      </ul>
 
-    <footer class="fixed-bottom bg-light text-center py-1 border-top">
-        {% block footer %}
-            {% include "footer.html" %}
-        {% endblock footer %}
-    </footer>
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <span class="nav-link disabled">
+            <i class="bi bi-person-circle"></i>
+            {% with user.get_full_name|default:user.username as full_name %}
+              {% if full_name %}
+                {% with full_name|split:" " as name_parts %}
+                  {{ name_parts.0 }} {{ name_parts|last }}
+                {% endwith %}
+              {% else %}
+                {{ user.username }}
+              {% endif %}
+            {% endwith %}
+          </span>
+        </li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right"></i> Sair</a></li>
+      </ul>
+      {% endif %}
+    </div>
+  </div>
+</nav>
+{% endblock header %}
+</header>
 
-    <!-- Bootstrap Bundle JS (Cloudflare CDN) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+<main role="main" class="flex-grow-1 container" style="max-width: 1400px; margin: 70px auto; padding: 0 10px 80px 10px;">
+  {% block content %}{% endblock %}
+</main>
 
-    {% block extra_js %}{% endblock extra_js %}
+<footer class="fixed-bottom bg-light text-center py-1 border-top">
+  {% block footer %}{% include "footer.html" %}{% endblock footer %}
+</footer>
 
-<!-- Overlay de Carregamento -->
-<!--
-<div id="loading-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999; align-items:center; justify-content:center;">
-  <div class="spinner-border text-light" role="status" style="width: 4rem; height: 4rem;"></div>
-</div>
+<!-- Bootstrap Bundle JS (Cloudflare CDN) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+{% block extra_js %}{% endblock extra_js %}
 
-<script>
-  function showLoadingOverlay() {
-    document.getElementById('loading-overlay').style.display = 'flex';
-  }
-</script>
--->
-
-<!-- Overlay Estilo Hackerman (comentado) -->
-<!--
-<div id="loading-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); color:#00ff00; z-index:9999; align-items:center; justify-content:center; flex-direction: column; font-family: monospace; text-align: center; font-size: 1.5rem;">
-  <h1 id="loading-text">Carregando...</h1>
-</div>
-<script>
-  const frases = [
-    "Processando com carinho... Aguenta aí, guerreiro!",
-    "O sistema é forte, o backend é ligeiro!",
-    "Relaxou? Backend no corre aqui!",
-    "Só um segundo... quase lá!"
-  ];
-  let fraseInterval = null;
-  function showLoadingOverlay() {
-    const overlay = document.getElementById('loading-overlay');
-    const text = document.getElementById('loading-text');
-    overlay.style.display = 'flex';
-    let index = 0;
-    fraseInterval = setInterval(() => {
-      text.textContent = frases[index % frases.length];
-      index++;
-    }, 1500);
-  }
-</script>
--->
-
-<!-- Overlay Estilo GIF Temático (ATIVO) -->
-<!--
-<div id="loading-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; align-items:center; justify-content:center;">
-  <img src="https://media.giphy.com/media/3o7TKU8RvQuomFfUUU/giphy.gif" style="width:150px; height:150px;" alt="Carregando...">
-</div>
-<script>
-  function showLoadingOverlay() {
-    document.getElementById('loading-overlay').style.display = 'flex';
-  }
-</script>
--->
-
-<!-- Overlay Estilo Partículas (ATIVO) -->
-<!--
-<div id="loading-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: radial-gradient(circle at center, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.95) 100%); z-index:9999; align-items:center; justify-content:center; flex-direction: column; font-family: monospace; text-align: center; font-size: 1.5rem;">
-  <div class="dots"></div>
-  <h1 style="color: #bb00ff; margin-top: 60px;">Sistema em operação...</h1>
-</div>
-
-<style>
-  .dots {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: radial-gradient(circle, #00ffff, #0088ff);
-    box-shadow:
-      0 0 30px #00ffff,
-      0 0 60px #00ffff,
-      0 0 90px #00ffff,
-      0 0 120px #00ffff;
-    animation: pulse 1.2s infinite alternate;
-  }
-
-  @keyframes pulse {
-    0% { transform: scale(1); opacity: 0.8; }
-    100% { transform: scale(1.5); opacity: 1; }
-  }
-</style>
-
-<script>
-  function showLoadingOverlay() {
-    document.getElementById('loading-overlay').style.display = 'flex';
-  }
-</script>
--->
-
-<!-- Fundo Pulsante Energizado (ATIVO) -->
-<!--
-<div id="loading-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: linear-gradient(45deg, #6f00ff, #00ffff); background-size: 400% 400%; z-index:9999; align-items:center; justify-content:center; flex-direction: column; font-family: monospace; text-align: center; font-size: 1.5rem; animation: gradientMove 3s ease infinite;">
-  <h1 style="color: #ffffff; text-shadow: 0 0 10px #ffffff;">Carregando dados... 🚀</h1>
-</div>
-
-<style>
-  @keyframes gradientMove {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
-</style>
-
-<script>
-  function showLoadingOverlay() {
-    document.getElementById('loading-overlay').style.display = 'flex';
-  }
-</script>
--->
-
-<!-- Partícula Flutuante Estilo "Sistema terra sol" -->
-
+<!-- Overlay minimal (mantido) -->
 <div id="loading-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(18,18,18,0.9); z-index:9999; align-items:center; justify-content:center; flex-direction: column; font-family: monospace; text-align: center; font-size: 1.5rem; overflow: hidden;">
   <div class="orbita-container">
     <div class="nucleo"></div>
@@ -311,137 +146,105 @@
 </div>
 
 <style>
-  .orbita-container {
-    position: relative;
-    width: 200px;
-    height: 200px;
-  }
-
+  /* Overlay orbit */
+  .orbita-container { position: relative; width: 200px; height: 200px; }
   .nucleo {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 40px;
-    height: 40px;
-    background: radial-gradient(circle, #ffcc00, #ffaa00);
-    border-radius: 50%;
+    position: absolute; top: 50%; left: 50%; width: 40px; height: 40px;
+    background: radial-gradient(circle, #ffcc00, #ffaa00); border-radius: 50%;
     transform: translate(-50%, -50%);
-    box-shadow:
-      0 0 10px #ffcc00,
-      0 0 20px #ffcc00;
+    box-shadow: 0 0 10px #ffcc00, 0 0 20px #ffcc00;
   }
-
   .orbit {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 150px;
-    height: 150px;
-    border: 2px dashed rgba(0, 188, 212, 0.4);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    animation: spin 3s linear infinite;
+    position: absolute; top: 50%; left: 50%; width: 150px; height: 150px;
+    border: 2px dashed rgba(0, 188, 212, 0.4); border-radius: 50%;
+    transform: translate(-50%, -50%); animation: spin 3s linear infinite;
   }
-
   .orbit::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 100%;
-    width: 16px;
-    height: 16px;
-    background-color: #00bcd4;
-    border-radius: 50%;
-    box-shadow:
-      0 0 5px #00bcd4,
-      0 0 10px #00bcd4;
+    content: ''; position: absolute; top: 50%; left: 100%; width: 16px; height: 16px;
+    background-color: #00bcd4; border-radius: 50%;
+    box-shadow: 0 0 5px #00bcd4, 0 0 10px #00bcd4;
     transform: translate(-50%, -50%);
   }
+  @keyframes spin { 0% { transform: translate(-50%,-50%) rotate(0); } 100% { transform: translate(-50%,-50%) rotate(360deg); } }
 
-  @keyframes spin {
-    0% { transform: translate(-50%, -50%) rotate(0deg); }
-    100% { transform: translate(-50%, -50%) rotate(360deg); }
+  /* ======= Configs globais (ajuste rápido) ======= */
+  :root{
+    --navbar-offset: 64px;
+    --toast-max-width: 480px;    /* largura máx. padrão dos toasts */
+    --toast-font-size: 0.975rem; /* tamanho do texto do toast */
+    --toast-icon-size: 1.1rem;   /* tamanho do ícone */
+    --toast-padding-y: .75rem;   /* padding vertical da mensagem */
+    --toast-gap: .5rem;          /* espaço entre toasts empilhados */
+  }
+
+  /* ======= Toasts (estilo premium e compacto) ======= */
+  .toast-container{ gap: var(--toast-gap) !important; }
+  .toast.accent{
+    position: relative;
+    overflow: hidden;
+    font-size: var(--toast-font-size);
+    display: inline-flex;           /* 🔥 ocupa só o necessário (não barra inteira) */
+    align-items: center;
+    --bs-toast-padding-x: .25rem;   /* reduz padding horizontal padrão */
+  }
+  .toast.accent::before{
+    content: ""; position: absolute; inset: 0 auto 0 0; width: 6px;
+    background: var(--accent, rgba(255,255,255,.35)); opacity: .9;
+  }
+
+  /* corpo da mensagem: sem padding lateral; usa margem à esquerda como “respiro” do ícone */
+  .toast .toast-body{
+    padding-top: var(--toast-padding-y) !important;
+    padding-bottom: var(--toast-padding-y) !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: .5rem;               /* 🔥 respiro entre ícone e texto */
+    line-height: 1.35;
+  }
+
+  .toast .toast-icon i{ font-size: var(--toast-icon-size) !important; }
+
+  /* Barrinha de progresso */
+  .toast .toast-progress{
+    height: 3px; opacity: .35; border-radius: 0 0 .5rem .5rem;
+    animation: toastProgress var(--toast-delay, 4000ms) linear forwards;
+    background: rgba(255,255,255,.9);
+  }
+  .bg-warning .toast-progress, .bg-info .toast-progress { background: rgba(0,0,0,.35); }
+  @keyframes toastProgress { from { width: 100%; } to { width: 0%; } }
+
+  /* badge redondinho pro ícone */
+  .toast-badge{
+    width: 26px; height: 26px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    margin: .35rem .25rem .35rem .5rem;
+    background: rgba(255,255,255,.14);
+    color: inherit;
+    flex: 0 0 26px;
+  }
+  .bg-warning .toast-badge, .bg-info .toast-badge{ background: rgba(0,0,0,.08); }
+  .toast-badge i{ font-size: 1rem; line-height: 1; }
+
+  /* Acessibilidade */
+  @media (prefers-reduced-motion: reduce){
+    .toast .toast-progress { animation: none; width: 0; }
+  }
+
+  /* Responsivo */
+  @media (min-width: 992px){ :root{ --toast-max-width: 520px; } }
+  @media (max-width: 576px){
+    :root{ --toast-font-size: .95rem; --toast-icon-size: 1rem; }
   }
 </style>
 
 <script>
   function showLoadingOverlay(show = true) {
     const overlay = document.getElementById('loading-overlay');
-    if (overlay) {
-      overlay.style.display = show ? 'flex' : 'none';
-    }
+    if (overlay) overlay.style.display = show ? 'flex' : 'none';
   }
 </script>
 
-
-
-<!-- Foguete orbitando a terra -->
-<!--
-<div id="loading-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color: rgba(18,18,18,0.9); z-index:9999; align-items:center; justify-content:center; flex-direction: column; font-family: monospace; text-align: center; font-size: 1.5rem; overflow: hidden;">
-  <div class="orbita-container">
-    <div class="terra"></div>
-    <div class="orbit">
-      <div class="foguete">🚀</div>
-    </div>
-  </div>
-  <h1 style="color: #e0e0e0; margin-top: 80px;">Processando... Sincronizando dados...</h1>
-</div>
-
-<style>
-  .orbita-container {
-    position: relative;
-    width: 200px;
-    height: 200px;
-  }
-
-  .terra {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 50px;
-    height: 50px;
-    background: radial-gradient(circle, #00bcd4, #0088aa);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    box-shadow:
-      0 0 10px #00bcd4,
-      0 0 20px #00bcd4;
-  }
-
-  .orbit {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    animation: spin 5s linear infinite;
-  }
-
-  .foguete {
-    position: absolute;
-    top: 50%;
-    left: 100%;
-    transform: translate(-50%, -50%) rotate(-45deg);
-    font-size: 1.8rem;
-    filter: drop-shadow(0 0 3px #00bcd4);
-  }
-
-  @keyframes spin {
-    0% { transform: translate(-50%, -50%) rotate(0deg); }
-    100% { transform: translate(-50%, -50%) rotate(-360deg); }
-  }
-</style>
-
-<script>
-  function showLoadingOverlay() {
-    document.getElementById('loading-overlay').style.display = 'flex';
-  }
-</script>
--->
-
-
-
+{% include "partials/toasts_all.html" %}
+{# Para usar apenas sucesso: {% include "partials/toasts_success.html" %} #}
 </body>
 </html>

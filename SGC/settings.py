@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 from decouple import config, Csv
+from django.contrib.messages import constants as messages
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -82,7 +83,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'logs.middleware.erro_logger.LogErroMiddleware', # Tratamento de erros
+    # 'logs.middleware.erro_logger.LogErroMiddleware', # Tratamento de erros
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -93,8 +94,22 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
 ]
+if ENV == 'production':
+    MIDDLEWARE.insert(0, 'logs.middleware.erro_logger.LogErroMiddleware')
+
+if ENV != 'production':
+    DEBUG_PROPAGATE_EXCEPTIONS = True
+
 
 ROOT_URLCONF = 'SGC.urls'
+
+MESSAGE_TAGS = {
+    messages.DEBUG:   'secondary',
+    messages.INFO:    'info',
+    messages.SUCCESS: 'success',
+    messages.WARNING: 'warning',
+    messages.ERROR:   'danger',
+}
 
 TEMPLATES = [
     {

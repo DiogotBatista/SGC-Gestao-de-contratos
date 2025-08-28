@@ -1,7 +1,10 @@
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
+
+# from teste_openrouter import response
 from .models import NotaPessoal
+from django.contrib import messages
 
 class SuperUserOnlyMixin(UserPassesTestMixin):
     def test_func(self):
@@ -21,7 +24,13 @@ class NotaPessoalCreateView(LoginRequiredMixin, SuperUserOnlyMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.autor = self.request.user
-        return super().form_valid(form)
+        response =  super().form_valid(form)
+        messages.success(self.request, f"Nota pessoal cadastrada!")
+        return response
+
+class NotaPessoalDetailView(LoginRequiredMixin, SuperUserOnlyMixin, DetailView):
+    model = NotaPessoal
+    template_name = 'notaspessoais/detalhe_notaspessoais.html'
 
 class NotaPessoalUpdateView(LoginRequiredMixin, SuperUserOnlyMixin, UpdateView):
     model = NotaPessoal
@@ -29,12 +38,18 @@ class NotaPessoalUpdateView(LoginRequiredMixin, SuperUserOnlyMixin, UpdateView):
     template_name = 'notaspessoais/cadastrar_notaspessoais.html'
     success_url = reverse_lazy('lista_notas')
 
+    def form_valid(self, form):
+        response =  super().form_valid(form)
+        messages.info(self.request, f"Nota pessoal atualizada!")
+        return response
+
 class NotaPessoalDeleteView(LoginRequiredMixin, SuperUserOnlyMixin, DeleteView):
     model = NotaPessoal
     template_name = 'notaspessoais/confirma_exclusao_notaspessoais.html'
     success_url = reverse_lazy('lista_notas')
 
-class NotaPessoalDetailView(LoginRequiredMixin, SuperUserOnlyMixin, DetailView):
-    model = NotaPessoal
-    template_name = 'notaspessoais/detalhe_notaspessoais.html'
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        messages.warning(self.request, f"Nota pessoal excluída!")
+        return response
 

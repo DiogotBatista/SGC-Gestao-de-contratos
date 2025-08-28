@@ -24,8 +24,6 @@ class TarefaBoardView(AccessRequiredMixin, ListView):
         context["form"] = TarefaForm()
         return context
 
-
-
 @require_http_methods(["POST"])
 def criar_tarefa(request):
     form = TarefaForm(request.POST)

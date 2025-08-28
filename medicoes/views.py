@@ -1,6 +1,8 @@
 # medicoes/views.py
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+
+# from teste_openrouter import response
 from .models import Medicao
 from .forms import MedicaoForm
 from core.mixins import AccessRequiredMixin, ContratoAccessMixin
@@ -49,8 +51,9 @@ class MedicaoCreateView(AccessRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.created_by = self.request.user
         form.instance.updated_by = self.request.user
-        messages.success(self.request, "Medição cadastrada com sucesso.")
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        messages.success(self.request, f"Medição do período {self.object.periodo_formatado} cadastrada com sucesso no contrato {self.object.contrato}.")
+        return response
 
 class MedicaoUpdateView(AccessRequiredMixin, ContratoAccessMixin, UpdateView):
     model = Medicao
@@ -67,8 +70,9 @@ class MedicaoUpdateView(AccessRequiredMixin, ContratoAccessMixin, UpdateView):
 
     def form_valid(self, form):
         form.instance.updated_by = self.request.user
-        messages.success(self.request, "Medição atualizada com sucesso.")
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        messages.info(self.request, f"Medição {self.object.identificador} atualizada com sucesso!")
+        return response
 
 class MedicaoDeleteView(AccessRequiredMixin, ContratoAccessMixin, DeleteView):
     model = Medicao
@@ -78,8 +82,9 @@ class MedicaoDeleteView(AccessRequiredMixin, ContratoAccessMixin, DeleteView):
     view_name = 'deletar_medicao'
 
     def form_valid(self, form):
+        identificador = self.object.identificador
         response = super().form_valid(form)
-        messages.success(self.request, "Contrato excluído com sucesso!")
+        messages.warning(self.request, f"Medição {identificador} excluída com sucesso!")
         return response
 
 @csrf_exempt

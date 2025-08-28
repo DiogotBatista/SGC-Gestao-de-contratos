@@ -3,6 +3,7 @@
 from django.urls import reverse_lazy
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 from core.mixins import AccessRequiredMixin
+# from teste_openrouter import response
 from .models import PropostaOrcamento
 from .forms import PropostaOrcamentoForm
 from django.contrib import messages
@@ -12,7 +13,7 @@ class PropostaListView(AccessRequiredMixin, ListView):
     """
     Lista de propostas de orçamento
     """
-    allowed_roles = []
+    allowed_cargos = []
     view_name = 'lista_propostas'
     model = PropostaOrcamento
     template_name = 'propostas/lista_propostas.html'
@@ -70,12 +71,11 @@ class PropostaListView(AccessRequiredMixin, ListView):
 
         return queryset.order_by(sort_field)
 
-
 class PropostaCreateView(AccessRequiredMixin, CreateView):
     """
     Cria uma proposta de orçamento
     """
-    allowed_roles = []
+    allowed_cargos = []
     view_name = 'criar_proposta'
     model = PropostaOrcamento
     form_class = PropostaOrcamentoForm
@@ -85,14 +85,15 @@ class PropostaCreateView(AccessRequiredMixin, CreateView):
     def form_valid(self, form):
         user = self.request.user
         form.instance.created_by = user
-        messages.success(self.request, "Proposta cadastrada com sucesso.")
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        messages.success(self.request, f"Proposta {self.object.titulo} - {self.object.contratante} cadastrada!")
+        return response
 
 class PropostaDetailView(AccessRequiredMixin, DetailView):
     """
     Pagina de detalhes de um orçamento
     """
-    allowed_roles = []
+    allowed_cargos = []
     view_name = 'detalhe_proposta'
     model = PropostaOrcamento
     template_name = 'propostas/detalhe_proposta.html'
@@ -102,7 +103,7 @@ class PropostaUpdateView(AccessRequiredMixin, UpdateView):
     """
     Atualiza uma proposta de orçamento
     """
-    allowed_roles = []
+    allowed_cargos = []
     view_name = 'atualizar_proposta'
     model = PropostaOrcamento
     form_class = PropostaOrcamentoForm
@@ -111,20 +112,24 @@ class PropostaUpdateView(AccessRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         form.instance.updated_by = self.request.user
-        messages.success(self.request, "Proposta atualizada com sucesso.")
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        messages.info(self.request, f"Proposta {self.object.titulo} - {self.object.contratante} atualizada!")
+        return response
 
 class PropostaDeleteView(AccessRequiredMixin, DeleteView):
     """
     Exclui uma proposta de orçamento
     """
-    allowed_roles = []
+    allowed_cargos = []
     view_name = 'deletar_proposta'
     model = PropostaOrcamento
     template_name = 'propostas/confirma_exclusao_proposta.html'
     success_url = reverse_lazy('lista_propostas')
 
     def form_valid(self, form):
-        messages.success(self.request, "Proposta excluída com sucesso.")
-        return super().form_valid(form)
+        titulo = self.object.titulo
+        contratante = self.object.contratante
+        response = super().form_valid(form)
+        messages.warning(self.request, f"Proposta {titulo} - {contratante} excluída!")
+        return response
 

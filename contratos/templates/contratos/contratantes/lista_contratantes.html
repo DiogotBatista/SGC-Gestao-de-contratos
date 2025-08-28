@@ -41,7 +41,7 @@
                 {% for contratante in contratantes %}
                     <tr>
                         <td>{{ contratante.nome }}</td>
-                        <td class="text-center">{{ contratante.cnpj }}</td>
+                        <td class="text-center">{{ contratante.cnpj|cnpj  }}</td>
                         <td class="text-center">
                         {% if contratante.ativo %}
                             <span class="badge bg-success">Ativo</span>

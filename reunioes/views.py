@@ -24,7 +24,7 @@ class MenuAtasView(AccessRequiredMixin, TemplateView):
 
 @method_decorator(login_required, name='dispatch')
 class AtaReuniaoCreateView(AccessRequiredMixin, View):
-    allowed_cargos = ['Gestor']
+    allowed_cargos = []
     view_name = 'criar_atas'
     template_name = 'reunioes/cadastrar_ata.html'
     no_permission_redirect_url = 'lista_atas'
@@ -78,7 +78,7 @@ class AtaReuniaoCreateView(AccessRequiredMixin, View):
                         item.created_by = request.user
                     item.save()
 
-            messages.success(request, 'Ata cadastrada com sucesso.')
+            messages.success(request, f"Ata {ata.contrato.numero} – {ata.data.strftime('%d/%m/%Y')} cadastrada com sucesso.")
             return redirect('lista_atas')
 
         return render(request, self.template_name, {'form': ata_form, 'formset': formset})
@@ -141,7 +141,7 @@ class AtaReuniaoUpdateView(AccessRequiredMixin, ContratoAccessMixin, UpdateView)
                         item.created_by = request.user
                     item.save()
 
-            messages.success(request, 'Ata atualizada com sucesso.')
+            messages.info(request, f"Ata {ata.contrato.numero} – {ata.data.strftime('%d/%m/%Y')} atualizada com sucesso.")
             next_url = request.POST.get('next')
             if next_url:
                 return redirect(f"{reverse('detalhe_ata', args=[ata.pk])}?next={next_url}")
@@ -193,11 +193,13 @@ class AtaReuniaoDeleteView(AccessRequiredMixin, ContratoAccessMixin, DeleteView)
 
     def form_valid(self, form):
         ata = self.object
+        contrato_num = ata.contrato.numero
+        data_label = ata.data.strftime('%d/%m/%Y')
         # Excluir a pasta e arquivos no Drive
         pasta_id = ata.arquivos.first().id_pasta_drive if ata.arquivos.exists() else None
         if pasta_id:
             delete_folder_in_drive(pasta_id)
-        messages.success(self.request, 'Ata excluída com sucesso.')
+        messages.warning(self.request, f"Ata {contrato_num} – {data_label} excluída com sucesso.")
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -205,7 +207,6 @@ class AtaReuniaoDeleteView(AccessRequiredMixin, ContratoAccessMixin, DeleteView)
         if next_url:
             return str(next_url)
         return reverse('lista_atas')
-
 
 class AtasAgrupadasView(AccessRequiredMixin, View):
     template_name = 'reunioes/atas_agrupadas.html'
@@ -264,8 +265,8 @@ def adicionar_arquivos_ata(request, pk):
             id_arquivo_drive=file_id,
             id_pasta_drive=pasta_id
         )
-
-    messages.success(request, f"{len(arquivos)} arquivo(s) anexado(s) com sucesso.")
+    qtd = len(arquivos)
+    messages.success(request, f"{qtd} arquivo{'s' if qtd != 1 else ''} anexado{'s' if qtd != 1 else ''} com sucesso.")
     return redirect('detalhe_ata', pk=pk)
 
 @method_decorator(csrf_exempt, name='dispatch')

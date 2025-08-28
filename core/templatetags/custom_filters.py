@@ -1,5 +1,6 @@
 from django import template
 import locale
+import re
 
 register = template.Library()
 
@@ -67,3 +68,17 @@ def eh_gestor(user):
 @register.filter(name='split')
 def split(value, separator):
     return value.split(separator)
+
+@register.filter
+def cnpj(value):
+    """
+    Formata '00111222000133' -> '00.111.222/0001-33'.
+    Se não tiver 14 dígitos, devolve o valor original.
+    Aceita None / string vazia.
+    """
+    if not value:
+        return ""
+    digits = re.sub(r"\D", "", str(value))
+    if len(digits) != 14:
+        return value
+    return f"{digits[0:2]}.{digits[2:5]}.{digits[5:8]}/{digits[8:12]}-{digits[12:14]}"

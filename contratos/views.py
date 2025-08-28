@@ -1,3 +1,5 @@
+# contratos/views.py
+
 from .models import Contrato, Obra, Contratante, NotaContrato, NotaObra
 from .forms import ContratoForm, ContratanteForm, ObraForm, NotaContratoForm, NotaObraForm
 from django.db.models import Q, Count, Max
@@ -71,8 +73,9 @@ class ContratoCreateView(AccessRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.created_by = self.request.user
         form.instance.updated_by = self.request.user
-        messages.success(self.request, "Contrato cadastrado com sucesso!")
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        messages.success(self.request, f"Contrato {self.object.numero} – {self.object.contratante.nome} cadastrado com sucesso!")
+        return response
 
 class ContratoDetailView(AccessRequiredMixin, ContratoAccessMixin, DetailView):
     """
@@ -122,8 +125,9 @@ class ContratoUpdateView(AccessRequiredMixin, ContratoAccessMixin, UpdateView):
 
     def form_valid(self, form):
         form.instance.updated_by = self.request.user
-        messages.success(self.request, "Contrato atualizado com sucesso!")
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        messages.info(self.request, f"Contrato {self.object.numero} – {self.object.contratante.nome} atualizado com sucesso!")
+        return response
 
     def get_success_url(self):
         return reverse_lazy('detalhes_contrato', kwargs={'pk': self.object.pk})
@@ -140,8 +144,14 @@ class ContratoDeleteView(AccessRequiredMixin, ContratoAccessMixin, DeleteView):
     success_url = reverse_lazy('lista_contratos')
 
     def form_valid(self, form):
-        response = super().form_valid(form)
-        messages.success(self.request, "Contrato excluído com sucesso!")
+        obj = self.get_object()
+        numero = obj.numero
+        contratante = obj.contratante.nome
+        response = super().form_valid(form)  # deleta
+        messages.warning(
+            self.request,
+            f"Contrato {numero} – {contratante} excluído com sucesso!"
+        )
         return response
 
 class AtasPorContratoView(AccessRequiredMixin, ListView):
@@ -223,7 +233,7 @@ class NotaContratoUpdateView(AccessRequiredMixin, UpdateView):
         nota = form.save(commit=False)
         nota.updated_by = self.request.user
         nota.save()
-        messages.success(self.request, 'Anotação atualizada com sucesso.')
+        messages.info(self.request, 'Anotação atualizada com sucesso.')
         return redirect('detalhes_contrato', pk=nota.contrato.pk)
 
 class NotaContratoDeleteView(AccessRequiredMixin, DeleteView):
@@ -236,7 +246,7 @@ class NotaContratoDeleteView(AccessRequiredMixin, DeleteView):
     template_name = 'contratos/contratos/excluir_nota.html'
 
     def get_success_url(self):
-        messages.success(self.request, 'Anotação excluída com sucesso.')
+        messages.warning(self.request, 'Anotação excluída com sucesso.')
         return reverse_lazy('detalhes_contrato', kwargs={'pk': self.object.contrato.pk})
 
 # VIEWS DOS CONTRATANTES
@@ -277,8 +287,9 @@ class ContratanteCreateView(AccessRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.created_by = self.request.user
         form.instance.updated_by = self.request.user
-        messages.success(self.request, "Empresa cadastrada com sucesso!")
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        messages.success(self.request, f"Empresa {self.object.nome} cadastrada com sucesso!")
+        return response
 
 class ContratanteUpdateView(AccessRequiredMixin, UpdateView):
     """
@@ -294,8 +305,9 @@ class ContratanteUpdateView(AccessRequiredMixin, UpdateView):
 
     def form_valid(self, form):
         form.instance.updated_by = self.request.user
-        messages.success(self.request, "Empresa atualizada com sucesso!")
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        messages.info(self.request, f"Empresa {self.object.nome} atualizada com sucesso!")
+        return response
 
 class ContratanteDeleteView(AccessRequiredMixin, DeleteView):
     """
@@ -309,8 +321,10 @@ class ContratanteDeleteView(AccessRequiredMixin, DeleteView):
     success_url = reverse_lazy('lista_contratantes')
 
     def form_valid(self, form):
+        obj = self.get_object()
+        nome = obj.nome
         response = super().form_valid(form)
-        messages.success(self.request, "Empresa excluída com sucesso!")
+        messages.warning(self.request, f"Empresa {nome} excluída com sucesso!")
         return response
 
 # VIEWS DAS OBRAS
@@ -385,8 +399,9 @@ class ObraCreateView(AccessRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.created_by = self.request.user
         form.instance.updated_by = self.request.user
-        messages.success(self.request, "Obra cadastrada com sucesso!")
-        return super().form_valid(form)
+        response = super().form_valid(form)
+        messages.success(self.request, f"Obra '{self.object.codigo}' cadastrada com sucesso no contrato {self.object.contrato}!")
+        return response
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -406,7 +421,7 @@ class ObraUpdateView(AccessRequiredMixin, ContratoAccessMixin, UpdateView):
     def form_valid(self, form):
         form.instance.updated_by = self.request.user
         response = super().form_valid(form)
-        messages.success(self.request, "Obra atualizada com sucesso!")
+        messages.info(self.request, f"Obra '{self.object.codigo}' atualizada com sucesso!")
         return response
 
     def get_success_url(self):
@@ -429,8 +444,11 @@ class ObraDeleteView(AccessRequiredMixin, ContratoAccessMixin, DeleteView):
     success_url = reverse_lazy('lista_obras')
 
     def form_valid(self, form):
+        obj = self.object
+        codigo = obj.codigo
+        contrato = obj.contrato
         response = super().form_valid(form)
-        messages.success(self.request, "Obra excluída com sucesso!")
+        messages.warning(self.request, f"Obra '{codigo}' removida do contrato {contrato}")
         return response
 
 #Notas na obras
@@ -450,7 +468,7 @@ class NotaObraCreateView(AccessRequiredMixin, View):
             nota.obra = obra
             nota.criado_por = request.user
             nota.save()
-            messages.success(request, 'Anotação adicionada com sucesso.')
+            messages.success(request, 'Anotação adicionada com sucesso!')
         else:
             messages.warning(request, 'Erro ao adicionar anotação.')
         return HttpResponseRedirect(reverse('detalhes_obra', kwargs={'pk': obra.pk}) + '#anotacoes')
@@ -468,7 +486,7 @@ class NotaObraUpdateView(AccessRequiredMixin, UpdateView):
     def form_valid(self, form):
         nota = form.save(commit=False)
         nota.save()
-        messages.success(self.request, 'Anotação atualizada com sucesso.')
+        messages.info(self.request, 'Anotação atualizada com sucesso!')
         return redirect('detalhes_obra', pk=nota.obra.pk)
 
 class NotaObraDeleteView(AccessRequiredMixin, DeleteView):
@@ -481,7 +499,7 @@ class NotaObraDeleteView(AccessRequiredMixin, DeleteView):
     template_name = 'contratos/obras/excluir_nota_obra.html'
 
     def get_success_url(self):
-        messages.success(self.request, 'Anotação excluída com sucesso.')
+        messages.warning(self.request, 'Anotação excluída com sucesso!')
         return reverse_lazy('detalhes_obra', kwargs={'pk': self.object.obra.pk})
 
 from django.http import HttpResponse
