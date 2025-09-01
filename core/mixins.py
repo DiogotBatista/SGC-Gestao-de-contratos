@@ -68,3 +68,21 @@ class ContratoAccessMixin:
             return obj.contrato
         except AttributeError:
             return obj
+
+class SuperUserOnlyMixin(UserPassesTestMixin):
+    """
+    Restringe o acesso exclusivamente a superusuários.
+    Use sempre em conjunto com LoginRequiredMixin.
+    """
+    def test_func(self):
+        return self.request.user.is_superuser
+
+    def handle_no_permission(self):
+        if not self.request.user.is_authenticated:
+            # mesmo comportamento do seu AccessRequiredMixin
+            return redirect_to_login(
+                self.request.get_full_path(),
+                None,  # usa LOGIN_URL do settings
+                'next'
+            )
+        return render(self.request, '403.html', status=403)

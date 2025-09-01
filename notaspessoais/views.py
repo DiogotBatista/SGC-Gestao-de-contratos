@@ -5,10 +5,7 @@ from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 # from teste_openrouter import response
 from .models import NotaPessoal
 from django.contrib import messages
-
-class SuperUserOnlyMixin(UserPassesTestMixin):
-    def test_func(self):
-        return self.request.user.is_superuser
+from core.mixins import SuperUserOnlyMixin
 
 class NotaPessoalListView(LoginRequiredMixin, SuperUserOnlyMixin, ListView):
     model = NotaPessoal

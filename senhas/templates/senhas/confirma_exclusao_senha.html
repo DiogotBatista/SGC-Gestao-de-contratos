@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Excluir Senha{% endblock %}
+
+{% block content %}
+{% include "toasts_all.html" %}
+<div class="container-fluid mt-4 mb-5">
+  <h1>Excluir Senha</h1>
+  <div class="alert alert-warning">
+    Tem certeza que deseja excluir a senha <strong>{{ obj.titulo }}</strong>?
+  </div>
+  <form method="post" class="d-flex gap-2">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">
+      <i class="bi bi-trash"></i> Excluir
+    </button>
+    <a href="{% url 'detalhe_senha' obj.pk %}" class="btn btn-outline-secondary">Cancelar</a>
+  </form>
+</div>
+{% endblock %}

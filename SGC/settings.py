@@ -62,12 +62,18 @@ else:
     SESSION_COOKIE_SECURE = False
     CSRF_COOKIE_SECURE = False
 
+DJANGO_PASSWORDS_KEY = config('DJANGO_PASSWORDS_KEY')
+if not DJANGO_PASSWORDS_KEY:
+    # Em produção, **não** deixe vazio. Exija a chave via env.
+    raise RuntimeError("Defina a variável de ambiente DJANGO_PASSWORDS_KEY (Fernet key).")
+
 # Application definition
 
 INSTALLED_APPS = [
     'core',
     'contratos',
     'reunioes',
+    'senhas',
     'dashboards',
     'logs',
     'notaspessoais',

@@ -42,6 +42,9 @@ urlpatterns = [
     #App medicoes
     path('medicoes/', include('medicoes.urls')),
 
+    #Senhas
+    path('senhas/', include('senhas.urls')),
+
 ]
 
 if settings.DEBUG:
