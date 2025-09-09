@@ -11,6 +11,7 @@ class PropostaOrcamentoForm(forms.ModelForm):
             "contratante",
             "local_execucao",
             "descricao",
+            "observacao",
             "valor_estimado",
             "data_recebimento",
             "data_envio",
@@ -27,6 +28,7 @@ class PropostaOrcamentoForm(forms.ModelForm):
                 attrs={"step": "0.01", "placeholder": "R$ 0,00"}
             ),
             "descricao": forms.Textarea(attrs={"rows": 4}),
+            "observacao": forms.Textarea(attrs={"rows": 4}),
             "endereco_servidor": forms.TextInput(
                 attrs={"placeholder": "\\\\srvarquivo\\"}
             ),

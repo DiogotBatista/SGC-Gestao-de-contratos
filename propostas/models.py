@@ -79,6 +79,11 @@ class PropostaOrcamento(models.Model):
         verbose_name="Situação",
         help_text="Situação do orçamento/proposta",
     )
+    observacao = models.TextField(
+        blank=True,
+        verbose_name="observação",
+        help_text="Observações relevantes sobre a proposta / orçamento",
+    )
     endereco_servidor = models.CharField(
         max_length=200,
         blank=True,
@@ -112,7 +117,7 @@ class PropostaOrcamento(models.Model):
     )
 
     class Meta:
-        ordering = ["-data_cadastro"]
+        ordering = ["-data_alteracao"]
         verbose_name = "Proposta de Orçamento"
         verbose_name_plural = "Propostas de Orçamento"
         indexes = [

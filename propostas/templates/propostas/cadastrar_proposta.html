@@ -125,6 +125,13 @@
                                     {% for error in form.descricao.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
                                     {% if form.descricao.help_text %}<small class="form-text text-muted">{{ form.descricao.help_text }}</small>{% endif %}
                                 </div>
+                               <!-- Descrição -->
+                                <div class="col-12">
+                                    {{ form.observacao.label_tag }}
+                                    {{ form.observacao|add_class:"form-control" }}
+                                    {% for error in form.observacao.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                                    {% if form.observacao.help_text %}<small class="form-text text-muted">{{ form.observacao.help_text }}</small>{% endif %}
+                                </div>
                             </div>
                             <!-- Botões -->
                             <div class="d-flex justify-content-end mt-4">

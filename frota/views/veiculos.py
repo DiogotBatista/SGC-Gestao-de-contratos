@@ -54,7 +54,7 @@ class VeiculoListView(AccessRequiredMixin, ListView):
                 | Q(placa__icontains=q)
                 | Q(tag_contrato__icontains=q)
                 | Q(empresa_locadora__nome__icontains=q)
-                | Q(contrato_atual__descricao__icontains=q)
+                | Q(contrato_atual__numero__icontains=q)
             )
 
         modalidade_id = self.request.GET.get("modalidade")

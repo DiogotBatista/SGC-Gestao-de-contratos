@@ -53,7 +53,7 @@ class PropostaListView(AccessRequiredMixin, ListView):
             queryset = queryset.filter(etapa_atual=etapa)
 
         # Ordenação
-        sort = request.GET.get("sort", "data_cadastro")
+        sort = request.GET.get("sort")
         dir = request.GET.get("dir", "desc")
 
         # Mapeia os nomes amigáveis para os campos reais
@@ -69,11 +69,15 @@ class PropostaListView(AccessRequiredMixin, ListView):
             "atualizado": "data_alteracao",
         }
 
-        sort_field = sort_map.get(sort, "data_cadastro")
-        if dir == "desc":
-            sort_field = f"-{sort_field}"
+        if sort in sort_map:
+            sort_field = sort_map[sort]
+            if dir == "desc":
+                sort_field = f"-{sort_field}"
+            # desempates estáveis para não “pular” linhas com mesmo timestamp
+            return queryset.order_by(sort_field, "-data_cadastro", "-pk")
 
-        return queryset.order_by(sort_field)
+            # Padrão desejado: atualizado desc (com desempate)
+        return queryset.order_by("-data_alteracao", "-data_cadastro", "-pk")
 
 
 class PropostaCreateView(AccessRequiredMixin, CreateView):

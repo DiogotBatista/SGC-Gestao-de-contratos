@@ -161,6 +161,19 @@
                             </div>
                         </div>
                     {% endif %}
+                    <!-- observação -->
+                    {% if proposta.observacao %}
+                        <div class="col-12">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="bi bi-sticky" title="Observação"></i> Observação
+                                    </h5>
+                                    <div class="border rounded p-2 bg-light">{{ proposta.observacao|linebreaksbr }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>

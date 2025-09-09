@@ -53,8 +53,9 @@ class AlocacaoListView(AccessRequiredMixin, ListView):
             qs = qs.filter(
                 Q(veiculo__modelo__icontains=q)
                 | Q(veiculo__placa__icontains=q)
-                | Q(contrato__descricao__icontains=q)
+                | Q(contrato__numero__icontains=q)
                 | Q(obra__descricao__icontains=q)
+                | Q(veiculo__modalidade__nome__icontains=q)
             )
 
         # Filtros por chaves diretas
