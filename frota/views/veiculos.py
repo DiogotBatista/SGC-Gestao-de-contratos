@@ -113,7 +113,7 @@ class VeiculoCreateView(AccessRequiredMixin, CreateView):
         form.instance.created_by = self.request.user
         form.instance.updated_by = self.request.user
         resp = super().form_valid(form)
-        messages.success(self.request, "Veículo cadastrado com sucesso!")
+        messages.success(self.request, f"Veículo {self.object.modelo} - {self.object.placa} cadastrado(a) com sucesso!")
         return resp
 
     def form_invalid(self, form):
@@ -145,7 +145,7 @@ class VeiculoUpdateView(AccessRequiredMixin, UpdateView):
     def form_valid(self, form):
         form.instance.updated_by = self.request.user
         resp = super().form_valid(form)
-        messages.info(self.request, "Veículo atualizado com sucesso!")
+        messages.info(self.request, f"Veículo {self.object.modelo} - {self.object.placa} atualizado(a) com sucesso!")
         return resp
 
     def get_success_url(self):
@@ -165,7 +165,7 @@ class VeiculoDetailView(AccessRequiredMixin, DetailView):
 
     def get_queryset(self):
         return Veiculo.objects.select_related(
-            "modalidade", "empresa_locadora", "status", "contrato_atual"
+            "modalidade", "empresa_locadora", "status", "contrato_atual",  "created_by", "updated_by",
         )
 
     def get_context_data(self, **kwargs):
@@ -204,8 +204,10 @@ class VeiculoDeleteView(AccessRequiredMixin, DeleteView):
         obj = self.get_object()
         obj.ativo = False
         obj.updated_by = self.request.user
+        modelo = obj.modelo
+        placa = obj.placa
         obj.save(update_fields=["ativo", "updated_by", "data_alteracao"])
-        messages.warning(self.request, "Veículo desativado com sucesso!")
+        messages.warning(self.request, f"Veículo {modelo} - {placa} desativado(a) com sucesso!")
         return redirect(self.get_success_url())
 
 
@@ -220,7 +222,7 @@ class VeiculoDesativarView(AccessRequiredMixin, View):
         v.ativo = False
         v.updated_by = request.user
         v.save(update_fields=["ativo", "updated_by", "data_alteracao"])
-        messages.warning(request, f"Veículo {v.modelo} ({v.placa}) desativado.")
+        messages.warning(request, f"Veículo {v.modelo} ({v.placa}) desativado(a).")
         return redirect("frota:lista_veiculos")
 
 
@@ -235,7 +237,7 @@ class VeiculoReativarView(AccessRequiredMixin, View):
         v.ativo = True
         v.updated_by = request.user
         v.save(update_fields=["ativo", "updated_by", "data_alteracao"])
-        messages.success(request, f"Veículo {v.modelo} ({v.placa}) reativado.")
+        messages.success(request, f"Veículo {v.modelo} ({v.placa}) reativado(a).")
         return redirect("frota:detalhe_veiculo", pk=v.pk)
 
 
@@ -296,7 +298,10 @@ class VeiculoAlocarView(AccessRequiredMixin, View):
                     form.add_error(None, str(e))
             else:
                 # sucesso → volta ao detalhe
-                messages.success(request, "Mobilização criada com sucesso!")
+                modelo = veiculo.modelo
+                placa = veiculo.placa
+                contrato = veiculo.contrato_atual
+                messages.success(request, f"{modelo}-{placa} mobilizado ao contrato {contrato}!")
                 return redirect("frota:detalhe_veiculo", veiculo.pk)
 
         # FORM INVÁLIDO: reabrir offcanvas e repassar contexto completo
@@ -358,8 +363,10 @@ class VeiculoEncerrarAlocacaoView(AccessRequiredMixin, View):
                 aloc.updated_by = request.user
                 aloc.full_clean()
                 aloc.save()
-
-                messages.info(request, "Mobilização encerrada!")
+                modelo = veiculo.modelo
+                placa = veiculo.placa
+                contrato = veiculo.contrato_atual
+                messages.info(request, f"Mobilização do veículo {modelo}-{placa} encerrada no contrato {contrato}!")
         except ValidationError as ve:
             # ✅ mostramos campo e mensagem certinhos (sem dict feio)
             if hasattr(ve, "message_dict"):
