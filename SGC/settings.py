@@ -11,49 +11,59 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
-from decouple import config, Csv
+
+from decouple import Csv, config
 from django.contrib.messages import constants as messages
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-GOOGLE_DRIVE_FOLDER_ID = config('GOOGLE_DRIVE_FOLDER_ID')
+GOOGLE_DRIVE_FOLDER_ID = config("GOOGLE_DRIVE_FOLDER_ID")
 OPENAI_API_KEY = config("OPENAI_API_KEY")
 OPENROUTER_API_KEY = config("OPENROUTER_API_KEY")
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('DJANGO_SECRET_KEY', default='unsafe-secret-for-dev')
+SECRET_KEY = config("DJANGO_SECRET_KEY", default="unsafe-secret-for-dev")
 
 # Ambiente: 'production' ou 'development'
-ENV = config('ENV', default='production')
+ENV = config("ENV", default="production")
 
 # DEBUG controlado por env (em prod cai pra False por padrão)
-DEBUG = config('DEBUG', cast=bool, default=(ENV != 'production'))
+DEBUG = config("DEBUG", cast=bool, default=(ENV != "production"))
 
 # Hosts permitidos
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv(), default=['127.0.0.1', 'localhost'])
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=Csv(), default=["127.0.0.1", "localhost"])
 
 # CSRF: origens confiáveis (scheme + domínio [+ porta])
 # Ex.: em dev: http://localhost:8000 ; em prod: https://sgccro.dbsistemas.com.br
 CSRF_TRUSTED_ORIGINS = config(
-    'CSRF_TRUSTED_ORIGINS',
+    "CSRF_TRUSTED_ORIGINS",
     cast=Csv(),
-    default=['http://localhost:8000', 'http://127.0.0.1:8000'] if ENV != 'production'
-            else ['https://sgccro.dbsistemas.com.br']
+    default=(
+        ["http://localhost:8000", "http://127.0.0.1:8000"]
+        if ENV != "production"
+        else ["https://sgccro.dbsistemas.com.br"]
+    ),
 )
 
 # Sessão (ex.: 5h e não expira ao fechar o navegador)
-SESSION_COOKIE_AGE = config('SESSION_COOKIE_AGE', cast=int, default=60*60*5)
-SESSION_EXPIRE_AT_BROWSER_CLOSE = config('SESSION_EXPIRE_AT_BROWSER_CLOSE', cast=bool, default=False)
+SESSION_COOKIE_AGE = config("SESSION_COOKIE_AGE", cast=int, default=60 * 60 * 5)
+SESSION_EXPIRE_AT_BROWSER_CLOSE = config(
+    "SESSION_EXPIRE_AT_BROWSER_CLOSE", cast=bool, default=False
+)
 
 # Segurança por ambiente
-if ENV == 'production':
-    SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', cast=bool, default=True)
-    SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', cast=bool, default=True)
-    CSRF_COOKIE_SECURE = config('CSRF_COOKIE_SECURE', cast=bool, default=True)
-    SECURE_HSTS_SECONDS = config('SECURE_HSTS_SECONDS', cast=int, default=31536000)  # 1 ano
-    SECURE_HSTS_INCLUDE_SUBDOMAINS = config('SECURE_HSTS_INCLUDE_SUBDOMAINS', cast=bool, default=True)
-    SECURE_HSTS_PRELOAD = config('SECURE_HSTS_PRELOAD', cast=bool, default=True)
+if ENV == "production":
+    SECURE_SSL_REDIRECT = config("SECURE_SSL_REDIRECT", cast=bool, default=True)
+    SESSION_COOKIE_SECURE = config("SESSION_COOKIE_SECURE", cast=bool, default=True)
+    CSRF_COOKIE_SECURE = config("CSRF_COOKIE_SECURE", cast=bool, default=True)
+    SECURE_HSTS_SECONDS = config(
+        "SECURE_HSTS_SECONDS", cast=int, default=31536000
+    )  # 1 ano
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = config(
+        "SECURE_HSTS_INCLUDE_SUBDOMAINS", cast=bool, default=True
+    )
+    SECURE_HSTS_PRELOAD = config("SECURE_HSTS_PRELOAD", cast=bool, default=True)
     # Se estiver atrás de proxy (Cloudflare/Nginx) que termina TLS:
     # SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 else:
@@ -62,78 +72,80 @@ else:
     SESSION_COOKIE_SECURE = False
     CSRF_COOKIE_SECURE = False
 
-DJANGO_PASSWORDS_KEY = config('DJANGO_PASSWORDS_KEY')
+DJANGO_PASSWORDS_KEY = config("DJANGO_PASSWORDS_KEY")
 if not DJANGO_PASSWORDS_KEY:
     # Em produção, **não** deixe vazio. Exija a chave via env.
-    raise RuntimeError("Defina a variável de ambiente DJANGO_PASSWORDS_KEY (Fernet key).")
+    raise RuntimeError(
+        "Defina a variável de ambiente DJANGO_PASSWORDS_KEY (Fernet key)."
+    )
 
 # Application definition
 
 INSTALLED_APPS = [
-    'core',
-    'contratos',
-    'reunioes',
-    'senhas',
-    'dashboards',
-    'logs',
-    'notaspessoais',
-    'tarefas',
-    'propostas',
-    'medicoes',
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
+    "core",
+    "contratos",
+    "reunioes",
+    "senhas",
+    "dashboards",
+    "frota",
+    "logs",
+    "notaspessoais",
+    "tarefas",
+    "propostas",
+    "medicoes",
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
 ]
 
 MIDDLEWARE = [
     # 'logs.middleware.erro_logger.LogErroMiddleware', # Tratamento de erros
-    'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
-if ENV == 'production':
-    MIDDLEWARE.insert(0, 'logs.middleware.erro_logger.LogErroMiddleware')
+if ENV == "production":
+    MIDDLEWARE.insert(0, "logs.middleware.erro_logger.LogErroMiddleware")
 
-if ENV != 'production':
+if ENV != "production":
     DEBUG_PROPAGATE_EXCEPTIONS = True
 
 
-ROOT_URLCONF = 'SGC.urls'
+ROOT_URLCONF = "SGC.urls"
 
 MESSAGE_TAGS = {
-    messages.DEBUG:   'secondary',
-    messages.INFO:    'info',
-    messages.SUCCESS: 'success',
-    messages.WARNING: 'warning',
-    messages.ERROR:   'danger',
+    messages.DEBUG: "secondary",
+    messages.INFO: "info",
+    messages.SUCCESS: "success",
+    messages.WARNING: "warning",
+    messages.ERROR: "danger",
 }
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR /'templates'],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [BASE_DIR / "templates"],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'SGC.wsgi.application'
+WSGI_APPLICATION = "SGC.wsgi.application"
 
 
 # Database
@@ -141,16 +153,16 @@ WSGI_APPLICATION = 'SGC.wsgi.application'
 
 # BANCO DE DADOS PRODUÇÃO
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOST'),
-        'PORT': config('DB_PORT', default='3306'),
-        'OPTIONS': {
-                    'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-                },
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": config("DB_NAME"),
+        "USER": config("DB_USER"),
+        "PASSWORD": config("DB_PASSWORD"),
+        "HOST": config("DB_HOST"),
+        "PORT": config("DB_PORT", default="3306"),
+        "OPTIONS": {
+            "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
 }
 
@@ -167,16 +179,16 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
@@ -184,9 +196,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = 'pt-br'
+LANGUAGE_CODE = "pt-br"
 
-TIME_ZONE = 'America/Sao_Paulo'
+TIME_ZONE = "America/Sao_Paulo"
 
 USE_L10N = False
 
@@ -198,12 +210,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
-STATIC_URL = '/static/'
-MEDIA_URL = '/media/'
-STATICFILES_DIRS = [BASE_DIR / "static", ]
-MEDIA_ROOT = BASE_DIR / 'mediafiles'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
+STATIC_URL = "/static/"
+MEDIA_URL = "/media/"
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+MEDIA_ROOT = BASE_DIR / "mediafiles"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 
 ## PRODUÇÃO
@@ -211,23 +225,23 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # MEDIA_ROOT = config('MEDIA_ROOT')
 
 # configuração do email do servidor
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = config('EMAIL_HOST')
-EMAIL_HOST_USER = config('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = config("EMAIL_HOST")
+EMAIL_HOST_USER = config("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
 EMAIL_PORT = 587  # ou outra porta conforme sua configuração
 EMAIL_USE_TLS = True
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
-DATE_FORMAT = 'd/m/y'
-TIME_FORMAT = 'H:i'
-DATETIME_FORMAT = 'd/m/y - H:i'
+DATE_FORMAT = "d/m/y"
+TIME_FORMAT = "H:i"
+DATETIME_FORMAT = "d/m/y - H:i"
 
-LOGIN_URL = '/login/'
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/login/'
+LOGIN_URL = "/login/"
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/login/"

@@ -2,171 +2,256 @@
 {% load custom_filters %}
 <!DOCTYPE html>
 <html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>{% block title %}SGC - Sistema de Gestão de Contratos{% endblock title %}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
-    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/favicon-apple.png' %}">
-    <meta name="description" content="SGC - Sistema de Gestão de Contratos">
-
-    <!-- Bootstrap CSS (Cloudflare CDN) -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Bootstrap Icons (Cloudflare CDN) -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.3/font/bootstrap-icons.min.css" rel="stylesheet">
-
-    <!-- HTMX -->
-    <script src="https://unpkg.com/htmx.org@1.9.5"></script>
-
-    <!-- Select2 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-
-    {% block extra_head %}
-    <style>
+    <head>
+        <meta charset="UTF-8">
+        <title>
+            {% block title %}
+                SGC - Sistema de Gestão de Contratos
+            {% endblock title %}
+        </title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="icon"
+              href="{% static 'images/favicon.ico' %}"
+              type="image/x-icon">
+        <link rel="apple-touch-icon"
+              sizes="180x180"
+              href="{% static 'images/favicon-apple.png' %}">
+        <meta name="description" content="SGC - Sistema de Gestão de Contratos">
+        <!-- Bootstrap CSS (Cloudflare CDN) -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css"
+              rel="stylesheet">
+        <!-- Bootstrap Icons (Cloudflare CDN) -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.3/font/bootstrap-icons.min.css"
+              rel="stylesheet">
+        <!-- HTMX -->
+        <script src="https://unpkg.com/htmx.org@1.9.5"></script>
+        <!-- Select2 CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+              rel="stylesheet" />
+        {% block extra_head %}
+            <style>
         .navbar-nav .nav-link { transition: background-color .3s ease, color .3s ease; }
         .navbar-nav .nav-link:hover { background-color: rgba(0,123,255,.1); color: #007bff; border-radius: 4px; }
         .ui-autocomplete { z-index: 9999; }
         .fade-out { opacity: 0; transform: translateX(30px); transition: all .4s ease; }
-    </style>
-    {% endblock extra_head %}
-</head>
-
-<body class="d-flex flex-column min-vh-100">
-<header>
-{% block header %}
-<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="{% url 'index' %}">
-      <i class="bi bi-clipboard-data"></i> SGC - CRO
-    </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarNav">
-      {% if user.is_authenticated %}
-      <ul class="navbar-nav me-auto">
-        <li class="nav-item"><a class="nav-link" href="{% url 'index' %}"><i class="bi bi-house"></i> Início</a></li>
-
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="contratoDropdown" data-bs-toggle="dropdown">
-            <i class="bi bi-clipboard-data"></i> Contratos
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="contratoDropdown">
-            <li><a class="dropdown-item" href="{% url 'menu_contratos' %}"><i class="bi bi-list-ul"></i> Menu</a></li>
-            <li><a class="dropdown-item" href="{% url 'lista_contratos' %}"><i class="bi bi-file-earmark-text"></i> Contratos</a></li>
-            <li><a class="dropdown-item" href="{% url 'lista_obras' %}"><i class="bi bi-building"></i> Obras</a></li>
-            <li><a class="dropdown-item" href="{% url 'lista_contratantes' %}"><i class="bi bi-buildings"></i> Contratantes</a></li>
-            <li><a class="dropdown-item" href="{% url 'lista_medicoes' %}"><i class="bi bi-clipboard2-check"></i> Medições</a></li>
-          </ul>
-        </li>
-
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="reunioesDropdown" data-bs-toggle="dropdown">
-            <i class="bi bi-journal-text"></i> Reuniões
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="reunioesDropdown">
-            <li><a class="dropdown-item" href="{% url 'lista_atas' %}"><i class="bi bi-journal-text"></i> Listar Atas</a></li>
-            <li><a class="dropdown-item" href="{% url 'atas_agrupadas' %}"><i class="bi bi-folder2-open"></i> Atas por Contrato</a></li>
-          </ul>
-        </li>
-
-        <li class="nav-item"><a class="nav-link" href="{% url 'lista_propostas' %}"><i class="bi bi-cash-coin"></i> Propostas</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}"><i class="bi bi-bar-chart-line"></i> Dashboard</a></li>
-
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="externosDropdown" data-bs-toggle="dropdown">
-            <i class="bi bi-share"></i> Sistemas
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="externosDropdown">
-            <li><a class="dropdown-item" href="https://sgmcro.dbsistemas.com.br/" target="_blank"><i class="bi bi-box-seam"></i> GSM - Gestão de Materiais</a></li>
-            <li><a class="dropdown-item" href="https://janos.dbsistemas.com.br/" target="_blank"><i class="bi bi-lightning-charge"></i> JANOS - Chaves Cemig</a></li>
-          </ul>
-        </li>
-
-        {% if user.is_superuser %}
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="superDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="bi bi-shield-lock-fill"></i> ADM
-          </a>
-          <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="superDropdown" role="menu">
-            <li role="menuitem">
-              <a class="dropdown-item" href="{% url 'lista_senhas' %}">
-                <i class="bi bi-key-fill"></i> Senhas
-              </a>
-            </li>
-            <li role="menuitem">
-              <a class="dropdown-item" href="{% url 'lista_notas' %}">
-                <i class="bi bi-journal-text"></i> Notas Pessoais
-              </a>
-            </li>
-            <li role="menuitem">
-              <a class="dropdown-item" href="{% url 'lista_tarefas' %}">
-                <i class="bi bi-check2-square"></i> Tarefas
-              </a>
-            </li>
-
-            <li><hr class="dropdown-divider"></li>
-
-            <li role="menuitem">
-              <a class="dropdown-item" href="{% url 'admin:index' %}">
-                <i class="bi bi-gear-fill"></i> Admin
-              </a>
-            </li>
-          </ul>
-        </li>
-        {% endif %}
-
-      </ul>
-
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <span class="nav-link disabled">
-            <i class="bi bi-person-circle"></i>
-            {% with user.get_full_name|default:user.username as full_name %}
-              {% if full_name %}
-                {% with full_name|split:" " as name_parts %}
-                  {{ name_parts.0 }} {{ name_parts|last }}
-                {% endwith %}
-              {% else %}
-                {{ user.username }}
-              {% endif %}
-            {% endwith %}
-          </span>
-        </li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right"></i> Sair</a></li>
-      </ul>
-      {% endif %}
-    </div>
-  </div>
-</nav>
-{% endblock header %}
-</header>
-
-<main role="main" class="flex-grow-1 container" style="max-width: 1400px; margin: 70px auto; padding: 0 10px 80px 10px;">
-  {% block content %}{% endblock %}
-</main>
-
-<footer class="fixed-bottom bg-light text-center py-1 border-top">
-  {% block footer %}{% include "footer.html" %}{% endblock footer %}
-</footer>
-
-<!-- Bootstrap Bundle JS (Cloudflare CDN) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-{% block extra_js %}{% endblock extra_js %}
-
-<!-- Overlay minimal (mantido) -->
-<div id="loading-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(18,18,18,0.9); z-index:9999; align-items:center; justify-content:center; flex-direction: column; font-family: monospace; text-align: center; font-size: 1.5rem; overflow: hidden;">
-  <div class="orbita-container">
-    <div class="nucleo"></div>
-    <div class="orbit"></div>
-  </div>
-  <h1 style="color: #e0e0e0; margin-top: 80px;">Processando.... Sincronizando dados...</h1>
-</div>
-
-<style>
+            </style>
+        {% endblock extra_head %}
+    </head>
+    <body class="d-flex flex-column min-vh-100">
+        <header>
+            {% block header %}
+                <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+                    <div class="container-fluid">
+                        <a class="navbar-brand" href="{% url 'index' %}">
+                            <i class="bi bi-clipboard-data"></i> SGC - CRO
+                        </a>
+                        <button class="navbar-toggler"
+                                type="button"
+                                data-bs-toggle="collapse"
+                                data-bs-target="#navbarNav"
+                                aria-controls="navbarNav"
+                                aria-expanded="false"
+                                aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                        <div class="collapse navbar-collapse" id="navbarNav">
+                            {% if user.is_authenticated %}
+                                <ul class="navbar-nav me-auto">
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{% url 'index' %}"><i class="bi bi-house"></i> Início</a>
+                                    </li>
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle"
+                                           href="#"
+                                           id="contratoDropdown"
+                                           data-bs-toggle="dropdown">
+                                            <i class="bi bi-clipboard-data"></i> Contratos
+                                        </a>
+                                        <ul class="dropdown-menu" aria-labelledby="contratoDropdown">
+                                            <li>
+                                                <a class="dropdown-item" href="{% url 'menu_contratos' %}"><i class="bi bi-list-ul"></i> Menu</a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="{% url 'lista_contratos' %}"><i class="bi bi-file-earmark-text"></i> Contratos</a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="{% url 'lista_obras' %}"><i class="bi bi-building"></i> Obras</a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="{% url 'lista_contratantes' %}"><i class="bi bi-buildings"></i> Contratantes</a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="{% url 'lista_medicoes' %}"><i class="bi bi-clipboard2-check"></i> Medições</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle"
+                                           href="#"
+                                           id="reunioesDropdown"
+                                           data-bs-toggle="dropdown">
+                                            <i class="bi bi-journal-text"></i> Reuniões
+                                        </a>
+                                        <ul class="dropdown-menu" aria-labelledby="reunioesDropdown">
+                                            <li>
+                                                <a class="dropdown-item" href="{% url 'lista_atas' %}"><i class="bi bi-journal-text"></i> Listar Atas</a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="{% url 'atas_agrupadas' %}"><i class="bi bi-folder2-open"></i> Atas por Contrato</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle"
+                                           href="#"
+                                           id="frotaDropdown"
+                                           data-bs-toggle="dropdown">
+                                            <i class="bi bi-car-front"></i> Frota
+                                        </a>
+                                        <ul class="dropdown-menu" aria-labelledby="frotaDropdown">
+                                            <li>
+                                                <a class="dropdown-item" href="{% url 'frota:lista_locadoras' %}"><i class="bi bi-tags"></i> Locadoras</a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="{% url 'frota:lista_veiculos' %}">
+                                                    <i class="bi bi-car-front"></i> Veículos
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" href="{% url 'frota:lista_alocacoes' %}">
+                                                    <i class="bi bi-arrow-left-right"></i> Mobilizações
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{% url 'lista_propostas' %}"><i class="bi bi-cash-coin"></i> Propostas</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{% url 'dashboard' %}"><i class="bi bi-bar-chart-line"></i> Dashboard</a>
+                                    </li>
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle"
+                                           href="#"
+                                           id="externosDropdown"
+                                           data-bs-toggle="dropdown">
+                                            <i class="bi bi-share"></i> Links externos
+                                        </a>
+                                        <ul class="dropdown-menu" aria-labelledby="externosDropdown">
+                                            <li>
+                                                <a class="dropdown-item"
+                                                   href="https://sgmcro.dbsistemas.com.br/"
+                                                   target="_blank"><i class="bi bi-box-seam"></i> GSM - Gestão de Materiais</a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item"
+                                                   href="https://janos.dbsistemas.com.br/"
+                                                   target="_blank"><i class="bi bi-lightning-charge"></i> JANOS - Chaves Cemig</a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    {% if user.is_superuser %}
+                                        <li class="nav-item dropdown">
+                                            <a class="nav-link dropdown-toggle"
+                                               href="#"
+                                               id="superDropdown"
+                                               data-bs-toggle="dropdown"
+                                               aria-expanded="false">
+                                                <i class="bi bi-shield-lock-fill"></i> ADM
+                                            </a>
+                                            <ul class="dropdown-menu dropdown-menu-end shadow-sm"
+                                                aria-labelledby="superDropdown"
+                                                role="menu">
+                                                <li role="menuitem">
+                                                    <a class="dropdown-item" href="{% url 'lista_senhas' %}">
+                                                        <i class="bi bi-key-fill"></i> Senhas
+                                                    </a>
+                                                </li>
+                                                <li role="menuitem">
+                                                    <a class="dropdown-item" href="{% url 'lista_notas' %}">
+                                                        <i class="bi bi-journal-text"></i> Notas Pessoais
+                                                    </a>
+                                                </li>
+                                                <li role="menuitem">
+                                                    <a class="dropdown-item" href="{% url 'lista_tarefas' %}">
+                                                        <i class="bi bi-check2-square"></i> Tarefas
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <hr class="dropdown-divider">
+                                                </li>
+                                                <li role="menuitem">
+                                                    <a class="dropdown-item" href="{% url 'admin:index' %}">
+                                                        <i class="bi bi-gear-fill"></i> Admin
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                                <ul class="navbar-nav">
+                                    <li class="nav-item">
+                                        <span class="nav-link disabled">
+                                            <i class="bi bi-person-circle"></i>
+                                            {% with user.get_full_name|default:user.username as full_name %}
+                                                {% if full_name %}
+                                                    {% with full_name|split:" " as name_parts %}{{ name_parts.0 }} {{ name_parts|last }}{% endwith %}
+                                                {% else %}
+                                                    {{ user.username }}
+                                                {% endif %}
+                                            {% endwith %}
+                                        </span>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right"></i> Sair</a>
+                                    </li>
+                                </ul>
+                            {% endif %}
+                        </div>
+                    </div>
+                </nav>
+            {% endblock header %}
+        </header>
+        <main role="main"
+              class="flex-grow-1 container"
+              style="max-width: 1400px;
+                     margin: 70px auto;
+                     padding: 0 10px 80px 10px">
+            {% block content %}{% endblock %}
+        </main>
+        <footer class="fixed-bottom bg-light text-center py-1 border-top">
+            {% block footer %}
+                {% include "footer.html" %}
+            {% endblock footer %}
+        </footer>
+        <!-- Bootstrap Bundle JS (Cloudflare CDN) -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+        {% block extra_js %}
+        {% endblock extra_js %}
+        <!-- Overlay minimal (mantido) -->
+        <div id="loading-overlay"
+             style="display:none;
+                    position:fixed;
+                    top:0;
+                    left:0;
+                    width:100%;
+                    height:100%;
+                    background-color:rgba(18,18,18,0.9);
+                    z-index:9999;
+                    align-items:center;
+                    justify-content:center;
+                    flex-direction: column;
+                    font-family: monospace;
+                    text-align: center;
+                    font-size: 1.5rem;
+                    overflow: hidden">
+            <div class="orbita-container">
+                <div class="nucleo"></div>
+                <div class="orbit"></div>
+            </div>
+            <h1 style="color: #e0e0e0; margin-top: 80px;">Processando.... Sincronizando dados...</h1>
+        </div>
+        <style>
   /* Overlay orbit */
   .orbita-container { position: relative; width: 200px; height: 200px; }
   .nucleo {
@@ -256,16 +341,14 @@
   @media (max-width: 576px){
     :root{ --toast-font-size: .95rem; --toast-icon-size: 1rem; }
   }
-</style>
-
-<script>
+        </style>
+        <script>
   function showLoadingOverlay(show = true) {
     const overlay = document.getElementById('loading-overlay');
     if (overlay) overlay.style.display = show ? 'flex' : 'none';
   }
-</script>
-
-{% include "partials/toasts_all.html" %}
-{# Para usar apenas sucesso: {% include "partials/toasts_success.html" %} #}
-</body>
+        </script>
+        {% include "partials/toasts_all.html" %}
+        {# Para usar apenas sucesso: {% include "partials/toasts_success.html" %} #}
+    </body>
 </html>

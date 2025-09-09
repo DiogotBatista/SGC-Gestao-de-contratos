@@ -2,6 +2,7 @@ from django import template
 
 register = template.Library()
 
+
 @register.filter
 def mask(val, visible=0):
     """
@@ -11,10 +12,10 @@ def mask(val, visible=0):
         visible = int(visible)
     except Exception:
         visible = 0
-    s = str(val or '')
+    s = str(val or "")
     if not s:
-        return ''
+        return ""
     if visible <= 0:
-        return '•' * 12
+        return "•" * 12
     head = s[:visible]
-    return head + '•' * max(0, 12 - visible)
+    return head + "•" * max(0, 12 - visible)

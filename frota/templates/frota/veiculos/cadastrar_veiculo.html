@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+{% load custom_filters %}
+{% block title %}Cadastrar Veículo{% endblock %}
+{% block content %}
+    <div class="container mt-4 mb-5">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{% url 'index' %}">Início</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{% url 'frota:lista_veiculos' %}">Veículos</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">Cadastrar</li>
+            </ol>
+        </nav>
+        <div class="row justify-content-center">
+            <div class="col-lg-11">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">
+                            <i class="bi bi-truck"></i> Cadastrar Veículo
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        {# Aviso único no topo se houver qualquer erro de validação #}
+                        {% if form.errors %}
+                            <div class="alert alert-warning d-flex align-items-center mb-3">
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                <span>Revise os campos destacados em vermelho.</span>
+                            </div>
+                        {% endif %}
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                    <br>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <form method="post" novalidate autocomplete="off" id="form-veiculo">
+                            {% csrf_token %}
+                            {# Layout horizontal em múltiplas colunas #}
+                            <div class="row g-3">
+                                <!-- Modelo -->
+                                <div class="col-12 col-md-6 col-lg-5">
+                                    {{ form.modelo.label_tag }}
+                                    {{ form.modelo|add_class:"form-control" }}
+                                    {% for error in form.modelo.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                                    {% if form.modelo.help_text %}<small class="form-text text-muted">{{ form.modelo.help_text }}</small>{% endif %}
+                                </div>
+                                <!-- Placa -->
+                                <div class="col-6 col-md-3 col-lg-2">
+                                    {{ form.placa.label_tag }}
+                                    {{ form.placa|add_class:"form-control" }}
+                                    {% for error in form.placa.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                                    {% if form.placa.help_text %}<small class="form-text text-muted">{{ form.placa.help_text }}</small>{% endif %}
+                                </div>
+                                <!-- Modalidade -->
+                                <div class="col-6 col-md-3 col-lg-2">
+                                    {{ form.modalidade.label_tag }}
+                                    {{ form.modalidade|add_class:"form-select" }}
+                                    {% for error in form.modalidade.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                                    {% if form.modalidade.help_text %}
+                                        <small class="form-text text-muted">{{ form.modalidade.help_text }}</small>
+                                    {% endif %}
+                                </div>
+                                <!-- Status -->
+                                <div class="col-6 col-md-3 col-lg-2">
+                                    {{ form.status.label_tag }}
+                                    {{ form.status|add_class:"form-select" }}
+                                    {% for error in form.status.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                                    {% if form.status.help_text %}<small class="form-text text-muted">{{ form.status.help_text }}</small>{% endif %}
+                                </div>
+                                <!-- Origem -->
+                                <div class="col-6 col-md-3 col-lg-2">
+                                    {{ form.origem.label_tag }}
+                                    {{ form.origem|add_class:"form-select" }}
+                                    {% for error in form.origem.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                                    {% if form.origem.help_text %}<small class="form-text text-muted">{{ form.origem.help_text }}</small>{% endif %}
+                                </div>
+                                <!-- Empresa Locadora -->
+                                <div class="col-12 col-md-6 col-lg-5">
+                                    {{ form.empresa_locadora.label_tag }}
+                                    {{ form.empresa_locadora|add_class:"form-select" }}
+                                    {% for error in form.empresa_locadora.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                                    {% if form.empresa_locadora.help_text %}
+                                        <small class="form-text text-muted">{{ form.empresa_locadora.help_text }}</small>
+                                    {% endif %}
+                                </div>
+                                <!-- Data Início Locação -->
+                                <div class="col-6 col-md-3 col-lg-2">
+                                    {{ form.data_inicio_locacao.label_tag }}
+                                    {{ form.data_inicio_locacao|add_class:"form-control" }}
+                                    {% for error in form.data_inicio_locacao.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                                    {% if form.data_inicio_locacao.help_text %}
+                                        <small class="form-text text-muted">{{ form.data_inicio_locacao.help_text }}</small>
+                                    {% endif %}
+                                </div>
+                                <!-- Data Aquisição -->
+                                <div class="col-6 col-md-3 col-lg-2">
+                                    {{ form.data_aquisicao.label_tag }}
+                                    {{ form.data_aquisicao|add_class:"form-control" }}
+                                    {% for error in form.data_aquisicao.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                                    {% if form.data_aquisicao.help_text %}
+                                        <small class="form-text text-muted">{{ form.data_aquisicao.help_text }}</small>
+                                    {% endif %}
+                                </div>
+                                <!-- Tag do Contrato (CharField como INPUT, sem "form-select") -->
+                                <div class="col-12 col-md-6 col-lg-3">
+                                    {{ form.tag_contrato.label_tag }}
+                                    {{ form.tag_contrato|add_class:"form-control" }}
+                                    {% for error in form.tag_contrato.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                                    {% if form.tag_contrato.help_text %}
+                                        <small class="form-text text-muted">{{ form.tag_contrato.help_text }}</small>
+                                    {% endif %}
+                                </div>
+                                <!-- Ativo -->
+                                <div class="col-12 col-md-6 col-lg-2 d-flex align-items-end">
+                                    <div class="form-check">
+                                        {{ form.ativo|add_class:"form-check-input" }}
+                                        <label class="form-check-label" for="{{ form.ativo.id_for_label }}">{{ form.ativo.label }}</label>
+                                        {% for error in form.ativo.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                                    </div>
+                                </div>
+                                <!-- Observações -->
+                                <div class="col-12">
+                                    {{ form.observacoes.label_tag }}
+                                    {{ form.observacoes|add_class:"form-control" }}
+                                    {% for error in form.observacoes.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                                    {% if form.observacoes.help_text %}
+                                        <small class="form-text text-muted">{{ form.observacoes.help_text }}</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <!-- Botões -->
+                            <div class="d-flex justify-content-end mt-4">
+                                <button type="submit" class="btn btn-success me-2">
+                                    <i class="bi bi-save"></i> Salvar
+                                </button>
+                                <a href="{% url 'frota:lista_veiculos' %}" class="btn btn-secondary">
+                                    <i class="bi bi-x-circle"></i> Cancelar
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {# Quando houver erros, esconda toasts globais para evitar poluição visual #}
+        {% if form.errors %}<style>.toast-container{display:none!important;}</style>{% endif %}
+    </div>
+{% endblock %}
+{% block extra_js %}
+    <script>
+    (function () {
+      const form = document.getElementById('form-veiculo');
+
+      // Overlay de carregamento e proteção contra duplo submit
+      if (form) {
+        form.addEventListener('submit', function () {
+          if (typeof showLoadingOverlay === 'function') {
+            showLoadingOverlay();
+          }
+        });
+      }
+
+      // Inicialização opcional de select2 se a lib existir (não altera regras de negócio)
+      if (window.jQuery && jQuery.fn && jQuery.fn.select2) {
+        jQuery(function ($) {
+          $('#form-veiculo select').each(function () {
+            $(this).select2({ width: '100%', theme: 'bootstrap-5', placeholder: 'Selecione...', allowClear: true });
+          });
+        });
+      }
+    })();
+    </script>
+{% endblock %}

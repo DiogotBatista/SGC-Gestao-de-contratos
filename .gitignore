@@ -21,7 +21,8 @@ Guias Digitalizadas SGM/
 temp/
 teste_openrouter.py
 listar_modelos_openrouter.py
-
+Comandos_uteis.txt
+/Arquivos
 
 # If your build process includes running collectstatic, then you probably don't need or want to include staticfiles/
 # in your Git repository. Update and uncomment the following line accordingly.

@@ -1,56 +1,58 @@
 {% extends 'base.html' %}
 {% load custom_filters %}
-
 {% block content %}
-<div class="container mt-4">
-
-  <!-- Cabeçalho -->
-  <header class="text-center mb-5">
-    <h1 class="fw-bold">Contratos Ativos</h1>
-    <p class="text-muted">CRO - Construtora Ribeiro Oliveira</p>
-  </header>
-
-  <!-- Cards -->
-  <div class="row g-4">
-    {% for contrato in cards_contratos %}
-      <div class="col-md-6 col-lg-4">
-        <div class="card h-100 border-0 shadow-sm dashboard-card">
-          <div class="card-body d-flex flex-column">
-            <h5 class="card-title text-primary fw-bold">{{ contrato.numero }}</h5>
-            <p class="mb-1"><i class="bi bi-building"></i> <strong>Contratante:</strong> {{ contrato.contratante }}</p>
-            <p class="mb-1"><i class="bi bi-person"></i> <strong>Preposto:</strong> {{ contrato.preposto }}</p>
-            <p class="mb-1"><i class="bi bi-currency-dollar"></i> <strong>Valor:</strong> {{ contrato.valor|moeda }}</p>
-            <p class="mb-1"><i class="bi bi-diagram-3"></i> <strong>Obras:</strong> {{ contrato.quantidade_obras }}</p>
-
-            <div class="mb-2">
-              <strong><i class="bi bi-speedometer2"></i> Execução:</strong>
-              <div class="progress mt-1" style="height: 20px;">
-                <div class="progress-bar bg-success progress-bar-striped progress-bar-animated"
-                     role="progressbar"
-                     style="width: {{ contrato.media_execucao }}%;"
-                     aria-valuenow="{{ contrato.media_execucao }}"
-                     aria-valuemin="0" aria-valuemax="100">
-                  {{ contrato.media_execucao }}%
+    <div class="container mt-4">
+        <!-- Cabeçalho -->
+        <header class="text-center mb-5">
+            <h1 class="fw-bold">Contratos Ativos</h1>
+            <p class="text-muted">CRO - Construtora Ribeiro Oliveira</p>
+        </header>
+        <!-- Cards -->
+        <div class="row g-4">
+            {% for contrato in cards_contratos %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm dashboard-card">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title text-primary fw-bold">{{ contrato.numero }}</h5>
+                            <p class="mb-1">
+                                <i class="bi bi-building"></i> <strong>Contratante:</strong> {{ contrato.contratante }}
+                            </p>
+                            <p class="mb-1">
+                                <i class="bi bi-person"></i> <strong>Preposto:</strong> {{ contrato.preposto }}
+                            </p>
+                            <p class="mb-1">
+                                <i class="bi bi-currency-dollar"></i> <strong>Valor:</strong> {{ contrato.valor|moeda }}
+                            </p>
+                            <p class="mb-1">
+                                <i class="bi bi-diagram-3"></i> <strong>Obras:</strong> {{ contrato.quantidade_obras }}
+                            </p>
+                            <div class="mb-2">
+                                <strong><i class="bi bi-speedometer2"></i> Execução:</strong>
+                                <div class="progress mt-1" style="height: 20px;">
+                                    <div class="progress-bar bg-success progress-bar-striped progress-bar-animated"
+                                         role="progressbar"
+                                         style="width: {{ contrato.media_execucao }}%"
+                                         aria-valuenow="{{ contrato.media_execucao }}"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100">{{ contrato.media_execucao }}%</div>
+                                </div>
+                            </div>
+                            <div class="mt-auto text-end">
+                                <a href="{% url 'detalhes_contrato' contrato.id %}"
+                                   class="btn btn-outline-primary btn-sm">
+                                    Ver Detalhes <i class="bi bi-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
-            </div>
-
-            <div class="mt-auto text-end">
-              <a href="{% url 'detalhes_contrato' contrato.id %}" class="btn btn-outline-primary btn-sm">
-                Ver Detalhes <i class="bi bi-arrow-right"></i>
-              </a>
-            </div>
-          </div>
+            {% empty %}
+                <p class="text-center text-muted">Nenhum contrato ativo encontrado.</p>
+            {% endfor %}
         </div>
-      </div>
-    {% empty %}
-      <p class="text-center text-muted">Nenhum contrato ativo encontrado.</p>
-    {% endfor %}
-  </div>
-</div>
-
-<!-- Estilo dos cards -->
-<style>
+    </div>
+    <!-- Estilo dos cards -->
+    <style>
   .dashboard-card {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
@@ -60,5 +62,5 @@
     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
     cursor: pointer;
   }
-</style>
+    </style>
 {% endblock %}

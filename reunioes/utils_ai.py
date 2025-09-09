@@ -1,21 +1,25 @@
-import os
 import io
-import requests
+import os
+
 import fitz  # PyMuPDF
 import openai
-from openai import OpenAI
+import requests
 from django.conf import settings
-from .utils_google_drive import download_file_from_drive
+from openai import OpenAI
+
 from SGC.settings import OPENROUTER_API_KEY
 
+from .utils_google_drive import download_file_from_drive
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-TEMP_DIR = os.path.join(BASE_DIR, 'temp')
+TEMP_DIR = os.path.join(BASE_DIR, "temp")
 openai.api_key = settings.OPENAI_API_KEY
 client = OpenAI(api_key=settings.OPENAI_API_KEY)
 
 
 # Cria a pasta temp se ela não existir
 os.makedirs(TEMP_DIR, exist_ok=True)
+
 
 def extrair_texto_pdfs_da_ata(ata):
     """
@@ -55,6 +59,7 @@ def extrair_texto_pdfs_da_ata(ata):
 
     return texto_total.strip()
 
+
 def extrair_texto_itens_da_ata(ata):
     """
     Monta um texto concatenado com os itens da ata (ItemAta).
@@ -69,6 +74,7 @@ def extrair_texto_itens_da_ata(ata):
 
     return texto.strip()
 
+
 def gerar_resumo_openai(texto):
     """
     Envia o texto para a OpenAI (SDK novo) e retorna o resumo gerado.
@@ -79,9 +85,11 @@ def gerar_resumo_openai(texto):
         response = client.chat.completions.create(
             model="gpt-3.5-turbo",  # Troca aqui
             messages=[
-                {"role": "system",
-                 "content": "Você é um assistente especialista em gerar resumos claros e objetivos de atas de reunião."},
-                {"role": "user", "content": prompt}
+                {
+                    "role": "system",
+                    "content": "Você é um assistente especialista em gerar resumos claros e objetivos de atas de reunião.",
+                },
+                {"role": "user", "content": prompt},
             ],
             max_tokens=400,
             temperature=0.5,
@@ -93,36 +101,44 @@ def gerar_resumo_openai(texto):
         print(f"Erro ao chamar OpenAI: {e}")
         return "Erro ao gerar resumo."
 
+
 def gerar_resumo_openrouter(texto):
     prompt = f"Leia o conteúdo abaixo (texto de atas de reunião) e gere um resumo claro e objetivo com no máximo 10 linhas:\n\n{texto}"
 
     headers = {
         "Authorization": f"Bearer {OPENROUTER_API_KEY}",
         "HTTP-Referer": "https://sgccro.dbsistemas.com.br/",  # Substitui pelo domínio do teu sistema ou deixa genérico
-        "X-Title": "SGC Resumo"
+        "X-Title": "SGC Resumo",
     }
 
     data = {
         "model": "mistralai/mistral-small-3.2-24b-instruct",
         "messages": [
-            {"role": "system", "content": "Você é um assistente especialista em gerar resumos claros e objetivos de atas de reunião."},
-            {"role": "user", "content": prompt}
+            {
+                "role": "system",
+                "content": "Você é um assistente especialista em gerar resumos claros e objetivos de atas de reunião.",
+            },
+            {"role": "user", "content": prompt},
         ],
         "max_tokens": 400,
-        "temperature": 0.5
+        "temperature": 0.5,
     }
 
     try:
-        response = requests.post("https://openrouter.ai/api/v1/chat/completions", json=data, headers=headers)
+        response = requests.post(
+            "https://openrouter.ai/api/v1/chat/completions", json=data, headers=headers
+        )
         response.raise_for_status()
-        resumo = response.json()['choices'][0]['message']['content']
+        resumo = response.json()["choices"][0]["message"]["content"]
         return resumo.strip()
     except Exception as e:
         print(f"Erro ao chamar OpenRouter: {e}")
         return "Erro ao gerar resumo."
 
+
 def gerar_resumo_ata(ata_id):
     from reunioes.models import AtaReuniao
+
     ata = AtaReuniao.objects.get(id=ata_id)
 
     # Extrai o texto dos PDFs
@@ -141,4 +157,3 @@ def gerar_resumo_ata(ata_id):
     ata.resumo = resumo
 
     return resumo
-

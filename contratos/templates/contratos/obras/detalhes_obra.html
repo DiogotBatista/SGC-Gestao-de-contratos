@@ -1,187 +1,180 @@
 {% extends "base.html" %}
 {% load custom_filters %}
 {% block title %}Detalhes da Obra{% endblock %}
-
 {% block content %}
-<div class="container mt-4 mb-5">
-  <div class="row justify-content-center">
-    <div class="col-lg-10">
-
-      <!-- Botões e título -->
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <a href="{% url 'lista_obras' %}" class="btn btn-outline-secondary btn-sm">
-          <i class="bi bi-arrow-left"></i> Voltar
-        </a>
-
-          <div>
-            <a href="{% url 'editar_obra' obra.pk %}" class="btn btn-outline-primary btn-sm me-1">
-              <i class="bi bi-pencil-square"></i> Editar
-            </a>
-            <a href="{% url 'excluir_obra' obra.pk %}" class="btn btn-outline-danger btn-sm">
-              <i class="bi bi-trash"></i> Excluir
-            </a>
-          </div>
-
-      </div>
-
-      <h2 class="mb-4">
-        <i class="bi bi-building"></i> Obra {{ obra.codigo }}
-      </h2>
-
-      <!-- Cards de detalhes -->
-      <div class="row g-4 mt-3">
-        <div class="col-md-6">
-          <div class="card shadow-sm h-100">
-            <div class="card-body">
-              <h5 class="card-title"><i class="bi bi-file-earmark-text"></i> Contrato</h5>
-              <p class="mb-1"><strong>Número:</strong> {{ obra.contrato.numero }}</p>
-              <p class="mb-0"><strong>Contratante:</strong> {{ obra.contrato.contratante.nome }}</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="card  shadow-sm h-100">
-            <div class="card-body">
-              <h5 class="card-title"><i class="bi bi-geo-alt"></i> Localização</h5>
-              <p class="mb-0">{{ obra.local }}</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="card  shadow-sm h-100">
-            <div class="card-body">
-              <h5 class="card-title"><i class="bi bi-card-text"></i> Descrição</h5>
-              <p class="mb-0">
-                {% if obra.descricao %}
-                  {{ obra.descricao }}
-                {% else %}
-                  <span class="text-muted">Nenhuma descrição fornecida.</span>
-                {% endif %}
-              </p>
-            </div>
-          </div>
-        </div>
-<div class="col-md-6">
-  <div class="card shadow-sm h-100">
-    <div class="card-body">
-      <h5 class="card-title"><i class="bi bi-check-circle"></i> Status e Execução</h5>
-
-      <!-- Status -->
-      <p class="mb-2">
-        <strong>Status:</strong>
-        {% if obra.ativo %}
-          <span class="badge bg-success">Ativa</span>
-        {% else %}
-          <span class="badge bg-secondary">Inativa</span>
-        {% endif %}
-      </p>
-
-      <!-- Execução -->
-      <p class="mb-2"><strong>Execução:</strong> {{ obra.porcentagem_execucao|floatformat:2 }}%</p>
-
-      <div class="progress mb-3" style="height: 20px;">
-        <div class="progress-bar
-          {% if obra.porcentagem_execucao >= 100 %}
-            bg-success
-          {% elif obra.porcentagem_execucao >= 50 %}
-            bg-warning
-          {% else %}
-            bg-danger
-          {% endif %}"
-          role="progressbar"
-          style="width: {{ obra.porcentagem_execucao }}%;"
-          aria-valuenow="{{ obra.porcentagem_execucao }}"
-          aria-valuemin="0"
-          aria-valuemax="100">
-          {{ obra.porcentagem_execucao|floatformat:0 }}%
-        </div>
-      </div>
-
-      <!-- Datas e Prazo -->
-      <p class="mb-1"><strong>Início das Atividades:</strong>
-        {% if obra.data_inicio_atividade %}
-          {{ obra.data_inicio_atividade|date:"d/m/Y" }}
-        {% else %}
-          <span class="text-muted">Não informado</span>
-        {% endif %}
-      </p>
-
-      <p class="mb-1"><strong>Término Previsto:</strong>
-        {% if obra.data_termino_previsto %}
-          {{ obra.data_termino_previsto|date:"d/m/Y" }}
-        {% else %}
-          <span class="text-muted">Não informado</span>
-        {% endif %}
-      </p>
-
-      <p class="mb-0"><strong>Dias Previstos:</strong>
-        {% if obra.dias_previstos %}
-          {{ obra.dias_previstos }} dias
-        {% else %}
-          <span class="text-muted">--</span>
-        {% endif %}
-      </p>
-    </div>
-  </div>
-</div>
-
-
-      </div>
-
-      <!-- Anotações -->
-      <div class="row mt-4" id="anotacoes" >
-        <div class="col-12">
-          <div class="card shadow-sm">
-            <div class="card-body">
-              <h5 class="card-title mb-3"><i class="bi bi-journal-text"></i> Anotações sobre a Obra</h5>
-
-              {% if obra.notas.exists %}
-                <div class="list-group mb-3">
-                  {% for nota in obra.notas.all %}
-                    <div class="list-group-item list-group-item-action shadow-sm mb-2">
-                      <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                          <strong>{{ nota.criado_por.get_full_name|default:nota.criado_por.username }}</strong>
-                          <small class="text-muted ms-2">{{ nota.criado_em|date:"d/m/Y H:i" }}</small>
-                        </div>
-                        <div class="btn-group">
-                          <a href="{% url 'editar_nota_obra' nota.pk %}" class="btn btn-sm btn-outline-primary">
-                            <i class="bi bi-pencil"></i>
-                          </a>
-                          <a href="{% url 'excluir_nota_obra' nota.pk %}" class="btn btn-sm btn-outline-danger">
-                            <i class="bi bi-trash"></i>
-                          </a>
-                        </div>
-                      </div>
-                      <p class="mb-0 mt-2">{{ nota.texto |linebreaksbr }}</p>
+    <div class="container mt-4 mb-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <!-- Botões e título -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <a href="{% url 'lista_obras' %}"
+                       class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-arrow-left"></i> Voltar
+                    </a>
+                    <div>
+                        <a href="{% url 'editar_obra' obra.pk %}"
+                           class="btn btn-outline-primary btn-sm me-1">
+                            <i class="bi bi-pencil-square"></i> Editar
+                        </a>
+                        <a href="{% url 'excluir_obra' obra.pk %}"
+                           class="btn btn-outline-danger btn-sm">
+                            <i class="bi bi-trash"></i> Excluir
+                        </a>
                     </div>
-                  {% endfor %}
                 </div>
-              {% else %}
-                <p class="text-muted">Nenhuma anotação registrada para esta obra.</p>
-              {% endif %}
-
-
-                <form method="post" action="{% url 'adicionar_nota_obra' obra.pk %}#anotacoes">
-                  {% csrf_token %}
-                  <div class="mb-2">
-                    {{ form_nota.texto|add_class:"form-control" }}
-                  </div>
-                  <button type="submit" class="btn btn-sm btn-outline-primary">
-                    <i class="bi bi-plus-circle"></i> Adicionar Anotação
-                  </button>
-                </form>
-
+                <h2 class="mb-4">
+                    <i class="bi bi-building"></i> Obra {{ obra.codigo }}
+                </h2>
+                <!-- Cards de detalhes -->
+                <div class="row g-4 mt-3">
+                    <div class="col-md-6">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="bi bi-file-earmark-text"></i> Contrato
+                                </h5>
+                                <p class="mb-1">
+                                    <strong>Número:</strong> {{ obra.contrato.numero }}
+                                </p>
+                                <p class="mb-0">
+                                    <strong>Contratante:</strong> {{ obra.contrato.contratante.nome }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card  shadow-sm h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="bi bi-geo-alt"></i> Localização
+                                </h5>
+                                <p class="mb-0">{{ obra.local }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card  shadow-sm h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="bi bi-card-text"></i> Descrição
+                                </h5>
+                                <p class="mb-0">
+                                    {% if obra.descricao %}
+                                        {{ obra.descricao }}
+                                    {% else %}
+                                        <span class="text-muted">Nenhuma descrição fornecida.</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="bi bi-check-circle"></i> Status e Execução
+                                </h5>
+                                <!-- Status -->
+                                <p class="mb-2">
+                                    <strong>Status:</strong>
+                                    {% if obra.ativo %}
+                                        <span class="badge bg-success">Ativa</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Inativa</span>
+                                    {% endif %}
+                                </p>
+                                <!-- Execução -->
+                                <p class="mb-2">
+                                    <strong>Execução:</strong> {{ obra.porcentagem_execucao|floatformat:2 }}%
+                                </p>
+                                <div class="progress mb-3" style="height: 20px;">
+                                    <div class="progress-bar {% if obra.porcentagem_execucao >= 100 %} bg-success {% elif obra.porcentagem_execucao >= 50 %} bg-warning {% else %} bg-danger {% endif %}"
+                                         role="progressbar"
+                                         style="width: {{ obra.porcentagem_execucao }}%"
+                                         aria-valuenow="{{ obra.porcentagem_execucao }}"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100">{{ obra.porcentagem_execucao|floatformat:0 }}%</div>
+                                </div>
+                                <!-- Datas e Prazo -->
+                                <p class="mb-1">
+                                    <strong>Início das Atividades:</strong>
+                                    {% if obra.data_inicio_atividade %}
+                                        {{ obra.data_inicio_atividade|date:"d/m/Y" }}
+                                    {% else %}
+                                        <span class="text-muted">Não informado</span>
+                                    {% endif %}
+                                </p>
+                                <p class="mb-1">
+                                    <strong>Término Previsto:</strong>
+                                    {% if obra.data_termino_previsto %}
+                                        {{ obra.data_termino_previsto|date:"d/m/Y" }}
+                                    {% else %}
+                                        <span class="text-muted">Não informado</span>
+                                    {% endif %}
+                                </p>
+                                <p class="mb-0">
+                                    <strong>Dias Previstos:</strong>
+                                    {% if obra.dias_previstos %}
+                                        {{ obra.dias_previstos }} dias
+                                    {% else %}
+                                        <span class="text-muted">--</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Anotações -->
+                <div class="row mt-4" id="anotacoes">
+                    <div class="col-12">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3">
+                                    <i class="bi bi-journal-text"></i> Anotações sobre a Obra
+                                </h5>
+                                {% if obra.notas.exists %}
+                                    <div class="list-group mb-3">
+                                        {% for nota in obra.notas.all %}
+                                            <div class="list-group-item list-group-item-action shadow-sm mb-2">
+                                                <div class="d-flex justify-content-between align-items-center">
+                                                    <div>
+                                                        <strong>{{ nota.criado_por.get_full_name|default:nota.criado_por.username }}</strong>
+                                                        <small class="text-muted ms-2">{{ nota.criado_em|date:"d/m/Y H:i" }}</small>
+                                                    </div>
+                                                    <div class="btn-group">
+                                                        <a href="{% url 'editar_nota_obra' nota.pk %}"
+                                                           class="btn btn-sm btn-outline-primary">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </a>
+                                                        <a href="{% url 'excluir_nota_obra' nota.pk %}"
+                                                           class="btn btn-sm btn-outline-danger">
+                                                            <i class="bi bi-trash"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <p class="mb-0 mt-2">{{ nota.texto |linebreaksbr }}</p>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                    <p class="text-muted">Nenhuma anotação registrada para esta obra.</p>
+                                {% endif %}
+                                <form method="post"
+                                      action="{% url 'adicionar_nota_obra' obra.pk %}#anotacoes">
+                                    {% csrf_token %}
+                                    <div class="mb-2">{{ form_nota.texto|add_class:"form-control" }}</div>
+                                    <button type="submit" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-plus-circle"></i> Adicionar Anotação
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
-
     </div>
-  </div>
-</div>
-
-<style>
+    <style>
   .list-group-item {
     background-color: #f9f9f9;
     border-left: 4px solid #0d6efd;
@@ -189,11 +182,10 @@
   .card-title i {
     margin-right: 5px;
   }
-</style>
+    </style>
 {% endblock %}
-
 {% block extra_js %}
-<script>
+    <script>
   document.addEventListener("DOMContentLoaded", function () {
     if (window.location.hash === "#anotacoes") {
       const el = document.getElementById("anotacoes");
@@ -202,5 +194,5 @@
       }
     }
   });
-</script>
+    </script>
 {% endblock %}

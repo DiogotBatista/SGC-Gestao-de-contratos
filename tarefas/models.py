@@ -1,7 +1,8 @@
-from django.db import models
 from django.contrib.auth import get_user_model
+from django.db import models
 
 User = get_user_model()
+
 
 class Tarefa(models.Model):
     descricao = models.CharField("Descrição", max_length=255)
@@ -10,7 +11,7 @@ class Tarefa(models.Model):
     autor = models.ForeignKey(User, on_delete=models.CASCADE)
 
     class Meta:
-        ordering = ['-criada_em']
+        ordering = ["-criada_em"]
         verbose_name = "Tarefa"
         verbose_name_plural = "Tarefas"
 

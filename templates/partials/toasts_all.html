@@ -1,93 +1,125 @@
 {# templates/partials/toasts_all.html #}
 {% if messages %}
-  <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3 gap-2"
-       style="z-index:1080; margin-top: var(--navbar-offset);">
-    {% for message in messages %}
-      {% with tag=message.tags %}
-        {# tempos: danger=8s; warning=6s; info=4.5s; success=4s #}
-
-        {% if tag == 'danger' %}
-          {% with delay=8000 icon='x-circle' textclass='text-white' btnclass='btn-close-white' accent='var(--bs-danger)' %}
-            <div class="toast accent shadow-lg rounded-3 border-0 bg-{{ tag }} {{ textclass }}"
-                 role="alert" aria-live="assertive" aria-atomic="true"
-                 data-bs-delay="{{ delay }}" data-bs-autohide="false"
-                 style="--accent: {{ accent }}; --toast-delay: {{ delay }}ms; max-width: var(--toast-max-width); width: auto;">
-              <div class="d-flex align-items-center">
-                <div class="toast-badge"><i class="bi bi-{{ icon }}"></i></div>
-                <div class="toast-body py-2">
-                  {{ message }}
-                  <div class="toast-progress mt-1"></div>
-                </div>
-                <button type="button" class="btn-close {{ btnclass }} ms-3 me-2 align-self-center"
-                        data-bs-dismiss="toast" aria-label="Fechar"></button>
-              </div>
-            </div>
-          {% endwith %}
-
-        {% elif tag == 'warning' %}
-          {% with delay=6000 icon='exclamation-triangle' textclass='text-dark' btnclass='' accent='var(--bs-warning)' %}
-            <div class="toast accent shadow-lg rounded-3 border-0 bg-{{ tag }} {{ textclass }}"
-                 role="alert" aria-live="polite" aria-atomic="true"
-                 data-bs-delay="{{ delay }}"
-                 style="--accent: {{ accent }}; --toast-delay: {{ delay }}ms; max-width: var(--toast-max-width); width: auto;">
-              <div class="d-flex align-items-center">
-                <div class="toast-badge"><i class="bi bi-{{ icon }}"></i></div>
-                <div class="toast-body py-2">
-                  {{ message }}
-                  <div class="toast-progress mt-1"></div>
-                </div>
-                <button type="button" class="btn-close {{ btnclass }} ms-3 me-2 align-self-center"
-                        data-bs-dismiss="toast" aria-label="Fechar"></button>
-              </div>
-            </div>
-          {% endwith %}
-
-        {% elif tag == 'info' %}
-          {% with delay=4500 icon='info-circle' textclass='text-dark' btnclass='' accent='var(--bs-info)' %}
-            <div class="toast accent shadow-lg rounded-3 border-0 bg-{{ tag }} {{ textclass }}"
-                 role="alert" aria-live="polite" aria-atomic="true"
-                 data-bs-delay="{{ delay }}"
-                 style="--accent: {{ accent }}; --toast-delay: {{ delay }}ms; max-width: var(--toast-max-width); width: auto;">
-              <div class="d-flex align-items-center">
-                <div class="toast-badge"><i class="bi bi-{{ icon }}"></i></div>
-                <div class="toast-body py-2">
-                  {{ message }}
-                  <div class="toast-progress mt-1"></div>
-                </div>
-                <button type="button" class="btn-close {{ btnclass }} ms-3 me-2 align-self-center"
-                        data-bs-dismiss="toast" aria-label="Fechar"></button>
-              </div>
-            </div>
-          {% endwith %}
-
-        {% else %}
-          {% with delay=4000 icon='check-circle' textclass='text-white' btnclass='btn-close-white' accent='var(--bs-success)' %}
-            <div class="toast accent shadow-lg rounded-3 border-0 bg-{{ tag }} {{ textclass }}"
-                 role="alert" aria-live="polite" aria-atomic="true"
-                 data-bs-delay="{{ delay }}"
-                 style="--accent: {{ accent }}; --toast-delay: {{ delay }}ms; max-width: var(--toast-max-width); width: auto;">
-              <div class="d-flex align-items-center">
-                <div class="toast-badge"><i class="bi bi-{{ icon }}"></i></div>
-                <div class="toast-body py-2">
-                  {{ message }}
-                  <div class="toast-progress mt-1"></div>
-                </div>
-                <button type="button" class="btn-close {{ btnclass }} ms-3 me-2 align-self-center"
-                        data-bs-dismiss="toast" aria-label="Fechar"></button>
-              </div>
-            </div>
-          {% endwith %}
-        {% endif %}
-
-      {% endwith %}
-    {% endfor %}
-  </div>
-
-  <script>
+    <div class="toast-container position-fixed top-0 start-50 translate-middle-x p-3 gap-2"
+         style="z-index:1080;
+                margin-top: var(--navbar-offset)">
+        {% for message in messages %}
+            {% with tag=message.tags %}
+                {# tempos: danger=8s; warning=6s; info=4.5s; success=4s #}
+                {% if tag == 'danger' %}
+                    {% with delay=8000 icon='x-circle' textclass='text-white' btnclass='btn-close-white' accent='var(--bs-danger)' %}
+                        <div class="toast accent shadow-lg rounded-3 border-0 bg-{{ tag }} {{ textclass }}"
+                             role="alert"
+                             aria-live="assertive"
+                             aria-atomic="true"
+                             data-bs-delay="{{ delay }}"
+                             data-bs-autohide="false"
+                             style="--accent: {{ accent }};
+                                    --toast-delay: {{ delay }}ms;
+                                    max-width: var(--toast-max-width);
+                                    width: auto">
+                            <div class="d-flex align-items-center">
+                                <div class="toast-badge">
+                                    <i class="bi bi-{{ icon }}"></i>
+                                </div>
+                                <div class="toast-body py-2">
+                                    {{ message }}
+                                    <div class="toast-progress mt-1"></div>
+                                </div>
+                                <button type="button"
+                                        class="btn-close {{ btnclass }} ms-3 me-2 align-self-center"
+                                        data-bs-dismiss="toast"
+                                        aria-label="Fechar"></button>
+                            </div>
+                        </div>
+                    {% endwith %}
+                {% elif tag == 'warning' %}
+                    {% with delay=6000 icon='exclamation-triangle' textclass='text-dark' btnclass='' accent='var(--bs-warning)' %}
+                        <div class="toast accent shadow-lg rounded-3 border-0 bg-{{ tag }} {{ textclass }}"
+                             role="alert"
+                             aria-live="polite"
+                             aria-atomic="true"
+                             data-bs-delay="{{ delay }}"
+                             style="--accent: {{ accent }};
+                                    --toast-delay: {{ delay }}ms;
+                                    max-width: var(--toast-max-width);
+                                    width: auto">
+                            <div class="d-flex align-items-center">
+                                <div class="toast-badge">
+                                    <i class="bi bi-{{ icon }}"></i>
+                                </div>
+                                <div class="toast-body py-2">
+                                    {{ message }}
+                                    <div class="toast-progress mt-1"></div>
+                                </div>
+                                <button type="button"
+                                        class="btn-close {{ btnclass }} ms-3 me-2 align-self-center"
+                                        data-bs-dismiss="toast"
+                                        aria-label="Fechar"></button>
+                            </div>
+                        </div>
+                    {% endwith %}
+                {% elif tag == 'info' %}
+                    {% with delay=4500 icon='info-circle' textclass='text-dark' btnclass='' accent='var(--bs-info)' %}
+                        <div class="toast accent shadow-lg rounded-3 border-0 bg-{{ tag }} {{ textclass }}"
+                             role="alert"
+                             aria-live="polite"
+                             aria-atomic="true"
+                             data-bs-delay="{{ delay }}"
+                             style="--accent: {{ accent }};
+                                    --toast-delay: {{ delay }}ms;
+                                    max-width: var(--toast-max-width);
+                                    width: auto">
+                            <div class="d-flex align-items-center">
+                                <div class="toast-badge">
+                                    <i class="bi bi-{{ icon }}"></i>
+                                </div>
+                                <div class="toast-body py-2">
+                                    {{ message }}
+                                    <div class="toast-progress mt-1"></div>
+                                </div>
+                                <button type="button"
+                                        class="btn-close {{ btnclass }} ms-3 me-2 align-self-center"
+                                        data-bs-dismiss="toast"
+                                        aria-label="Fechar"></button>
+                            </div>
+                        </div>
+                    {% endwith %}
+                {% else %}
+                    {% with delay=4000 icon='check-circle' textclass='text-white' btnclass='btn-close-white' accent='var(--bs-success)' %}
+                        <div class="toast accent shadow-lg rounded-3 border-0 bg-{{ tag }} {{ textclass }}"
+                             role="alert"
+                             aria-live="polite"
+                             aria-atomic="true"
+                             data-bs-delay="{{ delay }}"
+                             style="--accent: {{ accent }};
+                                    --toast-delay: {{ delay }}ms;
+                                    max-width: var(--toast-max-width);
+                                    width: auto">
+                            <div class="d-flex align-items-center">
+                                <div class="toast-badge">
+                                    <i class="bi bi-{{ icon }}"></i>
+                                </div>
+                                <div class="toast-body py-2">
+                                    {{ message }}
+                                    <div class="toast-progress mt-1"></div>
+                                </div>
+                                <button type="button"
+                                        class="btn-close {{ btnclass }} ms-3 me-2 align-self-center"
+                                        data-bs-dismiss="toast"
+                                        aria-label="Fechar"></button>
+                            </div>
+                        </div>
+                    {% endwith %}
+                {% endif %}
+            {% endwith %}
+        {% endfor %}
+    </div>
+    <script>
     document.addEventListener('DOMContentLoaded', function () {
       document.querySelectorAll('.toast').forEach(function (el) {
         new bootstrap.Toast(el).show();
       });
     });
-  </script>
+    </script>
 {% endif %}

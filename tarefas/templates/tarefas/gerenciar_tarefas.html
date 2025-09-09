@@ -1,9 +1,8 @@
 {% extends 'base.html' %}
 {% load custom_filters %}
 {% block title %}Tarefas{% endblock %}
-
 {% block content %}
-<style>
+    <style>
     .tarefa-item {
         transition: all 0.4s ease;
         padding: 10px 15px;
@@ -42,48 +41,50 @@
     #formNovaTarefa button {
         border-radius: 0 6px 6px 0;
     }
-</style>
-
-<div class="container mt-4 mb-5">
-    <h3 class="mb-4"><i class="bi bi-check2-square"></i> Gerenciador de Tarefas</h3>
-
-    <!-- Formulário para adicionar nova tarefa -->
-    <form id="formNovaTarefa"
-          method="post"
-          hx-post="{% url 'criar_tarefa' %}"
-          hx-target="#listaTarefas"
-          hx-swap="beforeend">
-        {% csrf_token %}
-        <div class="input-group mb-3">
-            {{ form.descricao|add_class:"form-control" }}
-            <button class="btn btn-success" type="submit">
-                <i class="bi bi-plus-circle"></i> Adicionar
-            </button>
-        </div>
-    </form>
-
-    <!-- Toast de sucesso -->
-    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1055;">
-        <div id="toastNovaTarefa" class="toast align-items-center text-bg-success border border-light shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="d-flex align-items-center">
-                <i class="bi bi-check-circle-fill ms-3 me-2" style="font-size: 1.5rem;"></i>
-                <div class="toast-body">
-                    Tarefa adicionada com sucesso!
+    </style>
+    <div class="container mt-4 mb-5">
+        <h3 class="mb-4">
+            <i class="bi bi-check2-square"></i> Gerenciador de Tarefas
+        </h3>
+        <!-- Formulário para adicionar nova tarefa -->
+        <form id="formNovaTarefa"
+              method="post"
+              hx-post="{% url 'criar_tarefa' %}"
+              hx-target="#listaTarefas"
+              hx-swap="beforeend">
+            {% csrf_token %}
+            <div class="input-group mb-3">
+                {{ form.descricao|add_class:"form-control" }}
+                <button class="btn btn-success" type="submit">
+                    <i class="bi bi-plus-circle"></i> Adicionar
+                </button>
+            </div>
+        </form>
+        <!-- Toast de sucesso -->
+        <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1055;">
+            <div id="toastNovaTarefa"
+                 class="toast align-items-center text-bg-success border border-light shadow-lg"
+                 role="alert"
+                 aria-live="assertive"
+                 aria-atomic="true">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-check-circle-fill ms-3 me-2" style="font-size: 1.5rem;"></i>
+                    <div class="toast-body">Tarefa adicionada com sucesso!</div>
+                    <button type="button"
+                            class="btn-close btn-close-white me-2 m-auto"
+                            data-bs-dismiss="toast"
+                            aria-label="Close"></button>
                 </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
         </div>
+        <!-- Lista de tarefas -->
+        <ul id="listaTarefas" class="list-group shadow-sm">
+            {% for tarefa in tarefas %}
+                {% include 'tarefas/partials/tarefa_item.html' with tarefa=tarefa %}
+            {% endfor %}
+        </ul>
     </div>
-
-    <!-- Lista de tarefas -->
-    <ul id="listaTarefas" class="list-group shadow-sm">
-        {% for tarefa in tarefas %}
-            {% include 'tarefas/partials/tarefa_item.html' with tarefa=tarefa %}
-        {% endfor %}
-    </ul>
-</div>
-
-<script>
+    <script>
     document.addEventListener('htmx:afterOnLoad', function(evt) {
         const form = document.getElementById('formNovaTarefa');
         const toastEl = document.getElementById('toastNovaTarefa');
@@ -154,5 +155,5 @@
             checkbox.classList.remove('animate-check');
         }, 400);
     }
-</script>
+    </script>
 {% endblock %}

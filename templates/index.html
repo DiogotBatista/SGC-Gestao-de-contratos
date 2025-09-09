@@ -1,100 +1,106 @@
 {% extends 'base.html' %}
 {% block title %}Página Inicial{% endblock %}
-
 {% block content %}
-<div class="container mt-3 mb-4">
-    <h2 class="text-center mb-3">SGC - Sistema de Gestão de Contratos</h2>
-    <h4 class="text-muted text-center">CRO - Construtora Ribeiro Oliveira</h4>
-
-    {% if avisos %}
-      {% for aviso in avisos %}
-        <div class="alert alert-{{ aviso.tipo }} shadow-sm text-center py-2">
-          {{ aviso.mensagem|linebreaksbr }}
-        </div>
-      {% endfor %}
-    {% endif %}
-
-    <div class="row g-4 mt-2">
-        <!-- Contratos -->
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm border-0">
-                <div class="card-body d-flex flex-column text-center gap-3">
-                    <div>
-                        <i class="bi bi-file-earmark-text display-4 text-primary mb-3"></i>
-                        <h5 class="card-title">Contratos</h5>
-                        <p class="card-text text-muted">Gerencie os contratos cadastrados.</p>
+    <div class="container mt-3 mb-4">
+        <h2 class="text-center mb-3">SGC - Sistema de Gestão de Contratos</h2>
+        <h4 class="text-muted text-center">CRO - Construtora Ribeiro Oliveira</h4>
+        {% if avisos %}
+            {% for aviso in avisos %}
+                <div class="alert alert-{{ aviso.tipo }} shadow-sm text-center py-2">{{ aviso.mensagem|linebreaksbr }}</div>
+            {% endfor %}
+        {% endif %}
+        <div class="row g-4 mt-2">
+            <!-- Contratos -->
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body d-flex flex-column text-center gap-3">
+                        <div>
+                            <i class="bi bi-file-earmark-text display-4 text-primary mb-3"></i>
+                            <h5 class="card-title">Contratos</h5>
+                            <p class="card-text text-muted">Gerencie os contratos cadastrados.</p>
+                        </div>
+                        <div class="mt-auto">
+                            <a href="{% url 'menu_contratos' %}" class="btn btn-outline-primary">Acessar</a>
+                        </div>
                     </div>
-                    <div class="mt-auto">
-                        <a href="{% url 'menu_contratos' %}" class="btn btn-outline-primary">Acessar</a>
+                </div>
+            </div>
+            <!-- Obras -->
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body d-flex flex-column text-center gap-3">
+                        <div>
+                            <i class="bi bi-building display-4 text-secondary mb-3"></i>
+                            <h5 class="card-title">Obras</h5>
+                            <p class="card-text text-muted">Gerencie as obras vinculadas aos contratos.</p>
+                        </div>
+                        <div class="mt-auto">
+                            <a href="{% url 'lista_obras' %}" class="btn btn-outline-secondary">Acessar</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Atas de Reunião -->
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body d-flex flex-column text-center gap-3">
+                        <div>
+                            <i class="bi bi-journal-text display-4 text-warning mb-3"></i>
+                            <h5 class="card-title">Atas de Reunião</h5>
+                            <p class="card-text text-muted">Consulte e registre reuniões importantes.</p>
+                        </div>
+                        <div class="mt-auto">
+                            <a href="{% url 'lista_atas' %}" class="btn btn-outline-warning">Acessar</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Propostas -->
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body d-flex flex-column text-center gap-3">
+                        <div>
+                            <i class="bi bi-file-earmark-bar-graph display-4 text-info mb-3"></i>
+                            <h5 class="card-title">Propostas</h5>
+                            <p class="card-text text-muted">Gerencie as propostas enviadas aos clientes.</p>
+                        </div>
+                        <div class="mt-auto">
+                            <a href="{% url 'lista_propostas' %}" class="btn btn-outline-info">Acessar</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Dashboard -->
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body d-flex flex-column text-center gap-3">
+                        <div>
+                            <i class="bi bi-bar-chart-line display-4 text-danger mb-3"></i>
+                            <h5 class="card-title">Dashboard</h5>
+                            <p class="card-text text-muted">Visualize a situação dos contratos.</p>
+                        </div>
+                        <div class="mt-auto">
+                            <a href="{% url 'dashboard' %}" class="btn btn-outline-danger">Acessar</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Frota -->
+            <div class="col-md-4">
+                <div class="card h-100 shadow-sm border-0">
+                    <div class="card-body d-flex flex-column text-center gap-3">
+                        <div>
+                            <i class="bi bi-car-front display-4 text-success mb-3"></i>
+                            <h5 class="card-title">Frota</h5>
+                            <p class="card-text text-muted">Cadastre veículos e acompanhe mobilizações por contrato.</p>
+                        </div>
+                        <div class="mt-auto">
+                            <a href="{% url 'frota:lista_veiculos' %}"
+                               class="btn btn-outline-success">Acessar</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Obras -->
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm border-0">
-                <div class="card-body d-flex flex-column text-center gap-3">
-                    <div>
-                        <i class="bi bi-building display-4 text-secondary mb-3"></i>
-                        <h5 class="card-title">Obras</h5>
-                        <p class="card-text text-muted">Gerencie as obras vinculadas aos contratos.</p>
-                    </div>
-                    <div class="mt-auto">
-                        <a href="{% url 'lista_obras' %}" class="btn btn-outline-secondary">Acessar</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Atas de Reunião -->
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm border-0">
-                <div class="card-body d-flex flex-column text-center gap-3">
-                    <div>
-                        <i class="bi bi-journal-text display-4 text-warning mb-3"></i>
-                        <h5 class="card-title">Atas de Reunião</h5>
-                        <p class="card-text text-muted">Consulte e registre reuniões importantes.</p>
-                    </div>
-                    <div class="mt-auto">
-                        <a href="{% url 'lista_atas' %}" class="btn btn-outline-warning">Acessar</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Propostas -->
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm border-0">
-                <div class="card-body d-flex flex-column text-center gap-3">
-                    <div>
-                        <i class="bi bi-file-earmark-bar-graph display-4 text-info mb-3"></i>
-                        <h5 class="card-title">Propostas</h5>
-                        <p class="card-text text-muted">Gerencie as propostas enviadas aos clientes.</p>
-                    </div>
-                    <div class="mt-auto">
-                        <a href="{% url 'lista_propostas' %}" class="btn btn-outline-info">Acessar</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Dashboard -->
-        <div class="col-md-4">
-            <div class="card h-100 shadow-sm border-0">
-                <div class="card-body d-flex flex-column text-center gap-3">
-                    <div>
-                        <i class="bi bi-bar-chart-line display-4 text-danger mb-3"></i>
-                        <h5 class="card-title">Dashboard</h5>
-                        <p class="card-text text-muted">Visualize a situação dos contratos.</p>
-                    </div>
-                    <div class="mt-auto">
-                        <a href="{% url 'dashboard' %}" class="btn btn-outline-danger">Acessar</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </div>
-</div>
 {% endblock %}

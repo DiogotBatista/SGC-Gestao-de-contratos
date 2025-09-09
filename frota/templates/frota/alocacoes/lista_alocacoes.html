@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% load custom_filters %}
+{% block title %}Mobilizações de Veículos{% endblock %}
+{% block content %}
+    <div class="container-fluid mt-3 mb-4">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{% url 'index' %}">Início</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">Mobilizações</li>
+            </ol>
+        </nav>
+        <h2 class="mb-3">
+            <i class="bi bi-arrow-left-right"></i> Mobilizações
+        </h2>
+        <!-- Filtros -->
+        <form method="get" class="mb-3">
+            <div class="row g-2">
+                <div class="col-md-4">
+                    <input type="text"
+                           name="q"
+                           value="{{ params.q|default:'' }}"
+                           class="form-control"
+                           placeholder="Pesquisar por veículo/placa/contrato/CC...">
+                </div>
+                <div class="col-md-3">
+                    <select name="veiculo" class="form-select">
+                        <option value="">Veículo</option>
+                        {% for v in veiculos %}
+                            <option value="{{ v.id }}"
+                                    {% if params.veiculo == v.id|stringformat:'s' %}selected{% endif %}>
+                                {{ v.modelo }} ({{ v.placa }})
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <input type="date"
+                           name="data_inicio"
+                           value="{{ params.data_inicio|default:'' }}"
+                           class="form-control"
+                           placeholder="De">
+                </div>
+                <div class="col-md-2">
+                    <input type="date"
+                           name="data_fim"
+                           value="{{ params.data_fim|default:'' }}"
+                           class="form-control"
+                           placeholder="Até">
+                </div>
+                {# Substitui o checkbox por select Aberta/Fechada/Todas #}
+                <div class="col-md-2">
+                    <select name="aberto" class="form-select">
+                        <option value="1"
+                                {% if params.aberto|default:'1' == '1' %}selected{% endif %}>Abertas</option>
+                        <option value="0" {% if params.aberto == '0' %}selected{% endif %}>Fechadas</option>
+                        <option value="todos" {% if params.aberto == 'todos' %}selected{% endif %}>Todas</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-outline-primary w-100">
+                        <i class="bi bi-search"></i> Filtrar
+                    </button>
+                </div>
+                <div class="col-md-2">
+                    <a href="{% url 'frota:lista_alocacoes' %}"
+                       class="btn btn-outline-dark w-100">Limpar</a>
+                </div>
+            </div>
+        </form>
+        <!-- Tabela -->
+        <div class="card">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="text-center">Veículo</th>
+                                <th class="text-center">Contrato</th>
+                                <th class="text-center">Início</th>
+                                <th class="text-center">Fim</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for a in page_obj %}
+                                <tr>
+                                    <td class="text-center">{{ a.veiculo.modelo }} ({{ a.veiculo.placa }})</td>
+                                    <td class="text-center">{{ a.contrato.numero }}</td>
+                                    <td class="text-center">{{ a.data_inicio|date:"d/m/Y" }}</td>
+                                    <td class="text-center">
+                                        {% if a.data_fim %}
+                                            {{ a.data_fim|date:"d/m/Y" }}
+                                        {% else %}
+                                            <span class="badge bg-success">Em aberto</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-3">Nenhum registro.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% if page_obj.has_other_pages %}
+                <div class="card-footer">
+                    <ul class="pagination mb-0">
+                        {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="?{% querystring params page=page_obj.previous_page_number %}">Anterior</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">Anterior</span>
+                            </li>
+                        {% endif %}
+                        <li class="page-item disabled">
+                            <span class="page-link">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+                        </li>
+                        {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link"
+                                   href="?{% querystring params page=page_obj.next_page_number %}">Próxima</a>
+                            </li>
+                        {% else %}
+                            <li class="page-item disabled">
+                                <span class="page-link">Próxima</span>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

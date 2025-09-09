@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+{% load custom_filters %}
+{% block title %}Veículo: {{ veiculo.modelo }}{% endblock %}
+{% block content %}
+    {% now "Y-m-d" as today %}
+    <div class="container-fluid mt-3 mb-4">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{% url 'index' %}">Início</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{% url 'frota:lista_veiculos' %}">Veículos</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">{{ veiculo.modelo }} - {{ veiculo.placa }}</li>
+            </ol>
+        </nav>
+        <!-- Título + Ações -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="mb-0">{{ veiculo.modelo }} ({{ veiculo.placa }})</h2>
+            {% include "frota/veiculos/_acoes_veiculo.html" %}
+        </div>
+        <div class="row g-3">
+            <!-- Coluna esquerda: dados do veículo -->
+            <div class="col-lg-4">
+                <div class="card h-100">
+                    <div class="card-header">Dados do veículo</div>
+                    <div class="card-body">
+                        <dl class="row mb-0">
+                            <dt class="col-5">Modalidade</dt>
+                            <dd class="col-7">
+                                {{ veiculo.modalidade }}
+                            </dd>
+                            <dt class="col-5">Origem</dt>
+                            <dd class="col-7">
+                                {{ veiculo.get_origem_display }}
+                            </dd>
+                            <dt class="col-5">Status</dt>
+                            <dd class="col-7">
+                                <span class="{{ veiculo.status|aparencia_status_veiculo }}">{{ veiculo.status.nome }}</span>
+                            </dd>
+                            <dt class="col-5">Situação</dt>
+                            <dd class="col-7">
+                                {% if veiculo.ativo %}
+                                    <span class="badge bg-success">Ativo</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Inativo</span>
+                                {% endif %}
+                            </dd>
+                            <dt class="col-5">Locadora</dt>
+                            <dd class="col-7">
+                                {{ veiculo.empresa_locadora|default:"—" }}
+                            </dd>
+                            <dt class="col-5">TAG</dt>
+                            <dd class="col-7">
+                                {{ veiculo.tag_contrato|default:"—" }}
+                            </dd>
+                            <dt class="col-5">Contrato atual</dt>
+                            <dd class="col-7">
+                                {% if veiculo.contrato_atual %}
+                                    {{ veiculo.contrato_atual.numero }}
+                                {% else %}
+                                    <span class="text-muted">Sem mobilização</span>
+                                {% endif %}
+                            </dd>
+                            <dt class="col-5">Observações</dt>
+                            <dd class="col-7">
+                                {{ veiculo.observacoes|default:"—" }}
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+            <!-- Coluna direita: mobilização em aberto + histórico -->
+            <div class="col-lg-8">
+                <!-- mobilização em aberto -->
+                <div class="card mb-3">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span>Mobilização em aberto</span>
+                        {% if alocacao_aberta %}
+                            <button class="btn btn-outline-danger btn-sm"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#modalEncerrar">
+                                <i class="bi bi-x-octagon"></i> Encerrar Mobilização
+                            </button>
+                        {% endif %}
+                    </div>
+                    <div class="card-body">
+                        {% if alocacao_aberta %}
+                            <p class="mb-2">
+                                <strong>Contrato:</strong> {{ alocacao_aberta.contrato.numero }}
+                            </p>
+                            <p class="mb-2">
+                                <strong>Início:</strong> {{ alocacao_aberta.data_inicio|date:"d/m/Y" }}
+                            </p>
+                            <p class="mb-0">
+                                <strong>OBS:</strong> {{ alocacao_aberta.observacoes|default:"—" }}
+                            </p>
+                        {% else %}
+                            <span class="text-muted">Não há mobilização em aberto.</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <!-- Histórico -->
+                <div class="card">
+                    <div class="card-header text-center">Histórico de mobilizações</div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-sm table-striped mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="text-center">Contrato</th>
+                                        <th class="text-center">Início</th>
+                                        <th class="text-center">Fim</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for a in historico %}
+                                        <tr>
+                                            <td class="text-center">{{ a.contrato.numero }}</td>
+                                            <td class="text-center">{{ a.data_inicio|date:"d/m/Y" }}</td>
+                                            <td class="text-center">
+                                                {% if a.data_fim %}
+                                                    {{ a.data_fim|date:"d/m/Y" }}
+                                                {% else %}
+                                                    <span class="badge bg-success">Em aberto</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% empty %}
+                                        <tr>
+                                            <td colspan="5" class="text-center text-muted py-3">Sem histórico.</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Offcanvas/Modais -->
+    {% include "frota/veiculos/_offcanvas_modal_acoes.html" %}
+    <!-- Modal: Encerrar mobilização -->
+    <div class="modal fade"
+         id="modalEncerrar"
+         tabindex="-1"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <form method="post"
+                  action="{% url 'frota:encerrar_alocacao' veiculo.pk %}"
+                  class="modal-content">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title">Encerrar mobilização</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Tem certeza que deseja encerrar a mobilização atual deste veículo?</p>
+                    <div class="mb-2">
+                        <label class="form-label">Data de encerramento</label>
+                        <input type="date" name="data_fim" class="form-control" value="{{ today }}">
+                        <div class="form-text">Deixe em branco para encerrar na data de hoje.</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-danger">
+                        <i class="bi bi-check2-circle"></i> Confirmar encerramento
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

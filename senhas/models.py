@@ -1,7 +1,9 @@
-from django.db import models
 from django.conf import settings
+from django.db import models
 from django.utils import timezone
-from .utils import encrypt_str, decrypt_bytes
+
+from .utils import decrypt_bytes, encrypt_str
+
 
 class PasswordEntry(models.Model):
     titulo = models.CharField("Título", max_length=150)
@@ -16,22 +18,24 @@ class PasswordEntry(models.Model):
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
-        null=True, blank=True,
-        related_name='senhas_criadas',
-        verbose_name="Criado por"
+        null=True,
+        blank=True,
+        related_name="senhas_criadas",
+        verbose_name="Criado por",
     )
     updated_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
-        null=True, blank=True,
-        related_name='senhas_atualizadas',
-        verbose_name="Atualizado por"
+        null=True,
+        blank=True,
+        related_name="senhas_atualizadas",
+        verbose_name="Atualizado por",
     )
 
     class Meta:
         verbose_name = "Senha"
         verbose_name_plural = "Senhas"
-        ordering = ['-updated_at', '-created_at']
+        ordering = ["-updated_at", "-created_at"]
 
     def __str__(self):
         return self.titulo

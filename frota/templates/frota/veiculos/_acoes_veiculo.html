@@ -1,0 +1,96 @@
+<div class="d-flex flex-wrap gap-2">
+    <a href="{% url 'frota:editar_veiculo' veiculo.pk %}"
+       class="btn btn-primary">
+        <i class="bi bi-pencil-square"></i> Editar
+    </a>
+    <!-- Ação: Alocar (abre offcanvas/modal simples com form_alocar) -->
+    <button class="btn btn-success"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasAlocar">
+        <i class="bi bi-plus-circle"></i> Mobilizar
+    </button>
+    <!-- Excluir (soft) -->
+    <form method="post"
+          action="{% url 'frota:excluir_veiculo' veiculo.pk %}"
+          class="d-inline ms-auto">
+        {% csrf_token %}
+        <!-- Desativar (abre modal) -->
+        {% if veiculo.ativo %}
+            <!-- Desativar: já feito com modal -->
+            <button type="button"
+                    class="btn btn-outline-secondary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalDesativar">
+                <i class="bi bi-archive"></i> Desativar
+            </button>
+        {% else %}
+            <!-- Reativar: abre modal -->
+            <button type="button"
+                    class="btn btn-success"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modalReativar">
+                <i class="bi bi-arrow-counterclockwise"></i> Reativar
+            </button>
+        {% endif %}
+    </form>
+</div>
+<!-- Modal: Desativar veículo -->
+<div class="modal fade"
+     id="modalDesativar"
+     tabindex="-1"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <form method="post"
+              action="{% url 'frota:desativar_veiculo' veiculo.pk %}"
+              class="modal-content">
+            {% csrf_token %}
+            <div class="modal-header">
+                <h5 class="modal-title">Desativar veículo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-0">
+                    Tem certeza que deseja desativar o veículo
+                    <strong>{{ veiculo.modelo }} ({{ veiculo.placa }})</strong>?
+                    <br>
+                    <small class="text-muted">
+                        A desativação é reversível a qualquer momento. O histórico de mobilizações é preservado.
+                    </small>
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline-secondary">
+                    <i class="bi bi-archive"></i> Confirmar desativação
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+<!-- Modal: Reativar veículo -->
+<div class="modal fade"
+     id="modalReativar"
+     tabindex="-1"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <form method="post"
+              action="{% url 'frota:reativar_veiculo' veiculo.pk %}"
+              class="modal-content">
+            {% csrf_token %}
+            <div class="modal-header">
+                <h5 class="modal-title">Reativar veículo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="mb-0">
+                    Confirmar reativação do veículo
+                    <strong>{{ veiculo.modelo }} ({{ veiculo.placa }})</strong>?
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-success">
+                    <i class="bi bi-check2-circle"></i> Confirmar reativação
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

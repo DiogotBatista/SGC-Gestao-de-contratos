@@ -1,6 +1,8 @@
 # senhas/forms.py
 from django import forms
+
 from .models import PasswordEntry
+
 
 class PasswordEntryForm(forms.ModelForm):
     senha = forms.CharField(
@@ -11,26 +13,32 @@ class PasswordEntryForm(forms.ModelForm):
             attrs={
                 "class": "form-control",
                 "autocomplete": "new-password",  # desestimula autofill
-            }
+            },
         ),
-        help_text="A senha será armazenada criptografada."
+        help_text="A senha será armazenada criptografada.",
     )
 
     class Meta:
         model = PasswordEntry
-        fields = ['titulo', 'usuario', 'url', 'senha', 'observacoes', 'ativo']
+        fields = ["titulo", "usuario", "url", "senha", "observacoes", "ativo"]
         widgets = {
-            'titulo': forms.TextInput(attrs={"class": "form-control", "autocomplete": "off"}),
-            'usuario': forms.TextInput(attrs={
-                "class": "form-control",
-                "autocomplete": "off",
-                "autocapitalize": "none",
-                "autocorrect": "off",
-                "spellcheck": "false",
-            }),
-            'url': forms.URLInput(attrs={"class": "form-control", "autocomplete": "off"}),
-            'observacoes': forms.Textarea(attrs={"class": "form-control", "rows": 3}),
-            'ativo': forms.CheckboxInput(attrs={"class": "form-check-input"}),
+            "titulo": forms.TextInput(
+                attrs={"class": "form-control", "autocomplete": "off"}
+            ),
+            "usuario": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "autocomplete": "off",
+                    "autocapitalize": "none",
+                    "autocorrect": "off",
+                    "spellcheck": "false",
+                }
+            ),
+            "url": forms.URLInput(
+                attrs={"class": "form-control", "autocomplete": "off"}
+            ),
+            "observacoes": forms.Textarea(attrs={"class": "form-control", "rows": 3}),
+            "ativo": forms.CheckboxInput(attrs={"class": "form-check-input"}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -38,10 +46,9 @@ class PasswordEntryForm(forms.ModelForm):
 
         if self.instance and self.instance.pk:
             # Estamos EDITANDO: senha vira opcional e não mostramos valor atual
-            self.fields['senha'].required = False
-            self.fields['senha'].widget.attrs.setdefault(
-                "placeholder",
-                "Deixe em branco para manter a senha atual"
+            self.fields["senha"].required = False
+            self.fields["senha"].widget.attrs.setdefault(
+                "placeholder", "Deixe em branco para manter a senha atual"
             )
         # IMPORTANTE: não defina self.fields['senha'].initial aqui (por segurança)
 
@@ -53,7 +60,7 @@ class PasswordEntryForm(forms.ModelForm):
         """
         obj = super().save(commit=False)
 
-        nova_senha = self.cleaned_data.get('senha')
+        nova_senha = self.cleaned_data.get("senha")
         if nova_senha:
             obj.set_plain_password(nova_senha)  # recriptografa com a nova senha
         # Se estiver editando e o campo estiver vazio, NÃO altera a senha.
@@ -63,5 +70,5 @@ class PasswordEntryForm(forms.ModelForm):
         return obj
 
     def clean_senha(self):
-        val = self.cleaned_data.get('senha', '')
+        val = self.cleaned_data.get("senha", "")
         return val.strip()

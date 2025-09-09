@@ -2,172 +2,159 @@
 {% load static %}
 {% load custom_filters %}
 {% block title %}Cadastrar Ata{% endblock %}
-
 {% block content %}
-<div class="container mt-4 mb-5">
-  <div class="row justify-content-center">
-    <div class="col-lg-10">
-      <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
-          <h2 class="mb-0">Cadastrar Ata de Reunião</h2>
-        </div>
-        <div class="card-body">
-
-          {% if form.errors %}
-            <div class="alert alert-warning">
-              <strong>Erros no formulário:</strong>
-              <ul class="mb-0">
-                {% for field, errors in form.errors.items %}
-                  {% for error in errors %}
-                    <li><strong>{{ field|capfirst }}:</strong> {{ error }}</li>
-                  {% endfor %}
-                {% endfor %}
-              </ul>
-            </div>
-          {% endif %}
-
-          <form method="post" enctype="multipart/form-data" novalidate id="form-ata">
-            {% csrf_token %}
-
-            <div class="mb-3">
-              <label class="form-label">Contrato</label>
-              {{ form.contrato|add_class:"form-select" }}
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label">Data da Reunião</label>
-              {{ form.data|add_class:"form-control" }}
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label">Resumo</label>
-              {{ form.resumo|add_class:"form-control" }}
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label">Arquivos Digitalizados</label>
-              <input type="file" name="arquivos" class="form-control" multiple>
-            </div>
-
-            <hr>
-            <h5 class="mb-3">Itens da Ata</h5>
-            {{ formset.management_form }}
-
-            <div id="formset-itens">
-              {% for item in formset %}
-              <div class="card mb-3 border-0 shadow-sm item-form fade-in">
-                <div class="card-body">
-                  <div class="row g-3 align-items-start">
-                    <div class="col-md-3">
-                      <label class="form-label">Categoria</label>
-                      {{ item.categoria|add_class:"form-select" }}
+    <div class="container mt-4 mb-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h2 class="mb-0">Cadastrar Ata de Reunião</h2>
                     </div>
-                    <div class="col-md-3">
-                      <label class="form-label">Solicitante</label>
-                      {{ item.solicitante|add_class:"form-control" }}
+                    <div class="card-body">
+                        {% if form.errors %}
+                            <div class="alert alert-warning">
+                                <strong>Erros no formulário:</strong>
+                                <ul class="mb-0">
+                                    {% for field, errors in form.errors.items %}
+                                        {% for error in errors %}
+                                            <li>
+                                                <strong>{{ field|capfirst }}:</strong> {{ error }}
+                                            </li>
+                                        {% endfor %}
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        {% endif %}
+                        <form method="post" enctype="multipart/form-data" novalidate id="form-ata">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label class="form-label">Contrato</label>
+                                {{ form.contrato|add_class:"form-select" }}
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Data da Reunião</label>
+                                {{ form.data|add_class:"form-control" }}
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Resumo</label>
+                                {{ form.resumo|add_class:"form-control" }}
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Arquivos Digitalizados</label>
+                                <input type="file" name="arquivos" class="form-control" multiple>
+                            </div>
+                            <hr>
+                            <h5 class="mb-3">Itens da Ata</h5>
+                            {{ formset.management_form }}
+                            <div id="formset-itens">
+                                {% for item in formset %}
+                                    <div class="card mb-3 border-0 shadow-sm item-form fade-in">
+                                        <div class="card-body">
+                                            <div class="row g-3 align-items-start">
+                                                <div class="col-md-3">
+                                                    <label class="form-label">Categoria</label>
+                                                    {{ item.categoria|add_class:"form-select" }}
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="form-label">Solicitante</label>
+                                                    {{ item.solicitante|add_class:"form-control" }}
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="form-label">Responsável</label>
+                                                    {{ item.responsavel|add_class:"form-control" }}
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label class="form-label">Status</label>
+                                                    {{ item.status|add_class:"form-select" }}
+                                                </div>
+                                            </div>
+                                            <div class="mt-2">
+                                                <label class="form-label">Descrição</label>
+                                                {{ item.descricao|add_class:"form-control" }}
+                                            </div>
+                                            <div class="mt-2">
+                                                <label class="form-label">Prazo</label>
+                                                {{ item.data_prazo|add_class:"form-control" }}
+                                            </div>
+                                            {{ item.id.as_hidden }}
+                                            {{ item.ordem.as_hidden }}
+                                            {{ item.DELETE.as_hidden }}
+                                            <div class="text-end mt-3">
+                                                <button type="button" class="btn btn-sm btn-outline-danger remove-item">
+                                                    <i class="bi bi-x-circle"></i> Remover
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <div id="empty-form-template" class="d-none">
+                                <div class="card mb-3 border-0 shadow-sm item-form fade-in">
+                                    <div class="card-body">
+                                        <div class="row g-3 align-items-start">
+                                            <div class="col-md-3">
+                                                <label class="form-label">Categoria</label>
+                                                {{ formset.empty_form.categoria|add_class:"form-select" }}
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="form-label">Solicitante</label>
+                                                {{ formset.empty_form.solicitante|add_class:"form-control" }}
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="form-label">Responsável</label>
+                                                {{ formset.empty_form.responsavel|add_class:"form-control" }}
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="form-label">Status</label>
+                                                {{ formset.empty_form.status|add_class:"form-select" }}
+                                            </div>
+                                        </div>
+                                        <div class="mt-2">
+                                            <label class="form-label">Descrição</label>
+                                            {{ formset.empty_form.descricao|add_class:"form-control" }}
+                                        </div>
+                                        <div class="mt-2">
+                                            <label class="form-label">Prazo</label>
+                                            {{ formset.empty_form.data_prazo|add_class:"form-control" }}
+                                        </div>
+                                        {{ formset.empty_form.id.as_hidden }}
+                                        {{ formset.empty_form.ordem.as_hidden }}
+                                        {{ formset.empty_form.DELETE.as_hidden }}
+                                        <div class="text-end mt-2">
+                                            <button type="button" class="btn btn-sm btn-outline-danger remove-item">
+                                                <i class="bi bi-x-circle"></i> Remover
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mb-3 mt-3">
+                                <button type="button" class="btn btn-outline-primary" id="add-item">
+                                    <i class="bi bi-plus-circle"></i> Adicionar Item
+                                </button>
+                            </div>
+                            <div class="d-flex justify-content-between mt-4">
+                                <button type="submit" class="btn btn-success" id="submitBtn">
+                                    <span class="spinner-border spinner-border-sm d-none"
+                                          role="status"
+                                          aria-hidden="true"
+                                          id="loadingSpinner"></span>
+                                    <span id="btnText"><i class="bi bi-save"></i> Salvar Ata</span>
+                                </button>
+                                <a href="{% url 'lista_atas' %}" class="btn btn-secondary">
+                                    <i class="bi bi-x-circle"></i> Cancelar
+                                </a>
+                            </div>
+                        </form>
                     </div>
-                    <div class="col-md-3">
-                      <label class="form-label">Responsável</label>
-                      {{ item.responsavel|add_class:"form-control" }}
-                    </div>
-                    <div class="col-md-3">
-                      <label class="form-label">Status</label>
-                      {{ item.status|add_class:"form-select" }}
-                    </div>
-                  </div>
-                  <div class="mt-2">
-                    <label class="form-label">Descrição</label>
-                    {{ item.descricao|add_class:"form-control" }}
-                  </div>
-                  <div class="mt-2">
-                    <label class="form-label">Prazo</label>
-                    {{ item.data_prazo|add_class:"form-control" }}
-                  </div>
-
-                  {{ item.id.as_hidden }}
-                  {{ item.ordem.as_hidden }}
-                  {{ item.DELETE.as_hidden }}
-
-                  <div class="text-end mt-3">
-                    <button type="button" class="btn btn-sm btn-outline-danger remove-item">
-                      <i class="bi bi-x-circle"></i> Remover
-                    </button>
-                  </div>
                 </div>
-              </div>
-              {% endfor %}
             </div>
-
-            <div id="empty-form-template" class="d-none">
-              <div class="card mb-3 border-0 shadow-sm item-form fade-in">
-                <div class="card-body">
-                  <div class="row g-3 align-items-start">
-                    <div class="col-md-3">
-                      <label class="form-label">Categoria</label>
-                      {{ formset.empty_form.categoria|add_class:"form-select" }}
-                    </div>
-                    <div class="col-md-3">
-                      <label class="form-label">Solicitante</label>
-                      {{ formset.empty_form.solicitante|add_class:"form-control" }}
-                    </div>
-                    <div class="col-md-3">
-                      <label class="form-label">Responsável</label>
-                      {{ formset.empty_form.responsavel|add_class:"form-control" }}
-                    </div>
-                    <div class="col-md-3">
-                      <label class="form-label">Status</label>
-                      {{ formset.empty_form.status|add_class:"form-select" }}
-                    </div>
-                  </div>
-                  <div class="mt-2">
-                    <label class="form-label">Descrição</label>
-                    {{ formset.empty_form.descricao|add_class:"form-control" }}
-                  </div>
-                  <div class="mt-2">
-                    <label class="form-label">Prazo</label>
-                    {{ formset.empty_form.data_prazo|add_class:"form-control" }}
-                  </div>
-
-                  {{ formset.empty_form.id.as_hidden }}
-                  {{ formset.empty_form.ordem.as_hidden }}
-                  {{ formset.empty_form.DELETE.as_hidden }}
-
-                  <div class="text-end mt-2">
-                    <button type="button" class="btn btn-sm btn-outline-danger remove-item">
-                      <i class="bi bi-x-circle"></i> Remover
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="mb-3 mt-3">
-              <button type="button" class="btn btn-outline-primary" id="add-item">
-                <i class="bi bi-plus-circle"></i> Adicionar Item
-              </button>
-            </div>
-
-            <div class="d-flex justify-content-between mt-4">
-              <button type="submit" class="btn btn-success" id="submitBtn">
-                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true" id="loadingSpinner"></span>
-                <span id="btnText"><i class="bi bi-save"></i> Salvar Ata</span>
-              </button>
-              <a href="{% url 'lista_atas' %}" class="btn btn-secondary">
-                <i class="bi bi-x-circle"></i> Cancelar
-              </a>
-            </div>
-          </form>
-
         </div>
-      </div>
     </div>
-  </div>
-</div>
 {% endblock %}
-
 {% block extra_js %}
-<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-<script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <script>
   document.addEventListener('DOMContentLoaded', function () {
     const formsetDiv = document.getElementById('formset-itens');
     const addButton = document.getElementById('add-item');
@@ -213,5 +200,5 @@
       showLoadingOverlay();
     });
   });
-</script>
+    </script>
 {% endblock %}

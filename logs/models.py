@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class ErroSistema(models.Model):
     data = models.DateTimeField(auto_now_add=True)
     view = models.CharField(max_length=255, blank=True)

@@ -1,7 +1,8 @@
-from django.db import models
 from django.contrib.auth import get_user_model
+from django.db import models
 
 User = get_user_model()
+
 
 class NotaPessoal(models.Model):
     titulo = models.CharField(max_length=200, verbose_name="Título")
@@ -13,7 +14,7 @@ class NotaPessoal(models.Model):
     class Meta:
         verbose_name = "Nota Pessoal"
         verbose_name_plural = "Notas Pessoais"
-        ordering = ['-criada_em']
+        ordering = ["-criada_em"]
 
     def __str__(self):
         return self.titulo

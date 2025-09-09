@@ -1,265 +1,276 @@
 {% extends "base.html" %}
 {% load custom_filters %}
 {% block title %}Detalhes do Contrato{% endblock %}
-
 {% block content %}
-<div class="container mt-4 mb-5">
-  <div class="row justify-content-center">
-    <div class="col-lg-10">
-
-      <!-- Botões e título -->
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <a href="{% url 'lista_contratos' %}" class="btn btn-outline-secondary btn-sm">
-           <i class="bi bi-arrow-left"></i> Voltar
-        </a>
-          <div>
-            <a href="{% url 'editar_contrato' contrato.pk %}" class="btn btn-outline-primary btn-sm me-1">
-              <i class="bi bi-pencil-square"></i> Editar
-            </a>
-            <a href="{% url 'excluir_contrato' contrato.pk %}" class="btn btn-outline-danger btn-sm">
-              <i class="bi bi-trash"></i> Excluir
-            </a>
-          </div>
-      </div>
-
-      <h2 class="mb-4"><i class="bi bi-file-earmark-text"></i> Contrato {{ contrato.numero }}</h2>
-
-      <!-- Cards de detalhes -->
-      <div class="row g-4 mt-3">
-        <!-- Contratante -->
-        <div class="col-md-6">
-          <div class="card shadow-sm h-100">
-            <div class="card-body">
-              <h5 class="card-title"><i class="bi bi-person-badge"></i> Contratante</h5>
-              <p class="mb-1"><strong>Empresa:</strong> {{ contrato.contratante.nome }}</p>
-              <p class="mb-0"><strong>CNPJ:</strong> {{ contrato.contratante.cnpj|default:"—" }}</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Descrição -->
-        <div class="col-md-6">
-          <div class="card shadow-sm h-100">
-            <div class="card-body">
-              <h5 class="card-title"><i class="bi bi-card-text"></i> Descrição</h5>
-              <p class="mb-0">
-                {% if contrato.descricao %}
-                  {{ contrato.descricao }}
-                {% else %}
-                  <span class="text-muted">Nenhuma descrição fornecida.</span>
-                {% endif %}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Informações -->
-        <div class="col-md-6">
-          <div class="card shadow-sm h-100">
-            <div class="card-body">
-              <h5 class="card-title"><i class="bi bi-info-circle"></i> Informações</h5>
-              <p class="mb-1"><strong>Preposto:</strong> {{ contrato.preposto }}</p>
-              <p class="mb-1"><strong>Situação:</strong>
-                {% if contrato.ativo %}
-                  <span class="badge bg-success">Ativo</span>
-                {% else %}
-                  <span class="badge bg-secondary">Inativo</span>
-                {% endif %}
-              </p>
-              <p class="mb-0"><strong>Dashboard:</strong>
-                {% if contrato.url_dashboard %}
-                  <a href="{{ contrato.url_dashboard }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                    <i class="bi bi-bar-chart-line"></i> Acessar
-                  </a>
-                {% else %}
-                  <span class="text-muted">Não informado</span>
-                {% endif %}
-              </p>
-            </div>
-          </div>
-        </div>
-
-          <!-- Vigência + Execução -->
-          <div class="col-md-6">
-            <div class="card shadow-sm h-100">
-              <div class="card-body">
-                <h5 class="card-title"><i class="bi bi-calendar-check"></i> Vigência e Execução</h5>
-
-                <p class="mb-1"><strong>Início:</strong> {{ contrato.data_inicio|date:"d/m/Y" }}</p>
-                {% if contrato.data_fim %}
-                  <p class="mb-1"><strong>Fim:</strong> {{ contrato.data_fim|date:"d/m/Y" }}</p>
-                {% else %}
-                  <p class="mb-1"><strong>Situação:</strong> Em vigência</p>
-                {% endif %}
-
-                <p class="mb-1"><strong>Valor Total:</strong> {{ contrato.valor_total|br_currency }}</p>
-
-                <p class="mb-2"><strong>Execução Média do Contrato:</strong> {{ contrato.media_execucao_obras|floatformat:2 }}%</p>
-
-                <div class="progress" style="height: 20px;">
-                  <div class="progress-bar
-                    {% if contrato.media_execucao_obras >= 100 %}
-                      bg-success
-                    {% elif contrato.media_execucao_obras >= 50 %}
-                      bg-warning
-                    {% else %}
-                      bg-danger
-                    {% endif %}"
-                    role="progressbar"
-                    style="width: {{ contrato.media_execucao_obras }}%;"
-                    aria-valuenow="{{ contrato.media_execucao_obras }}"
-                    aria-valuemin="0"
-                    aria-valuemax="100">
-                    {{ contrato.media_execucao_obras|floatformat:0 }}%
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-
-      <!-- Atas e Obras Vinculadas -->
-      <div class="row g-4 mt-4">
-        <div class="col-md-6">
-          <div class="card h-100 shadow-sm border-primary text-center">
-            <div class="card-body d-flex flex-column gap-2 align-items-center">
-              <i class="bi bi-journal-text display-5 text-primary"></i>
-              <h5 class="card-title">Atas Vinculadas</h5>
-              <p class="card-text text-muted">Visualize todas as atas de reunião relacionadas a este contrato.</p>
-              <a href="{% url 'atas_por_contrato' contrato.pk %}" class="btn btn-outline-primary mt-auto">
-                <i class="bi bi-eye"></i> Ver Atas
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-6">
-          <div class="card h-100 shadow-sm border-success text-center">
-            <div class="card-body d-flex flex-column gap-2 align-items-center">
-              <i class="bi bi-building display-5 text-success"></i>
-              <h5 class="card-title">Obras Vinculadas</h5>
-              <p class="card-text text-muted">Acesse todas as obras cadastradas sob este contrato.</p>
-              <a href="{% url 'obras_por_contrato' contrato.pk %}" class="btn btn-outline-success mt-auto">
-                <i class="bi bi-eye"></i> Ver Obras
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-        <div class="row mt-4">
-  <div class="col-12">
-    <div class="card shadow-sm">
-      <div class="card-body">
-        <h5 class="card-title"><i class="bi bi-clipboard-data"></i> Medições vinculadas</h5>
-
-        {% if medicoes %}
-        <div class="table-responsive">
-          <table class="table table-striped table-bordered align-middle">
-            <thead class="table-light">
-              <tr>
-                <th class="text-center">Identificador</th>
-                <th class="text-center">Período</th>
-                <th class="text-center">Valor</th>
-                <th class="text-center">Situação</th>
-<!--                <th class="text-center">Ações</th>-->
-              </tr>
-            </thead>
-            <tbody>
-              {% for med in medicoes %}
-              <tr>
-                <td class="text-center">{{ med.identificador }}</td>
-                <td class="text-center">{{ med.periodo_formatado }}</td>
-                <td class="text-center">{{ med.valor|br_currency }}</td>
-                <td class="text-center">
-                  <span class="badge {% if med.situacao == 'fechada' %}bg-success{% else %}bg-warning text-dark{% endif %}">
-                    {{ med.get_situacao_display }}
-                  </span>
-                </td>
-<!--                <td class="text-center">-->
-<!--                  <a href="{% url 'atualizar_medicao' med.pk %}" class="btn btn-sm btn-outline-primary">-->
-<!--                    <i class="bi bi-pencil-square"></i>-->
-<!--                  </a>-->
-<!--                  <a href="{% url 'deletar_medicao' med.pk %}" class="btn btn-sm btn-outline-danger">-->
-<!--                    <i class="bi bi-trash"></i>-->
-<!--                  </a>-->
-<!--                </td>-->
-              </tr>
-              {% endfor %}
-            </tbody>
-            <tfoot>
-              <tr>
-                <th class="text-end" colspan="2">Total das medições</th>
-                <th class="text-center">{{ total_medicoes|br_currency }}</th>
-                <th></th>
-              </tr>
-            </tfoot>
-
-          </table>
-        </div>
-        {% else %}
-          <p class="text-muted">Nenhuma medição cadastrada para este contrato.</p>
-        {% endif %}
-
-        <div class="mt-3 text-end">
-          <a href="{% url 'lista_medicoes' %}?contrato={{ contrato.numero }}" class="btn btn-outline-secondary btn-sm">
-            <i class="bi bi-search"></i> Ver todas as medições
-          </a>
-        </div>
-
-      </div>
-    </div>
-  </div>
-</div>
-
-      <!-- Anotações -->
-<div class="row mt-4" id="anotacoes">
-  <div class="col-12">
-    <div class="card shadow-sm">
-      <div class="card-body">
-        <h5 class="card-title mb-3"><i class="bi bi-journal-text"></i> Anotações sobre o Contrato</h5>
-
-        {% if contrato.notas.exists %}
-          <div class="list-group mb-3">
-            {% for nota in contrato.notas.all %}
-              <div class="list-group-item list-group-item-action shadow-sm mb-2">
-                <div class="d-flex justify-content-between align-items-center">
-                  <div>
-                    <strong>{{ nota.criado_por.get_full_name|default:nota.criado_por.username }}</strong>
-                    <small class="text-muted ms-2">{{ nota.criado_em|date:"d/m/Y H:i" }}</small>
-                  </div>
-                    <div class="btn-group">
-                      <a href="{% url 'editar_nota_contrato' nota.pk %}" class="btn btn-sm btn-outline-primary">
-                        <i class="bi bi-pencil"></i>
-                      </a>
-                      <a href="{% url 'excluir_nota_contrato' nota.pk %}" class="btn btn-sm btn-outline-danger">
-                        <i class="bi bi-trash"></i>
-                      </a>
+    <div class="container mt-4 mb-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <!-- Botões e título -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <a href="{% url 'lista_contratos' %}"
+                       class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-arrow-left"></i> Voltar
+                    </a>
+                    <div>
+                        <a href="{% url 'editar_contrato' contrato.pk %}"
+                           class="btn btn-outline-primary btn-sm me-1">
+                            <i class="bi bi-pencil-square"></i> Editar
+                        </a>
+                        <a href="{% url 'excluir_contrato' contrato.pk %}"
+                           class="btn btn-outline-danger btn-sm">
+                            <i class="bi bi-trash"></i> Excluir
+                        </a>
                     </div>
                 </div>
-                <p class="mb-0 mt-2">{{ nota.texto |linebreaksbr }}</p>
-              </div>
-            {% endfor %}
-          </div>
-        {% else %}
-          <p class="text-muted">Nenhuma anotação registrada para este contrato.</p>
-        {% endif %}
-
-          <form method="post" action="{% url 'adicionar_nota' contrato.pk %}#anotacoes">
-            {% csrf_token %}
-            <div class="mb-2">
-              {{ nota_form.texto|add_class:"form-control" }}
-            </div>
-            <button type="submit" class="btn btn-sm btn-outline-primary">
-              <i class="bi bi-plus-circle"></i> Adicionar Anotação
-            </button>
-          </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-<style>
+                <h2 class="mb-4">
+                    <i class="bi bi-file-earmark-text"></i> Contrato {{ contrato.numero }}
+                </h2>
+                <!-- Cards de detalhes -->
+                <div class="row g-4 mt-3">
+                    <!-- Contratante -->
+                    <div class="col-md-6">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="bi bi-person-badge"></i> Contratante
+                                </h5>
+                                <p class="mb-1">
+                                    <strong>Empresa:</strong> {{ contrato.contratante.nome }}
+                                </p>
+                                <p class="mb-0">
+                                    <strong>CNPJ:</strong> {{ contrato.contratante.cnpj|default:"—" }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Descrição -->
+                    <div class="col-md-6">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="bi bi-card-text"></i> Descrição
+                                </h5>
+                                <p class="mb-0">
+                                    {% if contrato.descricao %}
+                                        {{ contrato.descricao }}
+                                    {% else %}
+                                        <span class="text-muted">Nenhuma descrição fornecida.</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Informações -->
+                    <div class="col-md-6">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="bi bi-info-circle"></i> Informações
+                                </h5>
+                                <p class="mb-1">
+                                    <strong>Preposto:</strong> {{ contrato.preposto }}
+                                </p>
+                                <p class="mb-1">
+                                    <strong>Situação:</strong>
+                                    {% if contrato.ativo %}
+                                        <span class="badge bg-success">Ativo</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Inativo</span>
+                                    {% endif %}
+                                </p>
+                                <p class="mb-0">
+                                    <strong>Dashboard:</strong>
+                                    {% if contrato.url_dashboard %}
+                                        <a href="{{ contrato.url_dashboard }}"
+                                           target="_blank"
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-bar-chart-line"></i> Acessar
+                                        </a>
+                                    {% else %}
+                                        <span class="text-muted">Não informado</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Vigência + Execução -->
+                    <div class="col-md-6">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="bi bi-calendar-check"></i> Vigência e Execução
+                                </h5>
+                                <p class="mb-1">
+                                    <strong>Início:</strong> {{ contrato.data_inicio|date:"d/m/Y" }}
+                                </p>
+                                {% if contrato.data_fim %}
+                                    <p class="mb-1">
+                                        <strong>Fim:</strong> {{ contrato.data_fim|date:"d/m/Y" }}
+                                    </p>
+                                {% else %}
+                                    <p class="mb-1">
+                                        <strong>Situação:</strong> Em vigência
+                                    </p>
+                                {% endif %}
+                                <p class="mb-1">
+                                    <strong>Valor Total:</strong> {{ contrato.valor_total|br_currency }}
+                                </p>
+                                <p class="mb-2">
+                                    <strong>Execução Média do Contrato:</strong> {{ contrato.media_execucao_obras|floatformat:2 }}%
+                                </p>
+                                <div class="progress" style="height: 20px;">
+                                    <div class="progress-bar {% if contrato.media_execucao_obras >= 100 %} bg-success {% elif contrato.media_execucao_obras >= 50 %} bg-warning {% else %} bg-danger {% endif %}"
+                                         role="progressbar"
+                                         style="width: {{ contrato.media_execucao_obras }}%"
+                                         aria-valuenow="{{ contrato.media_execucao_obras }}"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100">{{ contrato.media_execucao_obras|floatformat:0 }}%</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Atas e Obras Vinculadas -->
+                    <div class="row g-4 mt-4">
+                        <div class="col-md-6">
+                            <div class="card h-100 shadow-sm border-primary text-center">
+                                <div class="card-body d-flex flex-column gap-2 align-items-center">
+                                    <i class="bi bi-journal-text display-5 text-primary"></i>
+                                    <h5 class="card-title">Atas Vinculadas</h5>
+                                    <p class="card-text text-muted">Visualize todas as atas de reunião relacionadas a este contrato.</p>
+                                    <a href="{% url 'atas_por_contrato' contrato.pk %}"
+                                       class="btn btn-outline-primary mt-auto">
+                                        <i class="bi bi-eye"></i> Ver Atas
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card h-100 shadow-sm border-success text-center">
+                                <div class="card-body d-flex flex-column gap-2 align-items-center">
+                                    <i class="bi bi-building display-5 text-success"></i>
+                                    <h5 class="card-title">Obras Vinculadas</h5>
+                                    <p class="card-text text-muted">Acesse todas as obras cadastradas sob este contrato.</p>
+                                    <a href="{% url 'obras_por_contrato' contrato.pk %}"
+                                       class="btn btn-outline-success mt-auto">
+                                        <i class="bi bi-eye"></i> Ver Obras
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="bi bi-clipboard-data"></i> Medições vinculadas
+                                    </h5>
+                                    {% if medicoes %}
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-bordered align-middle">
+                                                <thead class="table-light">
+                                                    <tr>
+                                                        <th class="text-center">Identificador</th>
+                                                        <th class="text-center">Período</th>
+                                                        <th class="text-center">Valor</th>
+                                                        <th class="text-center">Situação</th>
+                                                        <!--                <th class="text-center">Ações</th>-->
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for med in medicoes %}
+                                                        <tr>
+                                                            <td class="text-center">{{ med.identificador }}</td>
+                                                            <td class="text-center">{{ med.periodo_formatado }}</td>
+                                                            <td class="text-center">{{ med.valor|br_currency }}</td>
+                                                            <td class="text-center">
+                                                                <span class="badge {% if med.situacao == 'fechada' %}bg-success{% else %}bg-warning text-dark{% endif %}">
+                                                                    {{ med.get_situacao_display }}
+                                                                </span>
+                                                            </td>
+                                                            <!--                <td class="text-center">-->
+                                                            <!--                  <a href="{% url 'atualizar_medicao' med.pk %}"
+                     class="btn btn-sm btn-outline-primary">-->
+                                                            <!--                    <i class="bi bi-pencil-square"></i>-->
+                                                            <!--                  </a>-->
+                                                            <!--                  <a href="{% url 'deletar_medicao' med.pk %}"
+                     class="btn btn-sm btn-outline-danger">-->
+                                                            <!--                    <i class="bi bi-trash"></i>-->
+                                                            <!--                  </a>-->
+                                                            <!--                </td>-->
+                                                        </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <th class="text-end" colspan="2">Total das medições</th>
+                                                        <th class="text-center">{{ total_medicoes|br_currency }}</th>
+                                                        <th></th>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                    {% else %}
+                                        <p class="text-muted">Nenhuma medição cadastrada para este contrato.</p>
+                                    {% endif %}
+                                    <div class="mt-3 text-end">
+                                        <a href="{% url 'lista_medicoes' %}?contrato={{ contrato.numero }}"
+                                           class="btn btn-outline-secondary btn-sm">
+                                            <i class="bi bi-search"></i> Ver todas as medições
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Anotações -->
+                    <div class="row mt-4" id="anotacoes">
+                        <div class="col-12">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title mb-3">
+                                        <i class="bi bi-journal-text"></i> Anotações sobre o Contrato
+                                    </h5>
+                                    {% if contrato.notas.exists %}
+                                        <div class="list-group mb-3">
+                                            {% for nota in contrato.notas.all %}
+                                                <div class="list-group-item list-group-item-action shadow-sm mb-2">
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <div>
+                                                            <strong>{{ nota.criado_por.get_full_name|default:nota.criado_por.username }}</strong>
+                                                            <small class="text-muted ms-2">{{ nota.criado_em|date:"d/m/Y H:i" }}</small>
+                                                        </div>
+                                                        <div class="btn-group">
+                                                            <a href="{% url 'editar_nota_contrato' nota.pk %}"
+                                                               class="btn btn-sm btn-outline-primary">
+                                                                <i class="bi bi-pencil"></i>
+                                                            </a>
+                                                            <a href="{% url 'excluir_nota_contrato' nota.pk %}"
+                                                               class="btn btn-sm btn-outline-danger">
+                                                                <i class="bi bi-trash"></i>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <p class="mb-0 mt-2">{{ nota.texto |linebreaksbr }}</p>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        <p class="text-muted">Nenhuma anotação registrada para este contrato.</p>
+                                    {% endif %}
+                                    <form method="post"
+                                          action="{% url 'adicionar_nota' contrato.pk %}#anotacoes">
+                                        {% csrf_token %}
+                                        <div class="mb-2">{{ nota_form.texto|add_class:"form-control" }}</div>
+                                        <button type="submit" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-plus-circle"></i> Adicionar Anotação
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <style>
   .list-group-item {
     background-color: #f9f9f9;
     border-left: 4px solid #0d6efd;
@@ -269,11 +280,10 @@
   .card-title i {
     margin-right: 5px;
   }
-</style>
-{% endblock %}
-
-{% block extra_js %}
-<script>
+                    </style>
+                {% endblock %}
+                {% block extra_js %}
+                    <script>
   document.addEventListener("DOMContentLoaded", function () {
     if (window.location.hash === "#anotacoes") {
       const el = document.getElementById("anotacoes");
@@ -282,5 +292,5 @@
       }
     }
   });
-</script>
-{% endblock %}
+                    </script>
+                {% endblock %}

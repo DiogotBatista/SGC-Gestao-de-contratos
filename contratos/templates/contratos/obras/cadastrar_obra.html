@@ -1,61 +1,56 @@
 {% extends "base.html" %}
 {% load custom_filters %}
 {% block title %}Cadastrar Obra{% endblock %}
-
 {% block content %}
-<div class="container mt-4">
-  <div class="row justify-content-center">
-    <div class="col-lg-10">
-      <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
-          <h5 class="mb-0"><i class="bi bi-building-add"></i> Cadastrar Obra</h5>
-        </div>
-        <div class="card-body">
-          {% if form.non_field_errors %}
-            <div class="alert alert-danger">
-              {% for error in form.non_field_errors %}
-                {{ error }}<br>
-              {% endfor %}
-            </div>
-          {% endif %}
-
-          <form method="post" novalidate autocomplete="off" id="form-cadastrar-obra">
-            {% csrf_token %}
-            <div class="row g-3">
-              {% for field in form %}
-                <div class="col-md-6">
-                  <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                  {{ field|add_class:"form-control" }}
-                  {% if field.help_text %}
-                    <small class="form-text text-muted">{{ field.help_text }}</small>
-                  {% endif %}
-                  {% for error in field.errors %}
-                    <div class="text-danger small">{{ error }}</div>
-                  {% endfor %}
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">
+                            <i class="bi bi-building-add"></i> Cadastrar Obra
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                    <br>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                        <form method="post" novalidate autocomplete="off" id="form-cadastrar-obra">
+                            {% csrf_token %}
+                            <div class="row g-3">
+                                {% for field in form %}
+                                    <div class="col-md-6">
+                                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                                        {{ field|add_class:"form-control" }}
+                                        {% if field.help_text %}<small class="form-text text-muted">{{ field.help_text }}</small>{% endif %}
+                                        {% for error in field.errors %}<div class="text-danger small">{{ error }}</div>{% endfor %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <div class="d-flex justify-content-end mt-4">
+                                <button type="submit" class="btn btn-success me-2">
+                                    <i class="bi bi-save"></i> Salvar
+                                </button>
+                                <a href="{% url 'lista_obras' %}" class="btn btn-secondary">
+                                    <i class="bi bi-x-circle"></i> Cancelar
+                                </a>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-              {% endfor %}
             </div>
-
-            <div class="d-flex justify-content-end mt-4">
-              <button type="submit" class="btn btn-success me-2">
-                <i class="bi bi-save"></i> Salvar
-              </button>
-              <a href="{% url 'lista_obras' %}" class="btn btn-secondary">
-                <i class="bi bi-x-circle"></i> Cancelar
-              </a>
-            </div>
-          </form>
         </div>
-      </div>
     </div>
-  </div>
-</div>
 {% endblock %}
-
 {% block extra_js %}
-<script>
+    <script>
   document.getElementById('form-cadastrar-obra').addEventListener('submit', function() {
     showLoadingOverlay();
   });
-</script>
+    </script>
 {% endblock %}

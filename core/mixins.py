@@ -1,8 +1,10 @@
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib import messages
-from django.shortcuts import redirect, render
-from contratos.models import Contrato
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.views import redirect_to_login
+from django.shortcuts import redirect, render
+
+from contratos.models import Contrato
+
 
 def has_cargo(user, allowed_cargos, view_name=None):
     if user.is_superuser:
@@ -18,19 +20,24 @@ def has_cargo(user, allowed_cargos, view_name=None):
 
     if view_name and cargo:
         from core.models import PermissaoDeAcessoPorCargo
+
         return PermissaoDeAcessoPorCargo.objects.filter(
-            cargo=cargo,
-            views__nome=view_name
+            cargo=cargo, views__nome=view_name
         ).exists()
 
     return False
 
+
 class AccessRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
     allowed_cargos = []
     view_name = None
-    no_permission_redirect_url = 'index'
+    no_permission_redirect_url = "index"
 
     def test_func(self):
+        # ✅ superusuário sempre tem acesso
+        if self.request.user.is_superuser:
+            return True
+
         nome_view = self.view_name or self.__class__.__name__.lower()
         return has_cargo(self.request.user, self.allowed_cargos, nome_view)
 
@@ -39,10 +46,10 @@ class AccessRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
             return redirect_to_login(
                 self.request.get_full_path(),
                 self.get_login_url(),
-                self.get_redirect_field_name()
+                self.get_redirect_field_name(),
             )
-        else:
-            return render(self.request, '403.html', status=403)
+        return render(self.request, "403.html", status=403)
+
 
 class ContratoAccessMixin:
     """
@@ -55,8 +62,11 @@ class ContratoAccessMixin:
 
         contrato = self.get_contrato(self.get_object())
 
-        if contrato and not request.user.userprofile.contratos.filter(id=contrato.id).exists():
-            return render(request, '403.html', status=403)
+        if (
+            contrato
+            and not request.user.userprofile.contratos.filter(id=contrato.id).exists()
+        ):
+            return render(request, "403.html", status=403)
 
         return super().dispatch(request, *args, **kwargs)
 
@@ -69,11 +79,13 @@ class ContratoAccessMixin:
         except AttributeError:
             return obj
 
+
 class SuperUserOnlyMixin(UserPassesTestMixin):
     """
     Restringe o acesso exclusivamente a superusuários.
     Use sempre em conjunto com LoginRequiredMixin.
     """
+
     def test_func(self):
         return self.request.user.is_superuser
 
@@ -81,8 +93,6 @@ class SuperUserOnlyMixin(UserPassesTestMixin):
         if not self.request.user.is_authenticated:
             # mesmo comportamento do seu AccessRequiredMixin
             return redirect_to_login(
-                self.request.get_full_path(),
-                None,  # usa LOGIN_URL do settings
-                'next'
+                self.request.get_full_path(), None, "next"  # usa LOGIN_URL do settings
             )
-        return render(self.request, '403.html', status=403)
+        return render(self.request, "403.html", status=403)

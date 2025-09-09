@@ -1,4 +1,5 @@
-<li id="tarefa-{{ tarefa.id }}" class="list-group-item tarefa-item d-flex justify-content-between align-items-center">
+<li id="tarefa-{{ tarefa.id }}"
+    class="list-group-item tarefa-item d-flex justify-content-between align-items-center">
     <div class="d-flex align-items-center w-100">
         <input type="checkbox"
                class="form-check-input me-2"
@@ -15,15 +16,19 @@
                readonly>
         <small class="text-muted ms-3">{{ tarefa.criada_em|date:"d/m/Y H:i" }}</small>
     </div>
-
     <div class="ms-2 d-flex gap-2">
-        <button type="button" class="btn btn-sm btn-outline-primary btn-editar" onclick="editarTarefa({{ tarefa.id }})">
+        <button type="button"
+                class="btn btn-sm btn-outline-primary btn-editar"
+                onclick="editarTarefa({{ tarefa.id }})">
             <i class="bi bi-pencil"></i>
         </button>
-        <button type="button" class="btn btn-sm btn-outline-success btn-salvar d-none" onclick="salvarTarefa({{ tarefa.id }})">
+        <button type="button"
+                class="btn btn-sm btn-outline-success btn-salvar d-none"
+                onclick="salvarTarefa({{ tarefa.id }})">
             <i class="bi bi-save"></i>
         </button>
-        <button type="button" class="btn btn-sm btn-outline-danger"
+        <button type="button"
+                class="btn btn-sm btn-outline-danger"
                 hx-post="{% url 'excluir_tarefa' tarefa.pk %}"
                 hx-target="#tarefa-{{ tarefa.id }}"
                 hx-swap="delete">

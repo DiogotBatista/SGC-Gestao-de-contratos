@@ -1,152 +1,173 @@
 {% extends "base.html" %}
 {% load custom_filters %}
 {% block title %}Detalhes da Proposta{% endblock %}
-
 {% block content %}
-<div class="container mt-4 mb-5">
-  <div class="row justify-content-center">
-    <div class="col-lg-10">
-
-      <!-- Botões e título -->
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <a href="{% url 'lista_propostas' %}" class="btn btn-outline-secondary btn-sm">
-          <i class="bi bi-arrow-left"></i> Voltar
-        </a>
-        <div>
-          <a href="{% url 'editar_proposta' proposta.pk %}" class="btn btn-outline-primary btn-sm me-1">
-            <i class="bi bi-pencil-square"></i> Editar
-          </a>
-          <a href="{% url 'excluir_proposta' proposta.pk %}" class="btn btn-outline-danger btn-sm">
-            <i class="bi bi-trash3"></i> Excluir
-          </a>
-        </div>
-      </div>
-
-      <h2 class="mb-4 text-center fw-bold">
-        <i class="bi bi-file-earmark-text"></i> {{ proposta.titulo }}
-      </h2>
-
-      <!-- Cards de detalhes -->
-      <div class="row g-4 mt-3">
-
-        <!-- Contratante -->
-        <div class="col-md-6">
-          <div class="card shadow-sm h-100">
-            <div class="card-body">
-              <h5 class="card-title"><i class="bi bi-person-badge" title="Dados do contratante"></i> Contratante</h5>
-              <p class="mb-1"><strong>Empresa:</strong> {{ proposta.contratante.nome }}</p>
-              <p class="mb-0"><strong>Responsável:</strong> {{ proposta.created_by.get_full_name|default:proposta.created_by.username }}</p>
+    <div class="container mt-4 mb-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <!-- Botões e título -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <a href="{% url 'lista_propostas' %}"
+                       class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-arrow-left"></i> Voltar
+                    </a>
+                    <div>
+                        <a href="{% url 'editar_proposta' proposta.pk %}"
+                           class="btn btn-outline-primary btn-sm me-1">
+                            <i class="bi bi-pencil-square"></i> Editar
+                        </a>
+                        <a href="{% url 'excluir_proposta' proposta.pk %}"
+                           class="btn btn-outline-danger btn-sm">
+                            <i class="bi bi-trash3"></i> Excluir
+                        </a>
+                    </div>
+                </div>
+                <h2 class="mb-4 text-center fw-bold">
+                    <i class="bi bi-file-earmark-text"></i> {{ proposta.titulo }}
+                </h2>
+                <!-- Cards de detalhes -->
+                <div class="row g-4 mt-3">
+                    <!-- Contratante -->
+                    <div class="col-md-6">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="bi bi-person-badge" title="Dados do contratante"></i> Contratante
+                                </h5>
+                                <p class="mb-1">
+                                    <strong>Empresa:</strong> {{ proposta.contratante.nome }}
+                                </p>
+                                <p class="mb-0">
+                                    <strong>Responsável:</strong> {{ proposta.created_by.get_full_name|default:proposta.created_by.username }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Local e valor -->
+                    <div class="col-md-6">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="bi bi-geo-alt" title="Local e orçamento"></i> Local e Valor
+                                </h5>
+                                <p class="mb-1">
+                                    <strong>Local de Execução:</strong> {{ proposta.local_execucao }}
+                                </p>
+                                <p class="mb-0">
+                                    <strong>Valor Estimado:</strong>
+                                    {% if proposta.valor_estimado %}
+                                        {{ proposta.valor_estimado|br_currency }}
+                                    {% else %}
+                                        <span class="text-muted">Não informado</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Datas -->
+                    <div class="col-md-6">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="bi bi-calendar-check" title="Datas relevantes"></i> Datas
+                                </h5>
+                                <p class="mb-1">
+                                    <strong>Recebido em:</strong> {{ proposta.data_recebimento|date:"d/m/Y" }}
+                                </p>
+                                <p class="mb-1">
+                                    <strong>Enviado em:</strong> {{ proposta.data_envio|date:"d/m/Y" }}
+                                </p>
+                                <p class="mb-0">
+                                    <strong>Resposta em:</strong> {{ proposta.data_resposta|date:"d/m/Y" }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Situação, etapa e histórico -->
+                    <div class="col-md-6">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <i class="bi bi-check-circle" title="Situação atual"></i> Situação e Etapa
+                                </h5>
+                                <p class="mb-2">
+                                    <strong>Situação:</strong>
+                                    <span class="badge {% if proposta.situacao == 'Contrato firmado' %}bg-success {% elif proposta.situacao == 'Proposta rejeitada' %}bg-danger {% elif proposta.situacao == 'Em negociação' %}bg-warning text-dark {% else %}bg-secondary{% endif %}"
+                                          title="{{ proposta.situacao }}">{{ proposta.situacao }}</span>
+                                </p>
+                                <p class="mb-1">
+                                    <strong>Etapa Atual:</strong>
+                                    {% if proposta.etapa_atual == 'elaboracao' %}
+                                        <span class="badge bg-primary">Em Elaboração</span>
+                                    {% elif proposta.etapa_atual == 'analise' %}
+                                        <span class="badge bg-warning text-dark">Em Análise</span>
+                                    {% elif proposta.etapa_atual == 'negociacao' %}
+                                        <span class="badge bg-info text-dark">Em Negociação</span>
+                                    {% elif proposta.etapa_atual == 'aguardando' %}
+                                        <span class="badge bg-secondary">Aguardando</span>
+                                    {% else %}
+                                        <span class="badge bg-success">Finalizada</span>
+                                    {% endif %}
+                                </p>
+                                <hr>
+                                <p class="mb-1">
+                                    <strong>Cadastrada em:</strong> {{ proposta.data_cadastro|date:"d/m/Y - H:i" }}
+                                </p>
+                                <p class="mb-0">
+                                    <strong>Última atualização:</strong> {{ proposta.data_alteracao|date:"d/m/Y - H:i" }}
+                                </p>
+                                {% if proposta.updated_by %}
+                                    <p class="text-muted small mt-2">
+                                        <i class="bi bi-person-check"></i> Última alteração por {{ proposta.updated_by.get_full_name|default:proposta.updated_by.username }}
+                                    </p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Endereço do servidor -->
+                    {% if proposta.endereco_servidor %}
+                        <div class="col-12">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="bi bi-link-45deg" title="Local do arquivo"></i> Endereço da Proposta
+                                    </h5>
+                                    <div class="input-group">
+                                        <input type="text"
+                                               class="form-control bg-light"
+                                               readonly
+                                               value="{{ proposta.endereco_servidor }}"
+                                               id="endereco-servidor">
+                                        <button class="btn btn-outline-secondary"
+                                                type="button"
+                                                onclick="copiarEndereco()">
+                                            <i class="bi bi-clipboard"></i> Copiar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <!-- Descrição -->
+                    {% if proposta.descricao %}
+                        <div class="col-12">
+                            <div class="card shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="bi bi-card-text" title="Resumo"></i> Descrição
+                                    </h5>
+                                    <div class="border rounded p-2 bg-light">{{ proposta.descricao|linebreaksbr }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
-          </div>
         </div>
-
-        <!-- Local e valor -->
-        <div class="col-md-6">
-          <div class="card shadow-sm h-100">
-            <div class="card-body">
-              <h5 class="card-title"><i class="bi bi-geo-alt" title="Local e orçamento"></i> Local e Valor</h5>
-              <p class="mb-1"><strong>Local de Execução:</strong> {{ proposta.local_execucao }}</p>
-              <p class="mb-0"><strong>Valor Estimado:</strong>
-                {% if proposta.valor_estimado %}
-                  {{ proposta.valor_estimado|br_currency }}
-                {% else %}
-                  <span class="text-muted">Não informado</span>
-                {% endif %}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Datas -->
-        <div class="col-md-6">
-          <div class="card shadow-sm h-100">
-            <div class="card-body">
-              <h5 class="card-title"><i class="bi bi-calendar-check" title="Datas relevantes"></i> Datas</h5>
-              <p class="mb-1"><strong>Recebido em:</strong> {{ proposta.data_recebimento|date:"d/m/Y" }}</p>
-              <p class="mb-1"><strong>Enviado em:</strong> {{ proposta.data_envio|date:"d/m/Y" }}</p>
-              <p class="mb-0"><strong>Resposta em:</strong> {{ proposta.data_resposta|date:"d/m/Y" }}</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Situação, etapa e histórico -->
-        <div class="col-md-6">
-          <div class="card shadow-sm h-100">
-            <div class="card-body">
-              <h5 class="card-title"><i class="bi bi-check-circle" title="Situação atual"></i> Situação e Etapa</h5>
-              <p class="mb-2">
-                <strong>Situação:</strong>
-                <span class="badge
-                  {% if proposta.situacao == 'Contrato firmado' %}bg-success
-                  {% elif proposta.situacao == 'Proposta rejeitada' %}bg-danger
-                  {% elif proposta.situacao == 'Em negociação' %}bg-warning text-dark
-                  {% else %}bg-secondary{% endif %}"
-                  title="{{ proposta.situacao }}">
-                  {{ proposta.situacao }}
-                </span>
-              </p>
-              <p class="mb-1">
-                <strong>Etapa Atual:</strong>
-                  {% if proposta.etapa_atual == 'elaboracao' %}
-                    <span class="badge bg-primary">Em Elaboração</span>
-                  {% elif proposta.etapa_atual == 'analise' %}
-                    <span class="badge bg-warning text-dark">Em Análise</span>
-                  {% elif proposta.etapa_atual == 'negociacao' %}
-                    <span class="badge bg-info text-dark">Em Negociação</span>
-                  {% elif proposta.etapa_atual == 'aguardando' %}
-                    <span class="badge bg-secondary">Aguardando</span>
-                  {% else %}
-                    <span class="badge bg-success">Finalizada</span>
-                  {% endif %}
-              </p>
-              <hr>
-              <p class="mb-1"><strong>Cadastrada em:</strong> {{ proposta.data_cadastro|date:"d/m/Y - H:i" }}</p>
-              <p class="mb-0"><strong>Última atualização:</strong> {{ proposta.data_alteracao|date:"d/m/Y - H:i" }}</p>
-              {% if proposta.updated_by %}
-                <p class="text-muted small mt-2">
-                  <i class="bi bi-person-check"></i> Última alteração por {{ proposta.updated_by.get_full_name|default:proposta.updated_by.username }}
-                </p>
-              {% endif %}
-            </div>
-          </div>
-        </div>
-
-        <!-- Endereço do servidor -->
-        {% if proposta.endereco_servidor %}
-        <div class="col-12">
-          <div class="card shadow-sm">
-            <div class="card-body">
-              <h5 class="card-title"><i class="bi bi-link-45deg" title="Local do arquivo"></i> Endereço da Proposta</h5>
-              <div class="input-group">
-                <input type="text" class="form-control bg-light" readonly value="{{ proposta.endereco_servidor }}" id="endereco-servidor">
-                <button class="btn btn-outline-secondary" type="button" onclick="copiarEndereco()">
-                  <i class="bi bi-clipboard"></i> Copiar
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        {% endif %}
-
-        <!-- Descrição -->
-        {% if proposta.descricao %}
-        <div class="col-12">
-          <div class="card shadow-sm">
-            <div class="card-body">
-              <h5 class="card-title"><i class="bi bi-card-text" title="Resumo"></i> Descrição</h5>
-              <div class="border rounded p-2 bg-light">{{ proposta.descricao|linebreaksbr }}</div>
-            </div>
-          </div>
-        </div>
-        {% endif %}
-      </div>
     </div>
-  </div>
-</div>
 {% endblock %}
-
 {% block extra_js %}
-<script>
+    <script>
   function copiarEndereco() {
     const input = document.getElementById("endereco-servidor");
     input.select();
@@ -154,5 +175,5 @@
     document.execCommand("copy");
     alert("Endereço copiado para a área de transferência!");
   }
-</script>
+    </script>
 {% endblock %}

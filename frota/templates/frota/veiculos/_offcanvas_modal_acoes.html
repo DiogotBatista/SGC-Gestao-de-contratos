@@ -1,0 +1,120 @@
+{% load custom_filters %}
+<!-- Offcanvas: Alocar veículo -->
+<div class="offcanvas offcanvas-end"
+     tabindex="-1"
+     id="offcanvasAlocar"
+     aria-labelledby="offcanvasAlocarLabel">
+    <!-- Header -->
+    <div class="offcanvas-header bg-primary text-white">
+        <h5 class="offcanvas-title d-flex align-items-center gap-2"
+            id="offcanvasAlocarLabel">
+            <i class="bi bi-truck"></i>
+            Mobilizar veículo
+        </h5>
+        <button type="button"
+                class="btn-close btn-close-white"
+                data-bs-dismiss="offcanvas"
+                aria-label="Fechar"></button>
+    </div>
+    <!-- Body -->
+    <div class="offcanvas-body">
+        {% if form_alocar.errors %}
+            <div class="alert alert-warning d-flex align-items-center mb-3">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                <span>Revise os campos destacados em vermelho.</span>
+            </div>
+        {% endif %}
+        {% if form_alocar.non_field_errors %}
+            <div class="alert alert-danger">
+                {% for error in form_alocar.non_field_errors %}
+                    {{ error }}
+                    <br>
+                {% endfor %}
+            </div>
+        {% endif %}
+        <form method="post"
+              action="{% url 'frota:alocar_veiculo' veiculo.pk %}"
+              novalidate
+              autocomplete="off"
+              id="form-alocar-veiculo">
+            {% csrf_token %}
+            <div class="row g-3">
+                <!-- Contrato -->
+                <div class="col-12">
+                    <label class="form-label" for="{{ form_alocar.contrato.id_for_label }}">Contrato</label>
+                    {% if form_alocar.contrato.errors %}
+                        {{ form_alocar.contrato|add_class:"form-select is-invalid" }}
+                    {% else %}
+                        {{ form_alocar.contrato|add_class:"form-select" }}
+                    {% endif %}
+                    {% for error in form_alocar.contrato.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                </div>
+                <!-- Data início -->
+                <div class="col-12 col-md-6">
+                    <label class="form-label" for="{{ form_alocar.data_inicio.id_for_label }}">Data início</label>
+                    {% if form_alocar.data_inicio.errors %}
+                        {{ form_alocar.data_inicio|add_class:"form-control is-invalid" }}
+                    {% else %}
+                        {{ form_alocar.data_inicio|add_class:"form-control" }}
+                    {% endif %}
+                    {% for error in form_alocar.data_inicio.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                </div>
+                <!-- Observações -->
+                <div class="col-12">
+                    <label class="form-label" for="{{ form_alocar.observacoes.id_for_label }}">Observações</label>
+                    {% if form_alocar.observacoes.errors %}
+                        {{ form_alocar.observacoes|add_class:"form-control is-invalid" }}
+                    {% else %}
+                        {{ form_alocar.observacoes|add_class:"form-control" }}
+                    {% endif %}
+                    {% for error in form_alocar.observacoes.errors %}<div class="invalid-feedback d-block">{{ error }}</div>{% endfor %}
+                </div>
+            </div>
+            <div class="d-flex justify-content-end gap-2 mt-4">
+                <button type="button"
+                        class="btn btn-outline-secondary"
+                        data-bs-dismiss="offcanvas">
+                    <i class="bi bi-x-circle"></i> Cancelar
+                </button>
+                <button type="submit" class="btn btn-success" id="btn-submit-alocar">
+                    <i class="bi bi-check2-circle"></i> Confirmar mobilização
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% comment %} Abre o offcanvas automaticamente quando houver erros {% endcomment %}
+{% if abrir_offcanvas_alocar %}
+    <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const el = document.getElementById('offcanvasAlocar');
+    if (el) new bootstrap.Offcanvas(el).show();
+  });
+    </script>
+{% endif %}
+<script>
+  (function () {
+    const offcanvasEl = document.getElementById('offcanvasAlocar');
+    const form = document.getElementById('form-alocar-veiculo');
+    const submitBtn = document.getElementById('btn-submit-alocar');
+
+    if (offcanvasEl) {
+      offcanvasEl.addEventListener('shown.bs.offcanvas', function () {
+        const first = offcanvasEl.querySelector('select, input, textarea');
+        if (first) first.focus();
+      });
+    }
+
+    if (form) {
+      form.addEventListener('submit', function () {
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Processando...';
+        }
+        if (typeof showLoadingOverlay === 'function') {
+          showLoadingOverlay();
+        }
+      });
+    }
+  })();
+</script>

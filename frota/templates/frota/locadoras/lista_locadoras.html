@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+{% load custom_filters %}
+{# para querystring #}
+{% block title %}Locadoras{% endblock %}
+{% block content %}
+    <div class="container-fluid mt-3 mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="mb-0">
+                <i class="bi bi-building"></i> Locadoras
+            </h2>
+            <a class="btn btn-primary" href="{% url 'frota:cadastrar_locadora' %}">
+                <i class="bi bi-plus-lg"></i> Cadastrar locadora
+            </a>
+        </div>
+        <form method="get" class="row g-2 mb-3">
+            <div class="col-md-4">
+                <input type="text"
+                       name="q"
+                       value="{{ params.q|default:'' }}"
+                       class="form-control"
+                       placeholder="Buscar por nome">
+            </div>
+            <div class="col-md-2">
+                <select name="ativo" class="form-select">
+                    <option value="sim"
+                            {% if params.ativo|default:"sim" == "sim" %}selected{% endif %}>Ativas</option>
+                    <option value="nao" {% if params.ativo == "nao" %}selected{% endif %}>Inativas</option>
+                    <option value="todos" {% if params.ativo == "todos" %}selected{% endif %}>Todas</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-outline-primary w-100">
+                    <i class="bi bi-search"></i> Filtrar
+                </button>
+            </div>
+            <div class="col-md-2">
+                <a class="btn btn-outline-dark w-100"
+                   href="{% url 'frota:lista_locadoras' %}">Limpar</a>
+            </div>
+        </form>
+        <div class="card">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="text-center">Nome</th>
+                                <th class="text-center">Contato</th>
+                                <th class="text-center">Telefone</th>
+                                <th class="text-center">Email</th>
+                                <th class="text-center">Situação</th>
+                                <th class="text-center">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for f in locadoras %}
+                                <tr>
+                                    <td class="text-center">{{ f.nome }}</td>
+                                    <td class="text-center">{{ f.contato|default:"—" }}</td>
+                                    <td class="text-center">{{ f.telefone|default:"—" }}</td>
+                                    <td class="text-center">{{ f.email|default:"—" }}</td>
+                                    <td class="text-center">
+                                        {% if f.ativo %}
+                                            <span class="badge bg-success">Ativa</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Inativa</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-center">
+                                        <a class="btn btn-sm btn-outline-primary"
+                                           href="{% url 'frota:editar_locadora' f.pk %}">
+                                            <i class="bi bi-pencil-square"></i> Editar
+                                        </a>
+                                        {% if f.ativo %}
+                                            <button type="button"
+                                                    class="btn btn-sm btn-outline-secondary"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#modalDesativar{{ f.pk }}">
+                                                <i class="bi bi-archive"></i> Desativar
+                                            </button>
+                                        {% else %}
+                                            <button type="button"
+                                                    class="btn btn-sm btn-success"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#modalReativar{{ f.pk }}">
+                                                <i class="bi bi-arrow-counterclockwise"></i> Reativar
+                                            </button>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted py-3">Nenhuma locadora encontrada.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% if is_paginated %}
+                    <div class="px-3 py-2 d-flex justify-content-between">
+                        <div class="small text-muted">Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</div>
+                        <div>
+                            {% if page_obj.has_previous %}
+                                <a class="btn btn-sm btn-outline-secondary"
+                                   href="?{% querystring params page=page_obj.previous_page_number %}">Anterior</a>
+                            {% endif %}
+                            {% if page_obj.has_next %}
+                                <a class="btn btn-sm btn-outline-secondary"
+                                   href="?{% querystring params page=page_obj.next_page_number %}">Próxima</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        {# ===== MODAIS FORA DA TABELA (evita transparência) ===== #}
+        {% for f in locadoras %}
+            <!-- Modal Desativar -->
+            <div class="modal fade"
+                 id="modalDesativar{{ f.pk }}"
+                 tabindex="-1"
+                 aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <form method="post"
+                          action="{% url 'frota:desativar_locadora' f.pk %}"
+                          class="modal-content">
+                        {% csrf_token %}
+                        <div class="modal-header bg-warning-subtle">
+                            <h5 class="modal-title d-flex align-items-center gap-2">
+                                <i class="bi bi-archive"></i> Desativar locadora
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            Confirmar desativação de <strong>{{ f.nome }}</strong>?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button"
+                                    class="btn btn-outline-secondary"
+                                    data-bs-dismiss="modal">Cancelar</button>
+                            <button class="btn btn-outline-secondary">
+                                <i class="bi bi-archive"></i> Confirmar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- Modal Reativar -->
+            <div class="modal fade"
+                 id="modalReativar{{ f.pk }}"
+                 tabindex="-1"
+                 aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <form method="post"
+                          action="{% url 'frota:reativar_locadora' f.pk %}"
+                          class="modal-content">
+                        {% csrf_token %}
+                        <div class="modal-header bg-success text-white">
+                            <h5 class="modal-title d-flex align-items-center gap-2">
+                                <i class="bi bi-arrow-counterclockwise"></i> Reativar locadora
+                            </h5>
+                            <button type="button"
+                                    class="btn-close btn-close-white"
+                                    data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            Confirmar reativação de <strong>{{ f.nome }}</strong>?
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-light" data-bs-dismiss="modal">Cancelar</button>
+                            <button class="btn btn-light text-success">
+                                <i class="bi bi-check2-circle"></i> Confirmar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

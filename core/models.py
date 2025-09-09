@@ -1,12 +1,16 @@
 # app: core/models.py
 
-from django.db import models
-from django.contrib.auth.models import User
-from contratos.models import Empresa, Contrato
 from django.conf import settings
+from django.contrib.auth.models import User
+from django.db import models
+
+from contratos.models import Contrato, Empresa
+
 
 class Cargo(models.Model):
-    nome = models.CharField(max_length=100, unique=True, help_text="Ex: Gestor, Técnico, Operador")
+    nome = models.CharField(
+        max_length=100, unique=True, help_text="Ex: Gestor, Técnico, Operador"
+    )
 
     class Meta:
         verbose_name = "Cargo"
@@ -15,31 +19,42 @@ class Cargo(models.Model):
     def __str__(self):
         return self.nome
 
+
 class Empresa_usuario(models.Model):
-    nome = models.CharField(max_length=100, unique=True, help_text="Empresa que irá usar o Sistema")
+    nome = models.CharField(
+        max_length=100, unique=True, help_text="Empresa que irá usar o Sistema"
+    )
 
     class Meta:
-        verbose_name = 'Empresa_usuario'
+        verbose_name = "Empresa_usuario"
 
     def __str__(self):
         return self.nome
 
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     cargo = models.ForeignKey(Cargo, on_delete=models.SET_NULL, null=True, blank=True)
-    empresa = models.ForeignKey(Empresa, on_delete=models.SET_NULL, null=True, blank=True)
-    contratos = models.ManyToManyField(Contrato, blank=True, related_name='userprofiles')
+    empresa = models.ForeignKey(
+        Empresa, on_delete=models.SET_NULL, null=True, blank=True
+    )
+    contratos = models.ManyToManyField(
+        Contrato, blank=True, related_name="userprofiles"
+    )
 
     class Meta:
-        ordering = ['user']
-        verbose_name = 'Perfil de Usuário'
-        verbose_name_plural = 'Perfis de Usuários'
+        ordering = ["user"]
+        verbose_name = "Perfil de Usuário"
+        verbose_name_plural = "Perfis de Usuários"
 
     def __str__(self):
         return self.user.get_full_name() or self.user.username
 
+
 class ViewDisponivel(models.Model):
-    nome = models.CharField(max_length=100, unique=True, help_text="Ex: lista_contratos, editar_obra")
+    nome = models.CharField(
+        max_length=100, unique=True, help_text="Ex: lista_contratos, editar_obra"
+    )
 
     class Meta:
         verbose_name = "View Disponível"
@@ -47,6 +62,7 @@ class ViewDisponivel(models.Model):
 
     def __str__(self):
         return self.nome
+
 
 class PermissaoDeAcessoPorCargo(models.Model):
     cargo = models.ForeignKey(Cargo, on_delete=models.CASCADE)
@@ -59,7 +75,9 @@ class PermissaoDeAcessoPorCargo(models.Model):
     def __str__(self):
         return self.cargo.nome
 
+
 from django.db import models
+
 
 class Aviso(models.Model):
     TIPO_CHOICES = [
@@ -75,7 +93,7 @@ class Aviso(models.Model):
         max_length=10,
         choices=TIPO_CHOICES,
         default="info",
-        verbose_name="Tipo de aviso"
+        verbose_name="Tipo de aviso",
     )
     ativo = models.BooleanField(default=True, verbose_name="Ativo")
     criado_em = models.DateTimeField(auto_now_add=True)
@@ -87,9 +105,3 @@ class Aviso(models.Model):
 
     def __str__(self):
         return self.mensagem[:50]
-
-
-
-
-
-
